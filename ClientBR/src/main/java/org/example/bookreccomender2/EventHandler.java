@@ -51,24 +51,28 @@ public class EventHandler {
     @FXML
     private TextField userIdField;
     @FXML
-    private Button loginButton;
-    @FXML
-    private Button registerButton;
-    @FXML
     private TextField searchField;
     @FXML
-    private VBox booksContainer; // Cambiato da FlowPane a VBox
-    @FXML
-    private FontIcon star1, star2, star3, star4, star5;
+    private VBox booksContainer;
     @FXML
     private Label usernameLabel;
-
     @FXML
     private ComboBox<String> searchTypeCombo;
     @FXML
     private TextField yearField;
     @FXML
     private Button searchButton;
+    @FXML
+    private Button prevPageButton;
+    @FXML
+    private Button nextPageButton;
+    @FXML
+    private Label pageLabel;
+    private int currentPage = 1;
+    private int booksPerPage = 25;
+    private List<Book> currentSearchResults = new ArrayList<>();
+    private List<Book> allBooks = new ArrayList<>(); // Tutti i libri dalla ricerca
+
     @FXML
     protected void switchToRegister(ActionEvent event) {
         try {
@@ -323,10 +327,11 @@ public class EventHandler {
         if (searchTypeCombo != null) {
             searchTypeCombo.getSelectionModel().selectFirst(); // Seleziona "Per titolo" come default
 
-            // Mostra/nascondi il campo anno in base alla selezione
-            searchTypeCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-                if (newVal != null && yearField != null) {
-                    yearField.setVisible(newVal.equals("Per autore e anno"));
+            searchTypeCombo.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null && newValue.equals("Per autore e anno")) {
+                    yearField.setVisible(true);
+                } else {
+                    yearField.setVisible(false);
                 }
             });
         }
@@ -336,28 +341,28 @@ public class EventHandler {
 
         // Carica i libri solo se il container è disponibile
         if (booksContainer != null) {
-            loadBooks();
+            loadHomePageBooks();
         }
     }
 
     @FXML
-    private void loadBooks() {
-        // Pulisci il container dei libri
-        if (booksContainer == null) return;
-        booksContainer.getChildren().clear();
-
+    private void loadHomePageBooks() {
         // Utilizza BookClient per ottenere i libri
         try {
             BookClient client = new BookClient();
             try {
-                // Richiedi 10 libri al server
-                List<Book> books = client.getBookCovers(10);
+                // Richiedi libri al server
+                List<Book> books = client.getBooks(0);
+                //stampa books
 
-                // Visualizza i libri ricevuti nell'interfaccia
-                for (Book book : books) {
-                    // Aggiungi il libro all'interfaccia
-                    Platform.runLater(() -> addBookToUI(book));
-                }
+
+                currentSearchResults.addAll(books);
+
+                // Aggiorna controlli di paginazione
+                updatePageDisplay();
+
+                // Visualizza prima pagina
+                Platform.runLater(this::displayCurrentPage);
             } finally {
                 client.close();
             }
@@ -369,109 +374,104 @@ public class EventHandler {
     private void setupSearchField() {
         if (searchField == null) return;
 
-        searchField.setOnAction(event -> handleSearch());
+        searchField.setOnAction(event -> handleSearch(event));
     }
 
-
     @FXML
-    private void handleSearch() {
-        if (searchField == null) return;
+    protected void handleSearch(ActionEvent event) {
+        // Resetta la paginazione
+        currentPage = 1;
 
-        String searchTerm = searchField.getText();
+        String searchTerm = searchField.getText().trim();
+        String searchType = searchTypeCombo.getValue();
+
+        // Verifica se i campi sono compilati correttamente
         if (searchTerm.isEmpty()) {
+            // Mostra un messaggio di errore o carica tutti i libri
+            showAlert("Ricerca vuota", "Inserisci un termine di ricerca");
             return;
         }
 
-        // Determina il tipo di ricerca
-        String searchType = "TITLE"; // Default
-        if (searchTypeCombo != null) {
-            String selectedType = searchTypeCombo.getValue();
-            if (selectedType != null) {
-                if (selectedType.equals("Per autore")) {
-                    searchType = "AUTHOR";
-                } else if (selectedType.equals("Per autore e anno")) {
-                    searchType = "AUTHOR_YEAR";
-                    // Controlla che l'anno sia stato inserito
-                    if (yearField != null && yearField.getText().isEmpty()) {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Campo mancante");
-                        alert.setHeaderText("Anno richiesto");
-                        alert.setContentText("Per questo tipo di ricerca è necessario inserire l'anno.");
-                        alert.showAndWait();
-                        return;
-                    }
-                }
-            }
+        if (searchType == null) {
+            showAlert("Tipo di ricerca mancante", "Seleziona un tipo di ricerca");
+            return;
         }
 
-        // Pulisci il container dei libri
-        if (booksContainer != null) {
-            booksContainer.getChildren().clear();
+        // Converti il tipo di ricerca nel formato atteso dal server
+        String serverSearchType;
+        switch (searchType) {
+            case "Per titolo":
+                serverSearchType = "TITLE";
+                break;
+            case "Per autore":
+                serverSearchType = "AUTHOR";
+                break;
+            case "Per autore e anno":
+                serverSearchType = "AUTHOR_YEAR";
+                // Verifica che l'anno sia valido
+                if (yearField.getText().trim().isEmpty()) {
+                    showAlert("Anno mancante", "Inserisci un anno per questo tipo di ricerca");
+                    return;
+                }
+                break;
+            default:
+                showAlert("Tipo di ricerca non valido", "Seleziona un tipo di ricerca valido");
+                return;
         }
 
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        // Ottieni l'anno se necessario
+        String year;
+        if (serverSearchType.equals("AUTHOR_YEAR")) {
+            year = yearField.getText().trim();
+        } else {
+            year = null;
+        }
 
-            // Costruisci e invia la richiesta di ricerca appropriata
-            String searchRequest;
-            if (searchType.equals("AUTHOR_YEAR") && yearField != null) {
-                searchRequest = "SEARCH:" + searchType + ":" + searchTerm + ":" + yearField.getText();
-            } else {
-                searchRequest = "SEARCH:" + searchType + ":" + searchTerm;
-            }
-            out.println(searchRequest);
+        // Mostra indicatore di caricamento (se presente)
+        // showLoadingIndicator(true);
 
-            // Elabora la risposta del server
-            String line;
-            boolean reading = false;
-            List<Book> books = new ArrayList<>();
+        // Esegui la ricerca in un thread separato
+        new Thread(() -> {
+            try {
+                currentSearchResults = performSearch(serverSearchType, searchTerm, year);
 
-            while ((line = in.readLine()) != null) {
-                if (line.equals("INIZIO_LISTA_LIBRI")) {
-                    reading = true;
-                    continue;
-                }
-
-                if (line.equals("END_BOOKS")) {
-                    break;
-                }
-
-                if (reading && line.startsWith("BOOK:")) {
-                    try {
-                        String[] parts = line.split(":", 5);
-                        if (parts.length >= 5) {
-                            Book book = new Book(parts[1], parts[2], parts[3]);
-                            book.setCoverUrl(parts[4]);
-                            books.add(book);
-                        }
-                    } catch (Exception e) {
-                        System.err.println("Errore nel parsing: " + e.getMessage());
-                    }
-                }
-            }
-
-            // Visualizza i risultati
-            for (Book book : books) {
-                Platform.runLater(() -> addBookToUI(book));
-            }
-
-            if (books.isEmpty()) {
+                // Aggiorna l'UI nel thread JavaFX
                 Platform.runLater(() -> {
-                    Label noResultsLabel = new Label("Nessun libro trovato per: " + searchTerm);
-                    noResultsLabel.getStyleClass().add("no-results-label");
-                    booksContainer.getChildren().add(noResultsLabel);
+                    displayCurrentPage();
+                    updatePaginationControls();
+                    // showLoadingIndicator(false);
                 });
+            } catch (IOException e) {
+                Platform.runLater(() -> {
+                    showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
+                    // showLoadingIndicator(false);
+                });
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Errore di connessione");
-            alert.setHeaderText("Impossibile connettersi al server per la ricerca");
-            alert.setContentText("Dettagli: " + e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+        }).start();
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void displayCurrentPageBooks() {
+        booksContainer.getChildren().clear();
+
+        int startIndex = (currentPage - 1) * booksPerPage;
+        int endIndex = Math.min(startIndex + booksPerPage, allBooks.size());
+
+        for (int i = startIndex; i < endIndex; i++) {
+            Book book = allBooks.get(i);
+            addBookToUI(book);
         }
     }
+
+
     @FXML
     private void showUserMenu(MouseEvent event) {
         // Crea menu contestuale
@@ -505,7 +505,7 @@ public class EventHandler {
         coverView.setPreserveRatio(true);
 
         // Carica l'immagine di copertina
-        if (book.getCoverUrl() != null && !book.getCoverUrl().isEmpty() && !book.getCoverUrl().equals("null")) {
+        if (!book.getCoverUrl().equals("null")) {
             try {
                 // Estrai l'URL effettivo dall'URL ricevuto
                 String imageUrl = book.getCoverUrl();
@@ -554,14 +554,150 @@ public class EventHandler {
         Label authorLabel = new Label("Autore: " + (book.getAuthor().length() >= 3 ? book.getAuthor().substring(3) : book.getAuthor()));
         authorLabel.getStyleClass().add("book-author");
 
+        // Categoria del libro
+        Label categoryLabel = new Label("Categoria: " + book.getCategory());
+        categoryLabel.getStyleClass().add("book-category");
+
+        // Editore del libro
+        Label publisherLabel = new Label("Editore: " + book.getPublisher());
+        publisherLabel.getStyleClass().add("book-publisher");
+
+        // Anno di pubblicazione del libro
+        Label yearLabel = new Label("Anno: " + book.getPublicationYear());
+        yearLabel.getStyleClass().add("book-year");
+
 
         // Aggiungi gli elementi testuali al contentBox
-        contentBox.getChildren().addAll(titleLabel, authorLabel);
+        contentBox.getChildren().addAll(titleLabel, authorLabel, categoryLabel, publisherLabel, yearLabel);
 
         // Aggiungi copertina e contenitore di testo all'elemento libro
         bookItem.getChildren().addAll(coverView, contentBox);
 
         // Aggiungi al container
         booksContainer.getChildren().add(bookItem);
+    }
+
+    @FXML
+    protected void goToNextPage(ActionEvent event) {
+        if (currentPage < getTotalPages()) {
+            currentPage++;
+            updatePaginationControls();
+            displayCurrentPage();
+        }
+    }
+
+    @FXML
+    protected void goToPrevPage(ActionEvent event) {
+        if (currentPage > 1) {
+            currentPage--;
+            updatePaginationControls();
+            displayCurrentPage();
+        }
+    }
+
+    private int getTotalPages() {
+        return (int) Math.ceil((double) currentSearchResults.size() / booksPerPage);
+    }
+
+    private void updatePaginationControls() {
+        int totalPages = getTotalPages();
+        pageLabel.setText("Pagina " + currentPage + " di " + totalPages);
+        nextPageButton.setDisable(currentPage >= totalPages);
+        prevPageButton.setDisable(currentPage <= 1);
+    }
+
+    private void updatePageDisplay() {
+        if (pageLabel != null) {
+            pageLabel.setText("Pagina " + currentPage);
+        }
+
+        // Aggiorna stato dei pulsanti
+        if (prevPageButton != null) {
+            prevPageButton.setDisable(currentPage <= 1);
+        }
+
+        int totalPages = getTotalPages();
+        if (nextPageButton != null) {
+            nextPageButton.setDisable(currentPage >= totalPages);
+        }
+        updatePaginationControls();
+
+    }
+
+    private List<Book> performSearch(String searchType, String searchTerm, String year) throws IOException {
+        try (Socket socket = new Socket("localhost", 8080);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+            // Leggi il messaggio di benvenuto
+            String welcome = in.readLine();
+
+            // Invia la richiesta di ricerca
+            String request = "SEARCH:" + searchType + ":" + searchTerm;
+            if (year != null && searchType.equals("AUTHOR_YEAR")) {
+                request += ":" + year;
+            }
+            out.println(request);
+
+            // Parsa i risultati
+            return parseSearchResults(in);
+        }
+    }
+
+    private List<Book> parseSearchResults(BufferedReader in) throws IOException {
+        List<Book> results = new ArrayList<>();
+        String line;
+        boolean reading = false;
+
+        while ((line = in.readLine()) != null) {
+            if (line.equals("INIZIO_LISTA_LIBRI")) {
+                reading = true;
+                continue;
+            }
+
+            if (line.equals("END_BOOKS")) {
+                break;
+            }
+
+            if (reading && line.startsWith("BOOK:")) {
+                try {
+                    // Formato corretto da server: BOOK:titolo|||autore|||descrizione|||coverUrl
+                    String[] parts = line.substring(5).split("\\|\\|\\|", 4);
+                    if (parts.length >= 3) {
+                        String title = parts[0];
+                        String author = parts[1];
+                        String category = "";
+                        String publisher = "";
+                        String publicationYear = "";
+
+                        // La copertina è l'ultimo elemento
+                        String coverUrl = parts.length > 3 ? parts[3] : "null";
+
+                        Book book = new Book(title, author, category, publisher, publicationYear, coverUrl);
+                        results.add(book);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Errore nel parsing: " + e.getMessage());
+                }
+            }
+        }
+
+        return results;
+    }
+    private void displayCurrentPage() {
+        if (booksContainer == null) return;
+
+        // Pulisci il container
+        booksContainer.getChildren().clear();
+
+        // Calcola gli indici per la pagina corrente
+        int startIndex = (currentPage - 1) * booksPerPage;
+        int endIndex = Math.min(startIndex + booksPerPage, currentSearchResults.size());
+
+        // Mostra i libri per la pagina corrente
+        for (int i = startIndex; i < endIndex; i++) {
+            Book book = currentSearchResults.get(i);
+            addBookToUI(book);
+        }
     }
 }

@@ -25,11 +25,11 @@
         /**
          * Richiede un numero specifico di libri con copertine
          */
-        public List<Book> getBookCovers(int number) throws IOException {
+        public List<Book> getBooks(int number) throws IOException {
             List<Book> books = new ArrayList<>();
 
             // Invia la richiesta
-            String request = "GET_BOOK_COVERS:" + number;
+            String request = "GET_BOOKS:" + number;
             out.println(request);
 
             // Legge la risposta
@@ -48,23 +48,13 @@
 
                 if (reading && line.startsWith("BOOK:")) {
                     try {
-                        // Formato: BOOK:titolo:autore:descrizione:coverUrl
-                        String[] parts = line.split(":", 5);
-                        if (parts.length >= 5) {
-                            String title = parts[1];
-                            String author = parts[2];
-                            String description = parts[3];
-                            String coverUrl = parts[4];
-
-                            // Crea il libro
-                            Book book = new Book(title, author, description);
-
-                            // Imposta la copertina solo se è disponibile
-                            if (coverUrl != null && !coverUrl.equals("null")) {
-                                book.setCoverUrl(coverUrl);
-                            }
-
+                        // Formato corretto da server: BOOK:titolo|||autore|||categoria|||editore|||anno_pubblicazione|||copertina
+                        String[] parts = line.split("BOOK:|\\|\\|\\|");
+                        if (parts.length >= 7) {
+                            Book book = getBook(parts);
                             books.add(book);
+                        } else {
+                            System.err.println("Formato libro non valido: " + line);
                         }
                     } catch (Exception e) {
                         System.err.println("Errore nel parsing dei dati del libro: " + e.getMessage());
@@ -74,6 +64,25 @@
 
             return books;
         }
+        private static Book getBook(String[] parts) {
+            String title = parts[1];
+            String author = parts[2];
+            String category = parts[3];
+            String publisher = parts[4];
+            String publicationYear = parts[5];
+
+            // La parte coverUrl è opzionale, verifica se esiste
+            String coverUrl = "null";
+            if (parts.length > 6) {
+                coverUrl = parts[6];
+            }
+
+            // Crea il libro con il nuovo costruttore
+            Book book = new Book(title, author, category, publisher, publicationYear, coverUrl);
+            return book;
+        }
+
+
         /**
          * Chiude la connessione al server
          */

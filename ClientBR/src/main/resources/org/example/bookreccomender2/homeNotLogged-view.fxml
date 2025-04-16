@@ -82,29 +82,25 @@
             </HBox>
             <ScrollPane fitToWidth="true" styleClass="books-scroll-pane" VBox.vgrow="ALWAYS">
                 <VBox fx:id="booksContainer" alignment="TOP_CENTER" spacing="20.0" styleClass="books-container">
-                    <HBox styleClass="book-item" spacing="15.0">
-                        <ImageView fitWidth="120.0" fitHeight="180.0" preserveRatio="true">
-                            <image>
-                                <Image url="/logoBookRecomender.png" />
-                            </image>
-                        </ImageView>
-
-                        <VBox alignment="CENTER_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">
-                            <Label text="LIBRO" styleClass="book-title" />
-                            <TextFlow maxWidth="400">
-                                <Text text="DESCRIZIONE LUNGA CHE DEVE ANDARE A CAPO..." styleClass="book-description" />
-                            </TextFlow>
-                            <HBox alignment="CENTER_LEFT" spacing="5.0" styleClass="rating-container">
-                                <FontIcon iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
-                                <FontIcon iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
-                                <FontIcon iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
-                                <FontIcon iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
-                                <FontIcon iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
-                            </HBox>
-                        </VBox>
-                    </HBox>
+                    <padding>
+                        <Insets top="20.0" right="30.0" bottom="20.0" left="30.0" />
+                    </padding>
+                    <!-- Qui verranno aggiunti i libri -->
                 </VBox>
             </ScrollPane>
+            <HBox styleClass="pagination-container" alignment="CENTER" spacing="10">
+                <Button fx:id="prevPageButton" styleClass="page-button" onAction="#goToPrevPage" disable="true">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-chevron-left" iconSize="12" />
+                    </graphic>
+                </Button>
+                <Label fx:id="pageLabel" styleClass="current-page-label" text="Pagina 1" />
+                <Button fx:id="nextPageButton" styleClass="page-button" onAction="#goToNextPage" disable="true">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-chevron-right" iconSize="12" />
+                    </graphic>
+                </Button>
+            </HBox>
         </VBox>
     </center>
 </BorderPane>

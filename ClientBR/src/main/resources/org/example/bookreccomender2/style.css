@@ -173,7 +173,39 @@
 }
 
 
+/* ===== STILI PAGINAZIONE ===== */
+.pagination-container {
+    -fx-padding: 15 0;
+    -fx-spacing: 10;
+    -fx-alignment: center;
+}
 
+.page-button {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-padding: 5;
+    -fx-cursor: hand;
+}
+
+.page-button:hover {
+    -fx-background-color: #e0e0e0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 3, 0, 0, 1);
+}
+
+.page-button:disabled {
+    -fx-opacity: 0.5;
+    -fx-cursor: default;
+}
+
+.current-page-label {
+    -fx-font-size: 14px;
+    -fx-padding: 5 10;
+}
 
 
 

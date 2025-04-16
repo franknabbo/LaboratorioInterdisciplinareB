@@ -32,48 +32,6 @@ public class DataBaseConnection {
         }
     }
 
-    // Metodo per verificare lo stato della connessione
-    public boolean isConnected() {
-        try {
-            return connection != null && !connection.isClosed();
-        } catch (SQLException e) {
-            return false;
-        }
-    }
-
-    // Metodo per eseguire query SELECT
-    public ResultSet executeQuery(String query) {
-        try {
-            if (!isConnected()) {
-                System.err.println("Impossibile eseguire la query: connessione al database non stabilita");
-                return null;
-            }
-
-            Statement stmt = connection.createStatement();
-            return stmt.executeQuery(query);
-        } catch (SQLException e) {
-            System.err.println("Errore nell'esecuzione della query: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // Metodo per eseguire query di UPDATE, INSERT, DELETE
-    public int executeUpdate(String query) {
-        try {
-            if (!isConnected()) {
-                System.err.println("Impossibile eseguire l'aggiornamento: connessione al database non stabilita");
-                return -1;
-            }
-
-            Statement stmt = connection.createStatement();
-            return stmt.executeUpdate(query);
-        } catch (SQLException e) {
-            System.err.println("Errore nell'esecuzione dell'aggiornamento: " + e.getMessage());
-            e.printStackTrace();
-            return -1;
-        }
-    }
 
     // Metodo per chiudere la connessione
     public void closeConnection() {

@@ -33,10 +33,4 @@ public class Book {
     public int getPublicationYear() { return publicationYear; }
     public String getCoverUrl() { return coverUrl; }
 
-    // Per la richiesta del client, creiamo una descrizione formattata
-    public String getDescription() {
-        return "Categoria: " + category +
-                ", Editore: " + publisher +
-                ", Anno: " + publicationYear;
-    }
 }
