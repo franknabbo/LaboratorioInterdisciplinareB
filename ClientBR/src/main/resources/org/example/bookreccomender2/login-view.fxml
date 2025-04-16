@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="CENTER" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.bookreccomender2.EventHandler">
+    <padding>
+        <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+    </padding>
+    <children>
+        <!-- Logo e titolo -->
+        <VBox alignment="CENTER" spacing="10">
+            <children>
+                <ImageView fitHeight="150" fitWidth="150" preserveRatio="true">
+                    <image>
+                        <Image url="@/logoBookRecomender.png" />
+                    </image>
+                </ImageView>
+                <Label styleClass="title-label" text="BookRecomender" />
+                <Label styleClass="subtitle-label" text="Accedi al tuo account" />
+            </children>
+        </VBox>
+
+        <!-- Campo user_id -->
+        <VBox maxWidth="300" spacing="5">
+            <children>
+                <Label styleClass="input-label" text="User ID" />
+                <TextField fx:id="userIdField" styleClass="input-field" />
+            </children>
+        </VBox>
+
+        <!-- Campo password -->
+        <VBox maxWidth="300" spacing="5">
+            <children>
+                <Label styleClass="input-label" text="Password" />
+                <HBox alignment="CENTER_LEFT" styleClass="password-container">
+                    <children>
+                        <PasswordField fx:id="passwordField" styleClass="input-field" HBox.hgrow="ALWAYS" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+
+        <!-- Pulsanti -->
+        <HBox alignment="CENTER_RIGHT" maxWidth="300" spacing="10">
+            <children>
+                <Button fx:id="homeButton" onAction="#switchToHome" styleClass="homebutton" text="Home" />
+                <Button onAction="#switchToRegister" styleClass="button" text="Crea account" />
+                <Button fx:id="loginButton" onAction="#loginUser" styleClass="button" text="Avanti" />
+            </children>
+        </HBox>
+    </children>
+</VBox>

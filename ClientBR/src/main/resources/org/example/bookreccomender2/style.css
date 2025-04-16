@@ -1,0 +1,329 @@
+/* ===== COLORI E STILI BASE ===== */
+.root {
+    -fx-background-color: #f8eedf;
+}
+
+.main-container {
+    -fx-background-color: #f5f0e8;
+}
+
+/* ===== STILI HEADER E BARRA SUPERIORE ===== */
+.top-bar {
+    -fx-background-color: #4a6fa5;
+    -fx-border-color: #3a5a8a;
+    -fx-border-width: 0 0 1 0;
+}
+
+.header-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* ===== STILI TITOLI E SOTTOTITOLI ===== */
+.title-label {
+    -fx-font-size: 2em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #202124;
+}
+
+.subtitle-label {
+    -fx-font-size: 1.2em;
+    -fx-text-fill: #5f6368;
+}
+
+/* ===== STILI CAMPI INPUT ===== */
+.input-label {
+    -fx-text-fill: #3c4043;
+    -fx-font-size: 1em;
+    -fx-font-weight: bold;
+}
+
+.input-field {
+    -fx-background-color: white;
+    -fx-border-color: #dadce0;
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+    -fx-pref-height: 44;
+    -fx-padding: 0 15;
+    -fx-font-size: 1em;
+}
+
+.search-field {
+    -fx-background-color: white;
+    -fx-border-color: #aaaaaa;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 10;
+    -fx-font-size: 14px;
+}
+
+/* ===== STILI PASSWORD ===== */
+.password-container {
+    -fx-border-color: #dadce0;
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+    -fx-pref-height: 44;
+    -fx-background-color: white;
+}
+
+.password-field {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0 15;
+    -fx-font-size: 1em;
+}
+
+/* ===== STILI BOTTONI ===== */
+.button {
+    -fx-background-color: #6c63ff;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 6;
+    -fx-font-size: 1em;
+}
+
+.button:hover {
+    -fx-background-color: #5848c2;
+}
+
+.auth-button {
+    -fx-background-color: #336699;
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8 15;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.auth-button:hover {
+    -fx-background-color: #4477aa;
+}
+
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 10;
+    -fx-cursor: hand;
+}
+
+.homebutton, .registerbutton {
+    -fx-background-color: #336699;
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+
+.homebutton:hover, .registerbutton:hover {
+    -fx-background-color: #4477aa;
+}
+
+.button-secondary {
+    -fx-background-color: #78909c;
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.button-secondary:hover {
+    -fx-background-color: #90a4ae;
+}
+
+/* Stili migliorati per i bottoni di autenticazione */
+.login-button {
+    -fx-background-color: linear-gradient(to bottom, #4a6fa5, #3a5a8a);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,60,120,0.3), 5, 0, 0, 2);
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #5a7fb5;
+    -fx-border-width: 1.5;
+    -fx-min-width: 100px;
+    -fx-font-size: 12px;
+    -fx-padding: 8 15 8 10;
+    -fx-text-fill: #ffffff;
+}
+
+.login-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #5a7fb5, #4a6fa5);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,80,150,0.4), 7, 0, 0, 3);
+    -fx-border-color: #8aa3cc;
+}
+
+.register-button {
+    -fx-background-color: linear-gradient(to bottom, #6c63ff, #5848c2);
+    -fx-effect: dropshadow(three-pass-box, rgba(80,0,255,0.3), 5, 0, 0, 2);
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #8c7aff;
+    -fx-border-width: 1.5;
+    -fx-min-width: 100px;
+    -fx-font-size: 12px;
+    -fx-padding: 8 15 8 10;
+    -fx-text-fill: #ffffff;
+}
+
+.register-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #7d71ff, #6c63ff);
+    -fx-effect: dropshadow(three-pass-box, rgba(100,0,255,0.4), 7, 0, 0, 3);
+    -fx-border-color: #ac9aff;
+}
+
+
+
+
+
+
+/* ===== CONTENITORI ===== */
+.content-box {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
+.books-container {
+    -fx-padding: 20;
+}
+
+/* ===== STILI LIBRI ===== */
+.book-item {
+    -fx-background-color: white;
+    -fx-border-color: #eeeeee;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-padding: 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 2);
+    -fx-min-width: 300;
+    -fx-max-width: 600;
+    -fx-cursor: hand;
+}
+
+.book-item:hover {
+    -fx-background-color: #f8f8f8;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 3);
+}
+
+.book-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+.book-description {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666666;
+    -fx-wrap-text: true;
+    -fx-pref-width: 300px;  /* Larghezza preferita */
+    -fx-max-width: 400px;   /* Larghezza massima */
+}
+
+/* ===== STILI RATING ===== */
+.star-icon {
+    -fx-fill: #dddddd;
+}
+
+.star-filled {
+    -fx-fill: #ffc107;
+}
+
+.rating-container {
+    -fx-spacing: 5;
+    -fx-padding: 10 0;
+}
+
+
+
+
+/* Stili per l'username e avatar utente */
+.username-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.user-avatar {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 3, 0, 0, 1);
+    -fx-cursor: hand;
+}
+
+/* Stile per il bottone Librerie */
+.library-button {
+    -fx-background-color: linear-gradient(to bottom, #ff8c42, #e67e22);
+    -fx-effect: dropshadow(three-pass-box, rgba(255,140,0,0.3), 5, 0, 0, 2);
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #ffa96b;
+    -fx-border-width: 1.5;
+    -fx-min-width: 100px;
+    -fx-font-size: 12px;
+    -fx-padding: 8 15 8 10;
+    -fx-text-fill: #ffffff;
+}
+
+.library-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #ffa96b, #ff8c42);
+    -fx-effect: dropshadow(three-pass-box, rgba(255,140,0,0.4), 7, 0, 0, 3);
+    -fx-border-color: #ffbe8f;
+}
+
+/* Modifiche alla barra di ricerca per adattarsi al layout con il bottone librerie */
+.search-field {
+    -fx-max-width: 600px;
+}
+.search-button {
+    -fx-background-color: linear-gradient(to bottom, #4a6fa5, #3a5a8a);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,60,120,0.3), 5, 0, 0, 2);
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #5a7fb5;
+    -fx-border-width: 1.5;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-padding: 10;
+}
+
+.search-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #5a7fb5, #4a6fa5);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,80,150,0.4), 7, 0, 0, 3);
+    -fx-border-color: #8aa3cc;
+}
+.books-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+
+.books-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.books-container {
+    -fx-padding: 20;
+    -fx-spacing: 15;
+    -fx-alignment: top-center;
+    -fx-background-color: transparent;
+}
+
+
+/* ===== RESPONSIVITÀ ===== */
+@media (max-width: 600px) {
+    .book-item {
+        -fx-min-width: 250;
+        -fx-max-width: 450;
+    }
+
+    .book-description {
+        -fx-pref-width: 200px;
+        -fx-max-width: 300px;
+    }
+
+    .responsive-container {
+        -fx-max-width: 400px;
+    }
+}

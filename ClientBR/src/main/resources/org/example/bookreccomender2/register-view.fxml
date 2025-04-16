@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="CENTER" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.bookreccomender2.EventHandler">
+    <padding>
+        <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+    </padding>
+    <children>
+
+        <!-- Logo e titolo -->
+        <VBox alignment="CENTER" spacing="10">
+            <children>
+                <ImageView fitHeight="150" fitWidth="150" preserveRatio="true">
+                    <image>
+                        <Image url="@/logoBookRecomender.png" />
+                    </image>
+                </ImageView>
+                <Label styleClass="title-label" text="BookRecommender" />
+                <Label styleClass="subtitle-label" text="Crea il tuo account" />
+            </children>
+        </VBox>
+
+        <!-- Campi nome e cognome affiancati -->
+        <HBox alignment="CENTER" maxWidth="Infinity" spacing="10" styleClass="responsive-container">
+            <children>
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label styleClass="input-label" text="Nome" />
+                        <TextField fx:id="firstNameField" styleClass="input-field" />
+                    </children>
+                </VBox>
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label styleClass="input-label" text="Cognome" />
+                        <TextField fx:id="lastNameField" styleClass="input-field" />
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+        <!-- Codice Fiscale -->
+        <VBox maxWidth="Infinity" spacing="5" styleClass="responsive-container">
+            <children>
+                <Label styleClass="input-label" text="Codice Fiscale" />
+                <TextField fx:id="taxCodeField" styleClass="input-field" />
+            </children>
+        </VBox>
+
+        <!-- Email -->
+        <VBox maxWidth="Infinity" spacing="5" styleClass="responsive-container">
+            <children>
+                <Label styleClass="input-label" text="Email" />
+                <TextField fx:id="emailField" styleClass="input-field" />
+            </children>
+        </VBox>
+
+        <!-- Password -->
+        <VBox maxWidth="Infinity" spacing="5" styleClass="responsive-container">
+            <children>
+                <Label styleClass="input-label" text="Password" />
+                <HBox alignment="CENTER_LEFT" styleClass="password-container">
+                    <children>
+                        <PasswordField fx:id="passwordField" styleClass="password-container" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+
+        <!-- Pulsanti -->
+        <HBox alignment="CENTER_RIGHT" maxWidth="Infinity" spacing="10" styleClass="responsive-container">
+            <children>
+                <Button fx:id="homeButton" onAction="#switchToHome" styleClass="homebutton" text="Home" />
+                <Button fx:id="LoginButton" onAction="#switchToLogin" styleClass="button-secondary" text="Ho già un acocunt" />
+                <Button fx:id="registerButton" onAction="#registerUser" styleClass="registerbutton" text="Registrati" />
+            </children>
+        </HBox>
+    </children>
+</VBox>

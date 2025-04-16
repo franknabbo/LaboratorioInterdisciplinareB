@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.text.Text?>
+<?import javafx.collections.FXCollections?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.bookreccomender2.EventHandler"
+            prefHeight="600.0" prefWidth="800.0" stylesheets="@style.css">
+    <top>
+        <HBox alignment="CENTER" spacing="10.0" styleClass="top-bar">
+            <padding>
+                <Insets top="20.0" right="30.0" bottom="20.0" left="30.0" />
+            </padding>
+
+            <Label text="BookRecommender" styleClass="header-label">
+                <font>
+                    <Font name="System Bold" size="18.0" />
+                </font>
+            </Label>
+
+            <Region HBox.hgrow="ALWAYS" />
+<Button fx:id="loginButton" text="LOGIN" styleClass="login-button" onAction="#switchToLogin">
+                <graphic>
+                    <FontIcon iconLiteral="fas-sign-in-alt" iconSize="14" />
+                </graphic>
+            </Button>
+            <Button fx:id="registerButton" text="REGISTER" styleClass="register-button" onAction="#switchToRegister">
+                <graphic>
+                    <FontIcon iconLiteral="fas-user-plus" iconSize="14" />
+                </graphic>
+            </Button>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="20.0" styleClass="content-box">
+            <padding>
+                <Insets top="20.0" right="30.0" bottom="20.0" left="30.0" />
+            </padding>
+
+
+            <HBox spacing="10" alignment="CENTER">
+                <padding>
+                    <Insets right="20.0" left="20.0" />
+                </padding>
+
+                <!-- Menu a tendina per il tipo di ricerca -->
+                <ComboBox fx:id="searchTypeCombo" prefWidth="150" promptText="Tipo ricerca" styleClass="top-bar">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Per titolo" />
+                            <String fx:value="Per autore" />
+                            <String fx:value="Per autore e anno" />
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+
+                <!-- Campo di ricerca principale -->
+                <TextField fx:id="searchField" promptText="SEARCH..." styleClass="search-field" HBox.hgrow="ALWAYS" />
+
+                <!-- Campo per l'anno (inizialmente nascosto) -->
+                <TextField fx:id="yearField" promptText="Anno" prefWidth="80" visible="false" />
+
+                <!-- Bottone di ricerca con icona -->
+                <Button fx:id="searchButton" styleClass="search-button" onAction="#handleSearch">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-search" iconSize="14" />
+                    </graphic>
+                </Button>
+            </HBox>
+            <ScrollPane fitToWidth="true" styleClass="books-scroll-pane" VBox.vgrow="ALWAYS">
+                <VBox fx:id="booksContainer" alignment="TOP_CENTER" spacing="20.0" styleClass="books-container">
+                    <HBox styleClass="book-item" spacing="15.0">
+                        <ImageView fitWidth="120.0" fitHeight="180.0" preserveRatio="true">
+                            <image>
+                                <Image url="/logoBookRecomender.png" />
+                            </image>
+                        </ImageView>
+
+                        <VBox alignment="CENTER_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">
+                            <Label text="LIBRO" styleClass="book-title" />
+                            <TextFlow maxWidth="400">
+                                <Text text="DESCRIZIONE LUNGA CHE DEVE ANDARE A CAPO..." styleClass="book-description" />
+                            </TextFlow>
+                            <HBox alignment="CENTER_LEFT" spacing="5.0" styleClass="rating-container">
+                                <FontIcon iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                                <FontIcon iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                                <FontIcon iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                                <FontIcon iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                                <FontIcon iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                            </HBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>
