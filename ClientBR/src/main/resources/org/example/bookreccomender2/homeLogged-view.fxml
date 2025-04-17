@@ -10,23 +10,27 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<?import javafx.scene.text.TextFlow?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.shape.Circle?>
-
 
 <?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.text.Text?>
 <?import javafx.collections.FXCollections?>
+<?import javafx.scene.shape.Circle?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.bookreccomender2.EventHandler"
-            prefHeight="600.0" prefWidth="800.0" stylesheets="@style.css" style="-fx-background-color: #f8eedf">
+            prefHeight="600.0" prefWidth="800.0" stylesheets="@homelogged.css" style="-fx-background-color: #f8eedf">
     <top>
         <HBox alignment="CENTER" spacing="10.0" styleClass="top-bar">
             <padding>
                 <Insets top="20.0" right="30.0" bottom="20.0" left="30.0"/>
             </padding>
+
+            <!-- Bottone per la libreria -->
+            <Button fx:id="libraryButton" text="LIBRERIE" onAction="#switchToLibrary" styleClass="library-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-book" iconSize="14"/>
+                </graphic>
+            </Button>
 
             <Label text="BookRecommender" styleClass="header-label">
                 <font>
@@ -36,15 +40,16 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <!-- Account info al posto dei bottoni di login/register -->
             <HBox alignment="CENTER_RIGHT" spacing="10">
-                <Label fx:id="usernameLabel" styleClass="username-label"/>
+                <Label fx:id="usernameLabel" styleClass="username-label" text="NOME ACC"/>
                 <StackPane onMouseClicked="#showUserMenu">
                     <Circle fx:id="userAvatar" radius="15" styleClass="user-avatar" fill="#4a6fa5"/>
                     <FontIcon iconLiteral="fas-user" iconSize="14" iconColor="white"/>
                 </StackPane>
             </HBox>
         </HBox>
+
+
     </top>
 
     <center>
@@ -53,20 +58,14 @@
                 <Insets top="20.0" right="30.0" bottom="20.0" left="30.0"/>
             </padding>
 
+
             <HBox spacing="10" alignment="CENTER" style="-fx-background-color: #f8eedf">
                 <padding>
                     <Insets right="20.0" left="20.0"/>
                 </padding>
 
-                <!-- Bottone per la libreria -->
-                <Button fx:id="libraryButton" text="LIBRERIE" onAction="#switchToLibrary" styleClass="library-button">
-                    <graphic>
-                        <FontIcon iconLiteral="fas-book" iconSize="14"/>
-                    </graphic>
-                </Button>
-
                 <!-- Menu a tendina per il tipo di ricerca -->
-                <ComboBox fx:id="searchTypeCombo" prefWidth="150" promptText="Tipo ricerca">
+                <ComboBox fx:id="searchTypeCombo" prefWidth="150" promptText="Tipo ricerca" styleClass="top-bar">
                     <items>
                         <FXCollections fx:factory="observableArrayList">
                             <String fx:value="Per titolo"/>
@@ -89,12 +88,9 @@
                     </graphic>
                 </Button>
             </HBox>
-
-
             <ScrollPane fitToWidth="true" styleClass="books-scroll-pane" VBox.vgrow="ALWAYS"
                         style="-fx-background-color: #f8eedf">
-                <VBox fx:id="booksContainer" alignment="TOP_CENTER" spacing="20.0" styleClass="books-container"
-                      style="-fx-background-color: #f8eedf">
+                <VBox fx:id="booksContainer" alignment="TOP_CENTER" spacing="20.0" styleClass="books-container" style="-fx-background-color: #f8eedf">
                     <padding>
                         <Insets top="20.0" right="30.0" bottom="20.0" left="30.0"/>
                     </padding>

@@ -1,0 +1,160 @@
+/* Variabili colori e transizioni */
+.root {
+    -fx-primary: #8b4513;
+    -fx-secondary: #88654d;
+    -fx-light: #F8F9FA;
+    -fx-dark: #5a2a0c;
+    -fx-accent: #E74C3C;
+    -fx-shadow: rgba(0, 0, 0, 0.1);
+    -fx-border: #E9ECEF;
+}
+
+/* Top bar moderna */
+.top-bar {
+    -fx-background-color: -fx-primary;
+    -fx-padding: 12px 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 10, 0.0, 0, 4);
+}
+
+.home-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
+}
+
+.home-button:hover {
+    -fx-text-fill: -fx-secondary;
+    -fx-effect: dropshadow(three-pass-box, white, 15, 0.0, 0, 0);
+}
+
+/* Copertina libro con effetti moderni */
+.book-cover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 20, 0.0, 0, 8);
+    -fx-background-color: white;
+    -fx-padding: 15px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-transition: all 0.3s ease;
+}
+
+.book-cover:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.15), 25, 0.0, 0, 12);
+    -fx-translate-y: -2px;
+}
+
+/* Sezioni con stile minimalista */
+.section-pane {
+    -fx-text-fill: -fx-primary;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+}
+
+.section-pane > .title {
+    -fx-background-color: -fx-light;
+    -fx-background-radius: 8px;
+    -fx-padding: 12px 15px;
+}
+
+.section-pane > .content {
+    -fx-background-color: white;
+    -fx-padding: 20px;
+    -fx-border-color: -fx-border;
+    -fx-border-width: 1px;
+    -fx-border-radius: 0 0 8px 8px;
+}
+
+/* Input fields moderni */
+.recensione-text {
+    -fx-background-color: -fx-light;
+    -fx-border-color: -fx-border;
+    -fx-border-radius: 8px;
+    -fx-padding: 12px;
+    -fx-transition: all 0.3s ease;
+}
+
+.recensione-text:focused {
+    -fx-border-color: -fx-secondary;
+    -fx-effect: dropshadow(three-pass-box, rgba(52, 152, 219, 0.5), 8, 0.0, 0, 0);
+}
+
+/* Pulsanti con effetti moderni */
+.auth-button, .library-button {
+    -fx-background-radius: 25px;
+    -fx-padding: 12px 25px;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+    -fx-text-fill: white;
+    -fx-transition: all 0.3s ease;
+}
+
+.auth-button {
+    -fx-background-color: -fx-secondary;
+}
+
+.auth-button:hover {
+    -fx-background-color: derive(-fx-secondary, -10%);
+    -fx-effect: dropshadow(three-pass-box, rgba(52, 152, 219, 0.3), 10, 0.0, 0, 0);
+    -fx-translate-y: -2px;
+}
+
+.library-button {
+    -fx-background-color: -fx-accent;
+    -fx-font-weight: bold;
+}
+
+.library-button:hover {
+    -fx-background-color: derive(-fx-accent, -10%);
+    -fx-effect: dropshadow(three-pass-box, rgba(231, 76, 60, 0.3), 10, 0.0, 0, 0);
+    -fx-translate-y: -2px;
+}
+
+/* Footer elegante */
+.footer-container {
+    -fx-background-color: -fx-light;
+    -fx-border-color: -fx-border;
+    -fx-border-width: 1px 0 0 0;
+    -fx-padding: 15px 25px;
+}
+
+/* ScrollPane moderno */
+.books-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.books-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.books-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-padding: 0 5px;
+}
+
+.books-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #CED4DA;
+    -fx-background-radius: 10px;
+    -fx-opacity: 0.8;
+}
+
+.books-scroll-pane .scroll-bar:vertical .thumb:hover {
+    -fx-opacity: 1;
+}
+
+/* Effetti hover generali */
+.button {
+    -fx-transition: all 0.3s ease;
+}
+
+.button:hover {
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+    -fx-translate-y: -2px;
+}
+
+.button:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+    -fx-translate-y: 0;
+}

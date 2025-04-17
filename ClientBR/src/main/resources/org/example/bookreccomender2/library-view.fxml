@@ -34,12 +34,6 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <!-- Search field in the center -->
-            <TextField fx:id="mainSearchField" promptText="SEARCH..." styleClass="main-search-field" HBox.hgrow="ALWAYS"
-                       prefHeight="40.0" maxWidth="500.0"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-
             <!-- User avatar on the right -->
             <HBox alignment="CENTER_RIGHT" spacing="10">
                 <Label fx:id="usernameLabel" styleClass="username-label" text="NOME ACC"/>
