@@ -1,0 +1,146 @@
+/* Variabili per i colori principali */
+* {
+    -fx-primary-color: #8B4513;      /* Marrone principale */
+    -fx-secondary-color: #f8eedf;    /* Beige chiaro */
+    -fx-accent-color: #5C3317;       /* Marrone scuro */
+    -fx-text-color: #2C1810;         /* Marrone molto scuro per il testo */
+    -fx-hover-color: #A0522D;        /* Marrone più chiaro per hover */
+}
+
+/* Stile generale */
+.root {
+    -fx-background-color: -fx-secondary-color;
+    -fx-font-family: "System";
+}
+
+/* Barra superiore */
+.top-bar {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 2);
+}
+
+/* Pulsanti con icone */
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-padding: 8px;
+    -fx-cursor: hand;
+    -fx-background-radius: 50%;
+}
+
+.icon-button:hover {
+    -fx-background-color: derive(-fx-secondary-color, -5%);
+}
+
+.icon-button:pressed {
+    -fx-background-color: derive(-fx-secondary-color, -10%);
+}
+
+/* Titolo della libreria */
+.library-title-header {
+    -fx-text-fill: -fx-primary-color;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+/* Label username */
+.username-label {
+    -fx-text-fill: -fx-text-color;
+    -fx-font-size: 14px;
+}
+
+/* Avatar utente */
+.user-avatar {
+    -fx-fill: -fx-primary-color;
+    -fx-cursor: hand;
+}
+
+/* ScrollPane trasparente */
+.transparent-scroll-pane {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
+
+.transparent-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Scrollbar styling */
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical .thumb,
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: derive(-fx-primary-color, 50%);
+    -fx-background-radius: 5em;
+}
+
+.scroll-bar:vertical .track,
+.scroll-bar:horizontal .track {
+    -fx-background-color: transparent;
+}
+
+/* Container dei libri */
+#booksContainer {
+    -fx-background-color: transparent;
+}
+
+/* Effetti hover generali */
+.button {
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: white;
+    -fx-background-radius: 4px;
+}
+
+.button:hover {
+    -fx-background-color: -fx-hover-color;
+}
+
+/* Stile per elementi selezionati/focused */
+.button:focused,
+.combo-box:focused {
+    -fx-effect: dropshadow(three-pass-box, -fx-primary-color, 10, 0, 0, 0);
+}
+
+/* Animazioni */
+.button, .icon-button {
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+/* Menu contestuale */
+.context-menu {
+    -fx-background-color: white;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-padding: 5px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 2);
+}
+
+.menu-item {
+    -fx-padding: 8px 16px;
+}
+
+.menu-item:hover {
+    -fx-background-color: derive(-fx-secondary-color, -5%);
+}
+
+/* Font icons */
+.font-icon {
+    -fx-icon-color: -fx-text-color;
+}
+
+/* Stili specifici per contenitori */
+.vbox, .hbox {
+    -fx-background-color: transparent;
+}
+
+/* Label generiche */
+.label {
+    -fx-text-fill: -fx-text-color;
+}
+
+/* Effetto hover per elementi interattivi */
+.interactive:hover {
+    -fx-opacity: 0.85;
+}

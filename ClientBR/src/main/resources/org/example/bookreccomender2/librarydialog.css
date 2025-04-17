@@ -1,0 +1,126 @@
+/* Stili per il DialogPane */
+.dialog-pane {
+    -fx-background-color: white;
+    -fx-padding: 20px;
+}
+
+/* Variabili colori */
+.dialog-pane {
+    -fx-primary-color: #8B4513;      /* Marrone principale */
+    -fx-secondary-color: #f8eedf;    /* Beige chiaro */
+    -fx-accent-color: #5C3317;       /* Marrone scuro */
+    -fx-text-color: #2C1810;         /* Marrone molto scuro per il testo */
+}
+
+/* Label del dialog */
+.dialog-label {
+    -fx-text-fill: -fx-text-color;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 5px 0;
+}
+
+/* ComboBox */
+.dialog-combo-box {
+    -fx-background-color: white;
+    -fx-border-color: derive(-fx-primary-color, 70%);
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 5px;
+}
+
+.dialog-combo-box:hover {
+    -fx-border-color: -fx-primary-color;
+}
+
+.dialog-combo-box:focused {
+    -fx-border-color: -fx-primary-color;
+    -fx-border-width: 2px;
+}
+
+/* Lista del ComboBox */
+.dialog-combo-box .list-cell {
+    -fx-padding: 8px;
+    -fx-text-fill: -fx-text-color;
+}
+
+.dialog-combo-box .list-cell:hover {
+    -fx-background-color: -fx-secondary-color;
+}
+
+.dialog-combo-box .list-view {
+    -fx-background-color: white;
+    -fx-border-color: derive(-fx-primary-color, 70%);
+    -fx-border-radius: 4px;
+}
+
+/* Bottoni del dialog */
+.dialog-pane .button {
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: white;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.dialog-pane .button:hover {
+    -fx-background-color: derive(-fx-primary-color, 10%);
+}
+
+.dialog-pane .button:pressed {
+    -fx-background-color: derive(-fx-primary-color, -10%);
+}
+
+/* Bottone Cancel */
+.dialog-pane .button:cancel {
+    -fx-background-color: derive(-fx-primary-color, 80%);
+    -fx-text-fill: -fx-text-color;
+}
+
+.dialog-pane .button:cancel:hover {
+    -fx-background-color: derive(-fx-primary-color, 70%);
+}
+
+/* Container VBox */
+.dialog-pane .vbox {
+    -fx-spacing: 15;
+    -fx-alignment: center-left;
+}
+
+/* Effetto ombra per il DialogPane */
+.dialog-pane {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+}
+
+/* Animazioni */
+.dialog-combo-box,
+.dialog-pane .button {
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+/* Header del dialog */
+.dialog-pane > .header-panel {
+    -fx-background-color: -fx-secondary-color;
+    -fx-padding: 20px;
+}
+
+.dialog-pane > .header-panel > .label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-primary-color;
+}
+
+/* Scrollbar */
+.dialog-pane .scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.dialog-pane .scroll-bar .thumb {
+    -fx-background-color: derive(-fx-primary-color, 70%);
+    -fx-background-radius: 4px;
+}
+
+/* Focus */
+.dialog-pane *:focused {
+    -fx-focus-color: -fx-primary-color;
+}

@@ -11,7 +11,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.bookreccomender2.EventHandler"
-            stylesheets="@style.css"
+            stylesheets="@librarybooksview.css"
             prefHeight="600.0" prefWidth="800.0">
     <top>
         <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="10.0">
