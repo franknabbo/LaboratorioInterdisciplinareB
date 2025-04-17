@@ -8,7 +8,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -18,8 +17,11 @@ import javafx.scene.input.MouseEvent;
 
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.layout.Priority;
+import javafx.scene.text.Font;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,14 +33,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import javafx.scene.control.Label;
-import javafx.scene.text.TextFlow;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import javafx.scene.image.ImageView;
 
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class EventHandler {
     @FXML
@@ -88,6 +88,11 @@ public class EventHandler {
     private List<Book> currentSearchResults = new ArrayList<>();
     private List<Book> allBooks = new ArrayList<>(); // Tutti i libri dalla ricerca
     private Book selectedBook;
+    @FXML
+    private VBox librariesContainer; // Aggiungi questa variabile
+
+    @FXML
+    private TextField libraryNameField;
 
     @FXML
     private TitledPane recensioneMiaPane;
@@ -95,6 +100,8 @@ public class EventHandler {
     private TitledPane consigliMieiPane;
     @FXML
     private Button addToLibraryButton;
+    private String currentLibraryName;
+
 
     @FXML
     protected void switchToRegister(ActionEvent event) {
@@ -138,10 +145,10 @@ public class EventHandler {
             e.printStackTrace();
         }
     }
-
+    @FXML
     private void switchToBookView(MouseEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/Book-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/book-view.fxml"));
             Parent root = loader.load();
 
             // Ottieni il controller e inizializza i dati del libro
@@ -159,6 +166,20 @@ public class EventHandler {
             showAlert("Errore", "Impossibile aprire la pagina del libro: " + e.getMessage());
         }
     }
+
+    @FXML
+    protected void switchToLibrary(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/library-view.fxml"));
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root, 700, 700);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @FXML
     protected void loginUser(ActionEvent event) {
@@ -369,8 +390,7 @@ public class EventHandler {
 
         // Configura il ComboBox per il tipo di ricerca
         if (searchTypeCombo != null) {
-            searchTypeCombo.getSelectionModel().selectFirst(); // Seleziona "Per titolo" come default
-
+            searchTypeCombo.getSelectionModel().selectFirst();
             searchTypeCombo.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null && newValue.equals("Per autore e anno")) {
                     yearField.setVisible(true);
@@ -387,8 +407,122 @@ public class EventHandler {
         if (booksContainer != null) {
             loadHomePageBooks();
         }
+
+        // Carica le librerie se siamo nella vista librerie
+        if (SessionManager.isLoggedIn() && librariesContainer != null) {
+            loadLibraries();
+        }
     }
 
+    @FXML
+
+    private void loadLibraries() {
+        // Esegui in un thread separato per non bloccare l'UI
+        new Thread(() -> {
+            List<String> libraries = getLibraryList();
+            Platform.runLater(() -> showLibraryInUI(libraries));
+        }).start();
+    }
+
+    @FXML
+    private void addBookToLibrary(ActionEvent event) {
+        try {
+            // Ottieni la lista delle librerie dell'utente
+            List<String> libraries = getLibraryNames();
+
+            if (libraries.isEmpty()) {
+                showAlert("Nessuna libreria", "Non hai ancora creato librerie. Creane una prima di aggiungere libri.");
+                return;
+            }
+
+            // Carica il dialog
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/addToLibraryDialog.fxml"));
+            Parent root = loader.load();
+
+            // Configura il controller
+            AddToLibraryDialogController controller = loader.getController();
+            controller.setLibraries(libraries);
+
+            // Mostra il dialog
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setDialogPane((DialogPane) root);
+            dialog.setTitle("Aggiungi a Libreria");
+
+            Optional<ButtonType> result = dialog.showAndWait();
+
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                String selectedLibrary = controller.getSelectedLibrary();
+
+                if (selectedLibrary != null && !selectedLibrary.isEmpty()) {
+                    // Aggiungi il libro alla libreria
+                    addBookToSelectedLibrary(selectedLibrary);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Errore", "Impossibile aprire la finestra di dialogo: " + e.getMessage());
+        }
+    }
+
+    private List<String> getLibraryNames() {
+        List<String> libraryNames = new ArrayList<>();
+        List<String> libraryEntries = getLibraryList();
+
+        for (String library : libraryEntries) {
+            if (library.startsWith("LIBRARY:")) {
+                String[] parts = library.split("\\|\\|\\|");
+                if (parts.length >= 2) {
+                    libraryNames.add(parts[1]); // Estrai solo il nome
+                }
+            }
+        }
+
+        return libraryNames;
+    }
+
+    private void addBookToSelectedLibrary(String libraryName) {
+        if (selectedBook == null) {
+            showAlert("Errore", "Nessun libro selezionato");
+            return;
+        }
+
+        try (Socket socket = new Socket("localhost", 8080);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+            // Leggi il messaggio di benvenuto
+            String welcome = in.readLine();
+
+            // Invia richiesta di aggiunta libro alla libreria
+            // Formato: ADD_BOOK_TO_LIBRARY:userId:libraryName:titolo|||autore|||categoria|||editore|||anno|||copertina
+            String bookData = selectedBook.getTitle() + "|||" +
+                    selectedBook.getAuthor() + "|||" +
+                    selectedBook.getCategory() + "|||" +
+                    selectedBook.getPublisher() + "|||" +
+                    selectedBook.getPublicationYear() + "|||" +
+                    selectedBook.getCoverUrl();
+
+            out.println("ADD_BOOK_TO_LIBRARY:" + SessionManager.getUserId() + ":" + libraryName + ":" + bookData);
+
+            // Gestisci la risposta
+            String response = in.readLine();
+
+            if (response.startsWith("BOOK_ADDED")) {
+                showAlertSucces("Libro aggiunto", "Il libro è stato aggiunto alla libreria '" + libraryName + "' con successo.");
+            } else if (response.startsWith("BOOK_EXISTS")) {
+                showAlert("Libro già presente", "Il libro è già presente nella libreria '" + libraryName + "'.");
+            } else {
+                String errorMessage = "Errore nell'aggiunta del libro.";
+                if (response.contains(":")) {
+                    errorMessage = response.split(":", 2)[1];
+                }
+                showAlert("Errore", errorMessage);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
+        }
+    }
     @FXML
     private void loadHomePageBooks() {
         // Utilizza BookClient per ottenere i libri
@@ -420,7 +554,6 @@ public class EventHandler {
 
         searchField.setOnAction(event -> handleSearch(event));
     }
-
     @FXML
     protected void handleSearch(ActionEvent event) {
         // Resetta la paginazione
@@ -501,6 +634,13 @@ public class EventHandler {
         alert.showAndWait();
     }
 
+    private void showAlertSucces(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
     private void displayCurrentPageBooks() {
         booksContainer.getChildren().clear();
 
@@ -512,8 +652,6 @@ public class EventHandler {
             addBookToUI(book);
         }
     }
-
-
     @FXML
     private void showUserMenu(MouseEvent event) {
         // Crea menu contestuale
@@ -707,9 +845,20 @@ public class EventHandler {
 
     private void updatePaginationControls() {
         int totalPages = getTotalPages();
-        pageLabel.setText("Pagina " + currentPage + " di " + totalPages);
-        nextPageButton.setDisable(currentPage >= totalPages);
-        prevPageButton.setDisable(currentPage <= 1);
+
+        // Verifica che pageLabel esista prima di usarlo
+        if (pageLabel != null) {
+            pageLabel.setText("Pagina " + currentPage + " di " + totalPages);
+        }
+
+        // Verifica anche gli altri controlli
+        if (nextPageButton != null) {
+            nextPageButton.setDisable(currentPage >= totalPages);
+        }
+
+        if (prevPageButton != null) {
+            prevPageButton.setDisable(currentPage <= 1);
+        }
     }
 
     private void updatePageDisplay() {
@@ -717,7 +866,7 @@ public class EventHandler {
             pageLabel.setText("Pagina " + currentPage);
         }
 
-        // Aggiorna stato dei pulsanti
+        // Aggiorna stato dei pulsanti se esistono
         if (prevPageButton != null) {
             prevPageButton.setDisable(currentPage <= 1);
         }
@@ -726,8 +875,11 @@ public class EventHandler {
         if (nextPageButton != null) {
             nextPageButton.setDisable(currentPage >= totalPages);
         }
-        updatePaginationControls();
 
+        // Chiama updatePaginationControls solo se almeno uno dei controlli esiste
+        if (pageLabel != null || nextPageButton != null || prevPageButton != null) {
+            updatePaginationControls();
+        }
     }
 
     private List<Book> performSearch(String searchType, String searchTerm, String year) throws IOException {
@@ -788,6 +940,7 @@ public class EventHandler {
 
         return results;
     }
+
     private void displayCurrentPage() {
         if (booksContainer == null) return;
 
@@ -804,4 +957,328 @@ public class EventHandler {
             addBookToUI(book);
         }
     }
+
+    //Get library list from db
+    private List<String> getLibraryList() {
+        List<String> libraries = new ArrayList<>();
+        try (Socket socket = new Socket("localhost", 8080);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+            // Leggi il messaggio di benvenuto
+            String welcome = in.readLine();
+
+            // Invia richiesta di librerie
+            out.println("GET_LIBRARY:" + SessionManager.getUserId());
+
+            // Leggi la risposta
+            String line;
+            while ((line = in.readLine()) != null) {
+                if (line.equals("END_LIBRARIES")) {
+                    break;
+                }
+                libraries.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return libraries;
+    }
+
+    private void showLibraryInUI(List<String> libraryNames) {
+        // Verifica che librariesContainer non sia null
+        if (librariesContainer == null) {
+            System.err.println("Errore: librariesContainer è null");
+            return;
+        }
+
+        // Pulisci il container
+        librariesContainer.getChildren().clear();
+
+        // Aggiungi le librerie al container
+        for (String library : libraryNames) {
+            if (library.startsWith("LIBRARY:")) {
+                String[] parts = library.split("\\|\\|\\|");
+                if (parts.length >= 3) {
+                    // Crea un pulsante per ogni libreria
+                    Button libraryButton = new Button();
+                    libraryButton.getStyleClass().add("library-button");
+                    libraryButton.setMaxWidth(Double.MAX_VALUE);
+                    libraryButton.setStyle("-fx-background-color: #e6d7c3; -fx-background-radius: 8;");
+
+                    // Imposta il padding
+                    libraryButton.setPadding(new Insets(15.0, 20.0, 15.0, 20.0));
+
+                    // Crea il contenuto grafico
+                    HBox contentBox = new HBox();
+                    contentBox.setAlignment(Pos.CENTER_LEFT);
+                    contentBox.setSpacing(15);
+                    contentBox.setMaxWidth(Double.MAX_VALUE);
+                    HBox.setHgrow(contentBox, Priority.ALWAYS);
+
+                    // Aggiungi l'immagine della libreria
+                    ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/LibraryIcon.png")));
+                    imageView.setFitWidth(80);
+                    imageView.setFitHeight(80);
+                    imageView.setPreserveRatio(true);
+
+                    // Aggiungi l'etichetta con il nome della libreria
+                    Label nameLabel = new Label(parts[1]); // Il nome è la seconda parte
+                    nameLabel.getStyleClass().add("library-title");
+                    nameLabel.setFont(Font.font("System Bold", 18.0));
+
+                    // Assembla il contenuto
+                    contentBox.getChildren().addAll(imageView, nameLabel);
+                    libraryButton.setGraphic(contentBox);
+
+                    // Aggiungi l'evento di click per aprire la libreria
+                    final String libraryName = parts[1]; // Cattura il nome della libreria
+                    libraryButton.setOnMouseClicked(event -> openLibraryBooks(event, libraryName));
+
+                    // Aggiungi il pulsante al container
+                    librariesContainer.getChildren().add(libraryButton);
+                }
+            }
+        }
+
+        // Se non ci sono librerie, mostra un messaggio
+        if (librariesContainer.getChildren().isEmpty()) {
+            Label emptyLabel = new Label("Non hai ancora creato librerie");
+            emptyLabel.getStyleClass().add("empty-message");
+            librariesContainer.getChildren().add(emptyLabel);
+        }
+    }
+
+    @FXML
+    private void createNewLibrary(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/libraryDialog.fxml"));
+            Parent root = loader.load();
+
+            // Ottieni il controller della dialog
+            LibraryDialogController controller = loader.getController();
+
+            // Crea una nuova finestra di dialogo
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Crea Nuova Libreria");
+            dialogStage.initOwner(((Node) event.getSource()).getScene().getWindow());
+
+            // Usa la Dialog API per gestire i pulsanti OK e Cancel
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setDialogPane((DialogPane) root);
+            dialog.setTitle("Crea Nuova Libreria");
+
+            // Mostra la dialog e attendi il risultato
+            Optional<ButtonType> result = dialog.showAndWait();
+
+            // Gestisci il risultato solo se l'utente ha premuto OK
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                String libraryName = controller.getLibraryNameField();
+
+                // Verifica che il nome non sia vuoto
+                if (libraryName != null && !libraryName.trim().isEmpty()) {
+                    // Procedi con la creazione della libreria
+                    createLibraryWithName(libraryName);
+                } else {
+                    showAlert("Nome libreria non valido", "Inserisci un nome valido per la libreria.");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Errore", "Impossibile aprire la finestra di dialogo: " + e.getMessage());
+        }
+    }
+    /**
+     * Crea una nuova libreria con il nome specificato
+     */
+    private void createLibraryWithName(String libraryName) {
+        try (Socket socket = new Socket("localhost", 8080);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+            // Leggi il messaggio di benvenuto
+            String welcome = in.readLine();
+
+            // Invia richiesta di creazione libreria
+            out.println("CREATE_LIBRARY:" + SessionManager.getUserId() + ":" + libraryName);
+
+            // Gestisci la risposta
+            String response = in.readLine();
+
+            if (response.startsWith("LIBRARY_CREATED")) {
+                showAlertSucces("Libreria creata", "La libreria '" + libraryName + "' è stata creata con successo.");
+                loadLibraries(); // Ricarica le librerie
+
+
+            } else if (response.startsWith("LIBRARY_EXISTS")) {
+                showAlert("Libreria già esistente", "La libreria '" + libraryName + "' esiste già.");
+            } else {
+                String errorMessage = "Errore nella creazione della libreria.";
+                if (response.contains(":")) {
+                    errorMessage = response.split(":", 2)[1];
+                }
+                showAlert("Errore", errorMessage);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    protected void openLibraryBooks(MouseEvent event, String libraryName) {
+        try {
+            this.currentLibraryName = libraryName;
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/library-books-view.fxml"));
+            Parent root = loader.load();
+
+            // Ottieni il controller e inizializza i dati
+            EventHandler controller = loader.getController();
+            controller.initLibraryBooksView(libraryName);
+
+            // Cambia scena
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root, 700, 700);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Errore", "Impossibile aprire la vista dei libri della libreria: " + e.getMessage());
+        }
+    }
+
+    public void initLibraryBooksView(String libraryName) {
+        // Imposta il nome della libreria nell'intestazione
+        /*if (libraryTitleLabel != null) {
+            libraryTitleLabel.setText("Libreria: " + libraryName);
+        }*/
+
+        // Salva il nome della libreria corrente
+        this.currentLibraryName = libraryName;
+
+        // Carica i libri della libreria
+        loadLibraryBooks(libraryName);
+    }
+
+    private void loadLibraryBooks(String libraryName) {
+        // Ottieni l'userID attuale
+        String userId = SessionManager.getUserId();
+        new Thread(() -> {
+            try (BookClient client = new BookClient()) {
+                // Usa il nuovo metodo specifico
+                List<Book> books = client.getLibraryBooks(userId, libraryName);
+
+                Platform.runLater(() -> {
+                    // Pulisci il container
+                    if (booksContainer != null) {
+                        booksContainer.getChildren().clear();
+
+                        if (books.isEmpty()) {
+                            Label emptyLabel = new Label("Nessun libro in questa libreria");
+                            emptyLabel.getStyleClass().add("empty-message");
+                            booksContainer.getChildren().add(emptyLabel);
+                        } else {
+                            // Aggiungi i libri all'interfaccia
+                            for (Book book : books) {
+                                try {
+                                    addBookToUI(book);
+                                } catch (Exception e) {
+                                    System.err.println("Errore visualizzazione libro: " + e.getMessage());
+                                }
+                            }
+                        }
+                    } else {
+                        System.err.println("booksContainer è null");
+                    }
+                });
+            } catch (IOException e) {
+                Platform.runLater(() -> {
+                    System.err.println("Errore di connessione: " + e.getMessage());
+                });
+            }
+        }).start();
+    }
+
+    private List<Book> getLibraryBooks(String libraryName) {
+        List<Book> books = new ArrayList<>();
+
+        try (Socket socket = new Socket("localhost", 8080);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+            // Leggi il messaggio di benvenuto
+            String welcome = in.readLine();
+
+            // Invia richiesta per ottenere i libri della libreria
+            out.println("GET_LIBRARY_BOOKS:" + SessionManager.getUserId() + ":" + libraryName);
+
+            // Leggi la risposta
+            String line;
+            boolean reading = false;
+
+            while ((line = in.readLine()) != null) {
+                if (line.equals("INIZIO_LISTA_LIBRI")) {
+                    reading = true;
+                    continue;
+                }
+
+                if (line.equals("END_BOOKS")) {
+                    break;
+                }
+
+                if (reading && line.startsWith("BOOK:")) {
+                    try {
+                        String[] parts = line.split("BOOK:|\\|\\|\\|");
+                        if (parts.length >= 7) {
+                            String title = parts[1];
+                            String author = parts[2];
+                            String category = parts[3];
+                            String publisher = parts[4];
+                            String publicationYear = parts[5];
+                            String coverUrl = parts[6];
+
+                            Book book = new Book(title, author, category, publisher, publicationYear, coverUrl);
+                            books.add(book);
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Errore nel parsing: " + e.getMessage());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return books;
+    }
+
+    private void displayLibraryBooks(List<Book> books) {
+        if (booksContainer == null) {
+            System.err.println("ERRORE: booksContainer è null");
+            return;
+        }
+
+        System.out.println("Visualizzazione di " + books.size() + " libri"); // Debug
+
+        booksContainer.getChildren().clear();
+
+        if (books.isEmpty()) {
+            Label emptyLabel = new Label("Nessun libro in questa libreria");
+            emptyLabel.getStyleClass().add("empty-message");
+            booksContainer.getChildren().add(emptyLabel);
+            return;
+        }
+
+        for (Book book : books) {
+            try {
+                addBookToUI(book);
+            } catch (Exception e) {
+                System.err.println("Errore nell'aggiungere libro: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }

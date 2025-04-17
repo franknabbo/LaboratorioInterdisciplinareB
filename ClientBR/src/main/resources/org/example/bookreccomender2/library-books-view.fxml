@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<?import javafx.scene.shape.Circle?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.bookreccomender2.EventHandler"
+            stylesheets="@style.css"
+            prefHeight="600.0" prefWidth="800.0">
+    <top>
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="10.0">
+            <padding>
+                <Insets top="20.0" right="30.0" bottom="20.0" left="30.0"/>
+            </padding>
+
+            <!-- Home icon button on the left -->
+            <Button fx:id="homeButton" styleClass="icon-button" onAction="#switchToHome">
+                <graphic>
+                    <FontIcon iconLiteral="fas-home" iconSize="18" iconColor="black"/>
+                </graphic>
+            </Button>
+
+            <!-- Back button to return to libraries list -->
+            <Button fx:id="backToLibrariesButton" styleClass="icon-button" onAction="#switchToLibrary">
+                <graphic>
+                    <FontIcon iconLiteral="fas-arrow-left" iconSize="18" iconColor="black"/>
+                </graphic>
+            </Button>
+
+            <Label fx:id="libraryTitleLabel" styleClass="library-title-header" text="Libreria">
+                <font>
+                    <Font name="System Bold" size="20.0" />
+                </font>
+            </Label>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- User avatar on the right -->
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+                <Label fx:id="usernameLabel" styleClass="username-label" text="NOME ACC"/>
+                <StackPane onMouseClicked="#showUserMenu">
+                    <Circle fx:id="userAvatar" radius="15" styleClass="user-avatar" fill="#4a6fa5"/>
+                    <FontIcon iconLiteral="fas-user" iconSize="14" iconColor="white"/>
+                </StackPane>
+            </HBox>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox alignment="TOP_CENTER" style="-fx-background-color: #f8eedf;">
+            <ScrollPane fitToWidth="true" styleClass="transparent-scroll-pane" VBox.vgrow="ALWAYS"
+                        style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;">
+                <VBox fx:id="booksContainer" alignment="TOP_CENTER" spacing="15.0">
+                    <padding>
+                        <Insets top="20.0" right="30.0" bottom="20.0" left="30.0"/>
+                    </padding>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>

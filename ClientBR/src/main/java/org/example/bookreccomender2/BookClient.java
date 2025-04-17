@@ -5,7 +5,7 @@
     import java.util.ArrayList;
     import java.util.List;
 
-    public class BookClient {
+    public class BookClient implements AutoCloseable {
         private static final String SERVER_ADDRESS = "localhost";
         private static final int SERVER_PORT = 8080;
 
@@ -80,6 +80,48 @@
             // Crea il libro con il nuovo costruttore
             Book book = new Book(title, author, category, publisher, publicationYear, coverUrl);
             return book;
+        }
+
+        public List<Book> getLibraryBooks(String userId, String libraryName) throws IOException {
+            List<Book> books = new ArrayList<>();
+
+            // Invia la richiesta
+            String request = "GET_LIBRARY_BOOKS:" + userId + ":" + libraryName;
+            out.println(request);
+            System.out.println("Richiesta inviata: " + request);
+
+            // Legge la risposta
+            String line;
+            boolean reading = false;
+
+            while ((line = in.readLine()) != null) {
+                if (line.equals("INIZIO_LISTA_LIBRI_LIBRERIA")) {
+                    reading = true;
+                    continue;
+                }
+
+                if (line.equals("END_LIBRARY_BOOKS")) {
+                    break;
+                }
+
+                if (reading && line.startsWith("BOOK:")) {
+                    try {
+                        String[] parts = line.split("BOOK:|\\|\\|\\|");
+                        if (parts.length >= 7) {
+                            Book book = getBook(parts);
+                            books.add(book);
+                            System.out.println("Libro aggiunto: " + book.getTitle());
+                        } else {
+                            System.err.println("Formato libro non valido: " + line);
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Errore nel parsing: " + e.getMessage());
+                    }
+                }
+            }
+
+            System.out.println("Libri ricevuti dalla libreria: " + books.size());
+            return books;
         }
 
 

@@ -243,6 +243,12 @@ public class BookDAO {
         return books;
     }
 
+    // Aggiungi questo metodo alla classe BookDAO
+    public DataBaseConnection getDb() {
+        return db;
+    }
+
+
     public void closeConnection() {
         db.closeConnection();
     }

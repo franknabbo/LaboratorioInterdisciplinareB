@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+
+<DialogPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.bookreccomender2.AddToLibraryDialogController"
+            prefWidth="400.0" stylesheets="@style.css">
+    <content>
+        <VBox spacing="15" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+            </padding>
+
+            <Label text="Seleziona una libreria:" styleClass="dialog-label">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </Label>
+
+            <ComboBox fx:id="libraryComboBox" prefWidth="350.0" styleClass="dialog-combo-box">
+                <VBox.margin>
+                    <Insets top="5.0"/>
+                </VBox.margin>
+            </ComboBox>
+        </VBox>
+    </content>
+
+    <buttonTypes>
+        <ButtonType fx:constant="CANCEL"/>
+        <ButtonType fx:constant="OK" />
+    </buttonTypes>
+</DialogPane>

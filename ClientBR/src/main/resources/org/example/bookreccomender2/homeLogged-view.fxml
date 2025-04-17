@@ -59,7 +59,7 @@
                 </padding>
 
                 <!-- Bottone per la libreria -->
-                <Button fx:id="libraryButton" text="LIBRERIE" styleClass="library-button">
+                <Button fx:id="libraryButton" text="LIBRERIE" onAction="#switchToLibrary" styleClass="library-button">
                     <graphic>
                         <FontIcon iconLiteral="fas-book" iconSize="14"/>
                     </graphic>
