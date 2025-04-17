@@ -21,3 +21,9 @@ BookRecommender è un sistema di gestione, valutazione e raccomandazione di libr
 
 
 
+
+Grafica: mancano register e login
+
+
+
+
