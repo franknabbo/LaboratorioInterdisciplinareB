@@ -1,7 +1,23 @@
-<h1 align="center">Laboratorio B Del rosso, Cartolano, Ferloni</h1>
-<h3 align="center">Progetto per il laboratorio B</h3>
-<p align="left">
-</p>
 
-<h3 align="left">Linguaggi e strumenti utilizzati:</h3>
-<p align="left"> <a href="https://www.java.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/java/java-original.svg" alt="java" width="40" height="40"/> </a> <a href="https://www.postgresql.org" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original-wordmark.svg" alt="postgresql" width="40" height="40"/> </a> </p>
+# bookrecommender | Laboratorio B
+
+BookRecommender è un sistema di gestione, valutazione e raccomandazione di libri. Il programma consente agli utenti registrati di inserire recensioni e valutazioni, mentre tutti gli utenti (registrati e non) possono consultare i giudizi esistenti e ricevere consigli di lettura personalizzati.
+
+
+
+
+## Funzionalità principali
+
+✅ Registrazione e login degli utenti
+
+📝 Inserimento di recensioni e valutazioni sui libri
+
+🔍 Consultazione di libri e delle relative valutazioni
+
+🤖 Sistema di raccomandazione personalizzato basato sulle preferenze degli utenti
+
+📚 Gestione del catalogo libri
+
+
+
+
