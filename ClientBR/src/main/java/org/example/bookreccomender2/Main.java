@@ -11,8 +11,12 @@ import java.io.IOException;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
+
+        stage.setWidth(1000);
+        stage.setHeight(800);
+
         Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/homeNotLogged-view.fxml"));
-        Scene scene = new Scene(root, 700, 700);
+        Scene scene = new Scene(root    );
         stage.setTitle("BookRecomender");
         stage.setScene(scene);
         stage.show();
