@@ -1,6 +1,7 @@
 /* ===== COLORI E STILI BASE ===== */
 .root {
     -fx-background-color: #f8eedf;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
 }
 
 .main-container {
@@ -14,8 +15,20 @@
     -fx-border-width: 0 0 1 0;
 }
 
+.header-container {
+    -fx-background-color: #4a6fa5;
+    -fx-alignment: center-left;
+    -fx-spacing: 15.0;
+}
+
 .header-label {
     -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.page-title {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
 }
 
@@ -55,6 +68,7 @@
     -fx-background-radius: 20;
     -fx-padding: 10;
     -fx-font-size: 14px;
+    -fx-max-width: 600px;
 }
 
 /* ===== STILI PASSWORD ===== */
@@ -116,7 +130,6 @@
     -fx-font-weight: bold;
 }
 
-
 .homebutton:hover, .registerbutton:hover {
     -fx-background-color: #4477aa;
 }
@@ -172,7 +185,6 @@
     -fx-border-color: #ac9aff;
 }
 
-
 /* ===== STILI PAGINAZIONE ===== */
 .pagination-container {
     -fx-padding: 15 0;
@@ -207,11 +219,9 @@
     -fx-padding: 5 10;
 }
 
-
-
 /* ===== CONTENITORI ===== */
 .content-box {
-    -fx-background-color: white;
+    -fx-background-color: #f8f8f8;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-color: #dddddd;
@@ -220,8 +230,17 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
 }
 
+.content-container {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
 .books-container {
     -fx-padding: 20;
+    -fx-spacing: 15;
+    -fx-alignment: top-center;
+    -fx-background-color: transparent;
 }
 
 /* ===== STILI LIBRI ===== */
@@ -269,9 +288,6 @@
     -fx-padding: 10 0;
 }
 
-
-
-
 /* Stili per l'username e avatar utente */
 .username-label {
     -fx-text-fill: white;
@@ -304,10 +320,7 @@
     -fx-border-color: #ffbe8f;
 }
 
-/* Modifiche alla barra di ricerca per adattarsi al layout con il bottone librerie */
-.search-field {
-    -fx-max-width: 600px;
-}
+/* Modifiche alla barra di ricerca */
 .search-button {
     -fx-background-color: linear-gradient(to bottom, #4a6fa5, #3a5a8a);
     -fx-effect: dropshadow(three-pass-box, rgba(0,60,120,0.3), 5, 0, 0, 2);
@@ -325,23 +338,126 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,80,150,0.4), 7, 0, 0, 3);
     -fx-border-color: #8aa3cc;
 }
+
 .books-scroll-pane {
-    -fx-background-color: transparent;
+    -fx-background-color: white;
     -fx-padding: 0;
     -fx-border-width: 0;
 }
 
 .books-scroll-pane > .viewport {
+    -fx-background-color: white;
+}
+
+/* ===== STILI SPECIFICI PER LA PAGINA DETTAGLI LIBRO ===== */
+.home-button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.home-button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
+}
+
+.book-cover {
+    -fx-background-color: #f8f8f8;
+    -fx-border-color: #ddd;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-padding: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+.section-pane {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+.section-pane > .title {
+    -fx-background-color: white;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4a6fa5;
+}
+
+.section-pane > .content {
+    -fx-background-color: white;
+}
+
+.detail-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #555;
+}
+
+.detail-value {
+    -fx-text-fill: #333;
+}
+
+.rating-stars {
+    -fx-spacing: 2.0;
+}
+
+.recensione-text {
+    -fx-background-color: #f9f9f9;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 3px;
+}
+
+.action-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-padding: 5px 10px;
+    -fx-background-radius: 3px;
+}
+
+.action-button:hover {
+    -fx-background-color: #45a049;
+}
+
+.transparent-scroll-pane {
     -fx-background-color: transparent;
 }
 
-.books-container {
-    -fx-padding: 20;
-    -fx-spacing: 15;
-    -fx-alignment: top-center;
+.transparent-scroll-pane > .viewport {
     -fx-background-color: transparent;
 }
 
+.footer-container {
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: #ddd;
+    -fx-border-width: 1px 0 0 0;
+}
+
+.primary-button {
+    -fx-background-color: linear-gradient(to bottom, #4a6fa5, #3a5a8a);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,60,120,0.3), 5, 0, 0, 2);
+}
+
+.primary-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #5a7fb5, #4a6fa5);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,80,150,0.4), 7, 0, 0, 3);
+}
+
+.secondary-button {
+    -fx-background-color: linear-gradient(to bottom, #78909c, #607d8b);
+    -fx-text-fill: white;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+.secondary-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #90a4ae, #78909c);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 7, 0, 0, 3);
+}
 
 /* ===== RESPONSIVITÀ ===== */
 @media (max-width: 600px) {
@@ -358,4 +474,14 @@
     .responsive-container {
         -fx-max-width: 400px;
     }
+
+    .content-container {
+        -fx-padding: 10.0;
+    }
+
+    .book-cover ImageView {
+        -fx-fit-height: 400.0;
+        -fx-fit-width: 300.0;
+    }
+
 }

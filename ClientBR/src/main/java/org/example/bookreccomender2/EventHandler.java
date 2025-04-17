@@ -11,8 +11,11 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
+
+import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.scene.Node;
@@ -68,10 +71,30 @@ public class EventHandler {
     private Button nextPageButton;
     @FXML
     private Label pageLabel;
+    @FXML
+    private Label titoloLabel;
+    @FXML
+    private Label autoreLabel;
+    @FXML
+    private Label genereLabel;
+    @FXML
+    private Label editoreLabel;
+    @FXML
+    private Label annoLabel;
+    @FXML
+    private ImageView coverImage;
     private int currentPage = 1;
     private int booksPerPage = 25;
     private List<Book> currentSearchResults = new ArrayList<>();
     private List<Book> allBooks = new ArrayList<>(); // Tutti i libri dalla ricerca
+    private Book selectedBook;
+
+    @FXML
+    private TitledPane recensioneMiaPane;
+    @FXML
+    private TitledPane consigliMieiPane;
+    @FXML
+    private Button addToLibraryButton;
 
     @FXML
     protected void switchToRegister(ActionEvent event) {
@@ -113,6 +136,27 @@ public class EventHandler {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void switchToBookView(MouseEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/Book-view.fxml"));
+            Parent root = loader.load();
+
+            // Ottieni il controller e inizializza i dati del libro
+            EventHandler controller = loader.getController();
+            controller.initBookData(selectedBook);
+
+            // Cambia scena
+            Scene scene = ((Node) event.getSource()).getScene();
+            Stage stage = (Stage) scene.getWindow();
+            scene = new Scene(root, 700, 700);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Errore", "Impossibile aprire la pagina del libro: " + e.getMessage());
         }
     }
 
@@ -427,8 +471,6 @@ public class EventHandler {
             year = null;
         }
 
-        // Mostra indicatore di caricamento (se presente)
-        // showLoadingIndicator(true);
 
         // Esegui la ricerca in un thread separato
         new Thread(() -> {
@@ -490,6 +532,64 @@ public class EventHandler {
         // Mostra il menu nel punto del click
         contextMenu.show(((Node) event.getSource()).getScene().getWindow(),
                 event.getScreenX(), event.getScreenY());
+    }
+
+    public void initBookData(Book book) {
+        if (book == null) return;
+
+        // Memorizza il libro selezionato
+        this.selectedBook = book;
+
+        // Aggiorna i campi della vista con i dati del libro
+        if (titoloLabel != null) titoloLabel.setText(book.getTitle());
+        if (autoreLabel != null) autoreLabel.setText(book.getAuthor());
+        if (genereLabel != null) genereLabel.setText(book.getCategory());
+        if (editoreLabel != null) editoreLabel.setText(book.getPublisher());
+        if (annoLabel != null) annoLabel.setText(book.getPublicationYear());
+
+        // Gestisci la visibilità delle sezioni in base allo stato di login
+        if (recensioneMiaPane != null) {
+            recensioneMiaPane.setVisible(SessionManager.isLoggedIn());
+            recensioneMiaPane.setManaged(SessionManager.isLoggedIn());
+        }
+
+        if (consigliMieiPane != null) {
+            consigliMieiPane.setVisible(SessionManager.isLoggedIn());
+            consigliMieiPane.setManaged(SessionManager.isLoggedIn());
+        }
+        if (addToLibraryButton != null) {
+            addToLibraryButton.setVisible(SessionManager.isLoggedIn());
+            addToLibraryButton.setManaged(SessionManager.isLoggedIn());
+        }
+
+
+        // Carica la copertina
+        if (coverImage != null) {
+            if (book.getCoverUrl() != null && !book.getCoverUrl().equals("null")) {
+                try {
+                    // Estrai l'URL effettivo
+                    String imageUrl = book.getCoverUrl();
+                    int indexOfHttps = imageUrl.indexOf("https://");
+                    int indexOfHttp = imageUrl.indexOf("http://");
+
+                    if (indexOfHttps != -1) {
+                        imageUrl = imageUrl.substring(indexOfHttps);
+                    } else if (indexOfHttp != -1) {
+                        imageUrl = imageUrl.substring(indexOfHttp);
+                    } else if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                        imageUrl = "/" + imageUrl;
+                    }
+
+                    // Carica l'immagine
+                    Image cover = new Image(imageUrl, true);
+                    coverImage.setImage(cover);
+                } catch (Exception e) {
+                    coverImage.setImage(new Image("/logoBookRecomender.png"));
+                }
+            } else {
+                coverImage.setImage(new Image("/logoBookRecomender.png"));
+            }
+        }
     }
 
     private void addBookToUI(Book book) {
@@ -572,6 +672,12 @@ public class EventHandler {
 
         // Aggiungi copertina e contenitore di testo all'elemento libro
         bookItem.getChildren().addAll(coverView, contentBox);
+
+        bookItem.setCursor(Cursor.HAND);
+        bookItem.setOnMouseClicked(event -> {
+            selectedBook = book;
+            switchToBookView(event);
+        });
 
         // Aggiungi al container
         booksContainer.getChildren().add(bookItem);
@@ -661,18 +767,16 @@ public class EventHandler {
 
             if (reading && line.startsWith("BOOK:")) {
                 try {
-                    // Formato corretto da server: BOOK:titolo|||autore|||descrizione|||coverUrl
-                    String[] parts = line.substring(5).split("\\|\\|\\|", 4);
-                    if (parts.length >= 3) {
-                        String title = parts[0];
-                        String author = parts[1];
-                        String category = "";
-                        String publisher = "";
-                        String publicationYear = "";
-
-                        // La copertina è l'ultimo elemento
-                        String coverUrl = parts.length > 3 ? parts[3] : "null";
-
+                    // Formato corretto da server: BOOK:titolo|||autore|||categoria|||editore|||anno_pubblicazione|||copertina
+                    String[] parts = line.split("BOOK:|\\|\\|\\|");
+                    if (parts.length >= 7) {
+                        String title = parts[1];
+                        String author = parts[2];
+                        String category = parts[3];
+                        String publisher = parts[4];
+                        String publicationYear = parts[5];
+                        String coverUrl = parts[6];
+                        // Crea un oggetto Book e aggiungilo alla lista
                         Book book = new Book(title, author, category, publisher, publicationYear, coverUrl);
                         results.add(book);
                     }

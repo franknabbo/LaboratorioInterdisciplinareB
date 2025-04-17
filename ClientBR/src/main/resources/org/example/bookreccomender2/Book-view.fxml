@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.bookreccomender2.EventHandler"
+            stylesheets="@style.css"
+            prefHeight="600.0" prefWidth="800.0">
+
+    <!-- Header con icona home e titolo -->
+    <top>
+        <HBox styleClass="top-bar">
+            <Button fx:id="homeIconButton" styleClass="home-button" onAction="#switchToHome"
+                    StackPane.alignment="TOP_LEFT">
+                <graphic>
+                    <FontIcon iconLiteral="fas-home" iconSize="14"/>
+                </graphic>
+            </Button>
+            <padding>
+                <Insets top="10.0" right="15.0" bottom="10.0" left="15.0"/>
+            </padding>
+        </HBox>
+    </top>
+
+    <!-- Contenuto centrale con immagine di copertina -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="books-scroll-pane">
+            <VBox alignment="CENTER" spacing="20.0" styleClass="content-box">
+                <padding>
+                    <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+                </padding>
+
+                <!-- Copertina del libro -->
+                <StackPane fx:id="copertina" styleClass="book-cover">
+                    <ImageView fx:id="coverImage" fitHeight="400.0" fitWidth="300.0" preserveRatio="true">
+                        <Image url="/logoBookRecomender.png"/>
+                    </ImageView>
+                    <Label text="COPERTINA" style="-fx-font-size: 16px;" visible="false"/>
+                </StackPane>
+
+                <!-- Dettagli del libro -->
+                <TitledPane text="DETTAGLI LIBRO" expanded="true" styleClass="section-pane">
+                    <VBox spacing="10.0">
+                        <GridPane hgap="10.0" vgap="10.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" prefWidth="150.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" prefWidth="300.0" />
+                            </columnConstraints>
+
+                            <Label text="Titolo:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="input-label"/>
+                            <Label fx:id="titoloLabel" text="" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="detail-value"/>
+
+                            <Label text="Autore:" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="input-label"/>
+                            <Label fx:id="autoreLabel" text="" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="detail-value"/>
+
+                            <Label text="Editore:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="input-label"/>
+                            <Label fx:id="editoreLabel" text="" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="detail-value"/>
+
+                            <Label text="Anno:" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="input-label"/>
+                            <Label fx:id="annoLabel" text="" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="detail-value"/>
+
+                        </GridPane>
+                    </VBox>
+                </TitledPane>
+
+                <!-- La mia recensione -->
+                <TitledPane fx:id= "recensioneMiaPane" text="RECENSIONE MIA" expanded="false" styleClass="section-pane">
+                    <VBox spacing="10.0">
+                        <HBox spacing="10.0" alignment="CENTER_LEFT">
+                            <Label text="Voto:" styleClass="input-label"/>
+                            <HBox fx:id="ratingContainer" styleClass="rating-container"/>
+                        </HBox>
+                        <Label text="Commento:" styleClass="input-label"/>
+                        <TextArea fx:id="miaRecensioneText" wrapText="true" prefRowCount="4" styleClass="recensione-text"/>
+                        <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                            <Button fx:id="salvaRecensioneBtn" text="Salva" styleClass="auth-button"/>
+                        </HBox>
+                    </VBox>
+                </TitledPane>
+
+                <!-- Consigli miei -->
+                <TitledPane fx:id="consigliMieiPane" text="CONSIGLI MIEI" expanded="false" styleClass="section-pane">
+                    <VBox spacing="10.0">
+                        <HBox spacing="10.0" alignment="CENTER_LEFT">
+                            <Label text="Voto:" styleClass="input-label"/>
+                            <HBox fx:id="ratingContainer2" styleClass="rating-container"/>
+                        </HBox>
+                        <Label text="Commento:" styleClass="input-label"/>
+                        <TextArea fx:id="miaRecensioneText2" wrapText="true" prefRowCount="4" styleClass="recensione-text"/>
+                        <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                            <Button fx:id="salvaRecensioneBtn2" text="Salva" styleClass="auth-button"/>
+                        </HBox>
+                    </VBox>
+                </TitledPane>
+                <!-- Recensioni di altri utenti -->
+                <TitledPane text="RECENSIONI" expanded="false" styleClass="section-pane">
+                    <ScrollPane fitToWidth="true" styleClass="books-scroll-pane">
+                        <VBox fx:id="recensioniContainer" spacing="15.0"/>
+                    </ScrollPane>
+                </TitledPane>
+
+                <!-- Consigli e libri simili -->
+                <TitledPane text="CONSIGLI" expanded="false" styleClass="section-pane">
+                    <ScrollPane fitToWidth="true" styleClass="books-scroll-pane">
+                        <FlowPane fx:id="consigliContainer" hgap="15.0" vgap="15.0"/>
+                    </ScrollPane>
+                </TitledPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Footer con pulsanti di azione -->
+    <bottom>
+        <HBox alignment="CENTER" spacing="20.0" styleClass="footer-container">
+            <!-- Bottone Aggiungi alla libreria -->
+            <Button fx:id="addToLibraryButton" text="AGGIUNGI ALLA LIBRERIA"
+                    styleClass="library-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-plus" iconSize="14"/>
+                </graphic>
+            </Button>
+            <padding>
+                <Insets top="15.0" right="15.0" bottom="15.0" left="15.0"/>
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane>
