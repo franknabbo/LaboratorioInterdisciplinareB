@@ -18,11 +18,21 @@ BookRecommender è un sistema di gestione, valutazione e raccomandazione di libr
 
 📚 Gestione del catalogo libri
 
+ ---------
+
+Obbiettivi raggiunti:
+
+| Obbiettivi        | Funzionamento  | Grafica |
+| :---              |     :---:      |    ---: |
+| Consultare libri  |  ✅            |   ✅   |
+| Registrazione     | ✅             |  ✅    |
+| Login             | ✅             |   ✅   |
+| Creare librerie  |  ✅            |   ✅   |
+| Inserire valutazione    | ❌         |  ❌      |
+| Inserire consigli  | ❌           |  ❌      |
 
 
-
-
-Grafica: mancano register e login
+Grafica: da migliorare registrazione e login
 
 
 
