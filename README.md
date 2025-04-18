@@ -32,8 +32,6 @@ Obbiettivi raggiunti:
 | Inserire consigli  | ❌           |  ❌      |
 
 
-Grafica: da migliorare registrazione e login
-
 
 
 
