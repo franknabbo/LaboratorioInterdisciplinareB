@@ -56,7 +56,7 @@
                     </padding>
                     <Button fx:id="homeButton" onAction="#switchToHome" styleClass="homebutton" text="Home" />
                     <Button onAction="#switchToRegister" styleClass="homebutton" text="Crea account" />
-                    <Button fx:id="loginButton" onAction="#switchToHome" styleClass="button" text="Avanti" />
+                    <Button fx:id="loginButton" onAction="#loginUser" styleClass="button" text="Avanti" />
                 </HBox>
             </VBox>
         </VBox>

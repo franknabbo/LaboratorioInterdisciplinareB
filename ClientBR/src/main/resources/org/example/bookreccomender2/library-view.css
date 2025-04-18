@@ -1,0 +1,151 @@
+/* Variabili dei colori - Palette Marrone */
+.root {
+    -fx-primary-color: #8B4513;        /* Saddle Brown - per elementi principali */
+    -fx-secondary-color: #af8043;      /* Burlywood - per elementi secondari */
+    -fx-accent-color: #9e5627;         /* Chocolate - per accenti */
+    -fx-background-light: #FFF5E6;     /* Beige chiaro - per sfondi */
+    -fx-text-color: #3E2723;           /* Marrone scuro - per testi */
+}
+
+/* Stile generale */
+.button {
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: #FFF5E6;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
+}
+
+.button:hover {
+    -fx-background-color: derive(-fx-primary-color, 15%);
+    -fx-effect: dropshadow(gaussian, rgba(139,69,19,0.3), 10, 0, 0, 2);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+/* Barra superiore */
+.top-bar {
+    -fx-background-color: linear-gradient(to right, #F5DEB3, #FAEBD7);
+    -fx-effect: dropshadow(gaussian, rgba(139,69,19,0.2), 8, 0, 0, 2);
+}
+
+/* Pulsante Home */
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-padding: 8px;
+    -fx-border-radius: 50%;
+}
+
+.icon-button:hover {
+    -fx-background-color: derive(-fx-secondary-color, 10%);
+}
+
+/* Avatar utente */
+.user-avatar {
+    -fx-fill: -fx-primary-color;
+    -fx-effect: dropshadow(gaussian, rgba(139,69,19,0.3), 5, 0, 0, 1);
+}
+
+.username-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-primary-color;
+}
+
+/* Pulsante Crea Libreria */
+.create-library-button {
+    -fx-background-color: -fx-accent-color;
+    -fx-padding: 10px 20px;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.create-library-button:hover {
+    -fx-background-color: derive(-fx-accent-color, 15%);
+    -fx-effect: dropshadow(gaussian, rgba(139,69,19,0.4), 10, 0, 0, 2);
+}
+
+/* ScrollPane personalizzato */
+.transparent-scroll-pane {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
+
+.transparent-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.transparent-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 0 5;
+}
+
+.transparent-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: -fx-accent-color;
+    -fx-background-radius: 5px;
+}
+
+/* Container delle librerie */
+.libraries-container {
+    -fx-background-color: -fx-background-light;
+    -fx-spacing: 15px;
+}
+
+/* Media Queries per la responsività */
+@media (max-width: 600px) {
+    .top-bar {
+        -fx-padding: 10 15;
+    }
+
+    .create-library-button {
+        -fx-font-size: 12px;
+        -fx-padding: 8px 15px;
+    }
+
+    .username-label {
+        -fx-font-size: 12px;
+    }
+}
+
+@media (max-width: 400px) {
+    .top-bar {
+        -fx-padding: 5 10;
+    }
+
+    .user-avatar {
+        -fx-radius: 12;
+    }
+}
+
+/* Animazioni */
+.button {
+    -fx-animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        -fx-opacity: 0;
+    }
+    to {
+        -fx-opacity: 1;
+    }
+}
+
+/* Stili aggiuntivi per il banner di benvenuto */
+.welcome-banner {
+    -fx-background-color: linear-gradient(to right, -fx-primary-color, -fx-accent-color);
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(139,69,19,0.3), 10, 0, 0, 3);
+}
+
+.welcome-text {
+    -fx-text-fill: #FFF5E6;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.welcome-subtext {
+    -fx-text-fill: #FFF5E6;
+    -fx-font-size: 14px;
+    -fx-opacity: 0.9;
+}

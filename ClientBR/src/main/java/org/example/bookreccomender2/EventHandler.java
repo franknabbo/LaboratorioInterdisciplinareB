@@ -35,7 +35,9 @@ import java.security.NoSuchAlgorithmException;
 import javafx.scene.control.Label;
 
 import javafx.scene.image.ImageView;
-
+import javafx.scene.effect.DropShadow;
+import javafx.scene.paint.Color;
+import javafx.scene.text.FontWeight;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -1022,10 +1024,26 @@ public class EventHandler {
                     imageView.setFitHeight(80);
                     imageView.setPreserveRatio(true);
 
-                    // Aggiungi l'etichetta con il nome della libreria
+                    // Modifica la parte relativa all'etichetta del nome
                     Label nameLabel = new Label(parts[1]); // Il nome è la seconda parte
                     nameLabel.getStyleClass().add("library-title");
-                    nameLabel.setFont(Font.font("System Bold", 18.0));
+                     // Marrone scuro caldo
+                    nameLabel.setFont(Font.font("System", FontWeight.BOLD, 24.0)); // Aumentato la dimensione del font
+                    nameLabel.setWrapText(true); // Permette al testo di andare a capo se troppo lungo
+                    nameLabel.setTextFill(Color.valueOf("#4A3C32"));
+                    nameLabel.setStyle(nameLabel.getStyle() + "-fx-text-fill: #4A3C32;");
+// Aggiungere effetto ombra al testo
+                    DropShadow dropShadow = new DropShadow();
+                    dropShadow.setRadius(2.0);
+                    dropShadow.setOffsetX(1.0);
+                    dropShadow.setOffsetY(1.0);
+                    dropShadow.setColor(Color.rgb(0, 0, 0, 0.3));
+                    nameLabel.setEffect(dropShadow);
+
+// Modificare lo stile del pulsante per un migliore contrasto
+                    libraryButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #f0e6d8, #e6d7c3);" +
+                            "-fx-background-radius: 12;" +
+                            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);");
 
                     // Assembla il contenuto
                     contentBox.getChildren().addAll(imageView, nameLabel);
