@@ -6,20 +6,27 @@
 }
 
 /* Stili base */
+/* Modifica il colore dello sfondo */
+/* Sfondo principale */
 .main-container {
-    -fx-background-color: white;
+    -fx-background-color: #F8EFE0;
     -fx-font-family: 'Segoe UI', system-ui;
 }
 
-/* ScrollPane trasparente */
+/* ScrollPane */
 .transparent-scroll-pane {
-    -fx-background-color: transparent;
-    -fx-background: transparent;
+    -fx-background: #F8EFE0;
+    -fx-background-color: #F8EFE0;
     -fx-border-width: 0;
 }
 
 .transparent-scroll-pane > .viewport {
-    -fx-background-color: transparent;
+    -fx-background-color: #F8EFE0;
+}
+
+/* VBox interno */
+.main-container > .scroll-pane > .viewport > .vbox {
+    -fx-background-color: #F8EFE0;
 }
 
 /* Form container */
@@ -130,12 +137,19 @@
     }
 
     .title-label {
-        -fx-font-size: 1.8em;
+        -fx-font-size: 3em;  /* Aumentato la dimensione del font */
+        -fx-font-weight: bold;
+        -fx-text-fill: #8B4513;
+        -fx-padding: 0 0 0 10;  /* Aggiunto padding a sinistra */
     }
 
     .subtitle-label {
-        -fx-font-size: 1.1em;
+        -fx-font-size: 1.3em;
+        -fx-text-fill: #654321;
+        -fx-opacity: 0.9;
+        -fx-padding: 0 0 0 10;  /* Aggiunto padding a sinistra */
     }
+
 
     .button-container {
         -fx-orientation: vertical;

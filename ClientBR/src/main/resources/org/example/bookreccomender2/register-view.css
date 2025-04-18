@@ -9,6 +9,16 @@
     -fx-success-color: #2E7D32;        /* Verde per successi */
 }
 
+/* Modifica/aggiungi questa regola */
+.root {
+    -fx-background-color: #F8EFE0; /* Marrone chiaro come sfondo */
+}
+
+VBox {
+    -fx-background-color: #F8EFE0;
+    -fx-background-radius: 10;
+}
+
 /* Container principale */
 .main-container {
     -fx-background-color: white;
