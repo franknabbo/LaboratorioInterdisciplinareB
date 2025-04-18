@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.geometry.Insets?>
 
-<VBox alignment="CENTER" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.bookreccomender2.EventHandler">
+<VBox alignment="CENTER" spacing="20.0" stylesheets="@register-view.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.bookreccomender2.EventHandler">
     <padding>
         <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
     </padding>
@@ -62,23 +62,23 @@
         </VBox>
 
         <!-- Password -->
+        <!-- Password -->
         <VBox maxWidth="Infinity" spacing="5" styleClass="responsive-container">
             <children>
                 <Label styleClass="input-label" text="Password" />
                 <HBox alignment="CENTER_LEFT" styleClass="password-container">
                     <children>
-                        <PasswordField fx:id="passwordField" styleClass="password-container" />
+                        <PasswordField fx:id="passwordField" styleClass="input-field" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
             </children>
         </VBox>
-
         <!-- Pulsanti -->
-        <HBox alignment="CENTER_RIGHT" maxWidth="Infinity" spacing="10" styleClass="responsive-container">
+        <HBox alignment="CENTER" maxWidth="Infinity" spacing="10" styleClass="button-container">
             <children>
-                <Button fx:id="homeButton" onAction="#switchToHome" styleClass="homebutton" text="Home" />
-                <Button fx:id="LoginButton" onAction="#switchToLogin" styleClass="button-secondary" text="Ho già un acocunt" />
-                <Button fx:id="registerButton" onAction="#registerUser" styleClass="registerbutton" text="Registrati" />
+                <Button fx:id="homeButton" onAction="#switchToHome" styleClass="secondary-button" text="Home" />
+                <Button fx:id="LoginButton" onAction="#switchToLogin" styleClass="secondary-button" text="Ho già un account" />
+                <Button fx:id="registerButton" onAction="#registerUser" styleClass="primary-button" text="Registrati" />
             </children>
         </HBox>
     </children>
