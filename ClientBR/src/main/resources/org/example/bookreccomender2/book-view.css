@@ -1,160 +1,169 @@
-/* Variabili colori e transizioni */
+/* Variabili per i colori */
+* {
+    -fx-primary-brown: #8B4513;
+    -fx-light-brown: #DEB887;
+    -fx-dark-brown: #3E2723;
+    -fx-accent-brown: #A0522D;
+    -fx-background-beige: #FFF8DC;
+    -fx-text-brown: #5D4037;
+    -fx-hover-brown: #CD853F;
+}
+
+/* Stile generale */
 .root {
-    -fx-primary: #8b4513;
-    -fx-secondary: #88654d;
-    -fx-light: #F8F9FA;
-    -fx-dark: #5a2a0c;
-    -fx-accent: #a56333;
-    -fx-shadow: rgba(0, 0, 0, 0.1);
-    -fx-border: #E9ECEF;
+    -fx-background-color: -fx-background-beige;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* Top bar moderna */
+/* Barra superiore */
 .top-bar {
-    -fx-background-color: -fx-primary;
-    -fx-padding: 12px 20px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 10, 0.0, 0, 4);
+    -fx-background-color: -fx-primary-brown;
+    -fx-padding: 10px;
+    -fx-min-height: 50px;
+    -fx-alignment: center-left;
 }
 
+/* Pulsante home */
 .home-button {
     -fx-background-color: transparent;
-    -fx-text-fill: white;
     -fx-cursor: hand;
-    -fx-transition: all 0.3s ease;
 }
 
 .home-button:hover {
-    -fx-text-fill: -fx-secondary;
-    -fx-effect: dropshadow(three-pass-box, white, 15, 0.0, 0, 0);
-}
-
-/* Copertina libro con effetti moderni */
-.book-cover {
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 20, 0.0, 0, 8);
-    -fx-background-color: white;
-    -fx-padding: 15px;
-    -fx-background-radius: 8px;
-    -fx-border-radius: 8px;
-    -fx-transition: all 0.3s ease;
-}
-
-.book-cover:hover {
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.15), 25, 0.0, 0, 12);
-    -fx-translate-y: -2px;
-}
-
-/* Sezioni con stile minimalista */
-.section-pane {
-    -fx-text-fill: -fx-primary;
-    -fx-font-weight: bold;
-    -fx-background-radius: 8px;
-}
-
-.section-pane > .title {
-    -fx-background-color: -fx-light;
-    -fx-background-radius: 8px;
-    -fx-padding: 12px 15px;
-}
-
-.section-pane > .content {
-    -fx-background-color: white;
-    -fx-padding: 20px;
-    -fx-border-color: -fx-border;
-    -fx-border-width: 1px;
-    -fx-border-radius: 0 0 8px 8px;
-}
-
-/* Input fields moderni */
-.recensione-text {
-    -fx-background-color: -fx-light;
-    -fx-border-color: -fx-border;
-    -fx-border-radius: 8px;
-    -fx-padding: 12px;
-    -fx-transition: all 0.3s ease;
-}
-
-.recensione-text:focused {
-    -fx-border-color: -fx-secondary;
-    -fx-effect: dropshadow(three-pass-box, rgba(52, 152, 219, 0.5), 8, 0.0, 0, 0);
-}
-
-/* Pulsanti con effetti moderni */
-.auth-button, .library-button {
-    -fx-background-radius: 25px;
-    -fx-padding: 12px 25px;
-    -fx-cursor: hand;
-    -fx-font-size: 13px;
-    -fx-text-fill: white;
-    -fx-transition: all 0.3s ease;
-}
-
-.auth-button {
-    -fx-background-color: -fx-secondary;
-}
-
-.auth-button:hover {
-    -fx-background-color: derive(-fx-secondary, -10%);
-    -fx-effect: dropshadow(three-pass-box, rgba(52, 152, 219, 0.3), 10, 0.0, 0, 0);
-    -fx-translate-y: -2px;
-}
-
-.library-button {
-    -fx-background-color: -fx-accent;
-    -fx-font-weight: bold;
-}
-
-.library-button:hover {
-    -fx-background-color: derive(-fx-accent, -10%);
-    -fx-effect: dropshadow(three-pass-box, rgba(231, 76, 60, 0.3), 10, 0.0, 0, 0);
-    -fx-translate-y: -2px;
-}
-
-/* Footer elegante */
-.footer-container {
-    -fx-background-color: -fx-light;
-    -fx-border-color: -fx-border;
-    -fx-border-width: 1px 0 0 0;
-    -fx-padding: 15px 25px;
-}
-
-/* ScrollPane moderno */
-.books-scroll-pane {
-    -fx-background-color: transparent;
-    -fx-padding: 0;
-}
-
-.books-scroll-pane .viewport {
-    -fx-background-color: transparent;
-}
-
-.books-scroll-pane .scroll-bar:vertical {
-    -fx-background-color: transparent;
-    -fx-padding: 0 5px;
-}
-
-.books-scroll-pane .scroll-bar:vertical .thumb {
-    -fx-background-color: #CED4DA;
-    -fx-background-radius: 10px;
     -fx-opacity: 0.8;
 }
 
-.books-scroll-pane .scroll-bar:vertical .thumb:hover {
-    -fx-opacity: 1;
+.home-button .ikonli-font-icon {
+    -fx-fill: white;
+}
+
+/* ScrollPane principale */
+.content-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 20px;
+}
+
+.content-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Immagine copertina */
+.book-cover-image {
+    -fx-fit-width: 280px;
+    -fx-fit-height: 400px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 12, 0, 0, 0);
+}
+
+/* Griglia dettagli libro */
+GridPane {
+    -fx-padding: 10px;
+}
+
+/* Label normali nella griglia */
+GridPane Label {
+    -fx-text-fill: -fx-text-brown;
+    -fx-font-size: 14px;
+}
+
+/* Label dei titoli nella griglia */
+.label-title {
+    -fx-font-weight: bold;
+}
+
+/* TitledPane personalizzato */
+.titled-pane {
+    -fx-text-fill: -fx-text-brown;
+}
+
+.titled-pane > .title {
+    -fx-background-color: -fx-light-brown;
+    -fx-font-size: 16px;
+    -fx-padding: 10px;
+}
+
+.titled-pane > .title:hover {
+    -fx-background-color: derive(-fx-light-brown, 10%);
+}
+
+.titled-pane > .content {
+    -fx-background-color: white;
+    -fx-padding: 15px;
+}
+
+/* Pulsanti azione */
+.action-button {
+    -fx-background-color: -fx-primary-brown;
+    -fx-text-fill: white;
+    -fx-padding: 10px 20px;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-background-radius: 5px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 3, 0, 0, 2);
+}
+
+.action-button:hover {
+    -fx-background-color: -fx-hover-brown;
+}
+
+/* Container per i libri consigliati */
+.flow-pane {
+    -fx-hgap: 10px;
+    -fx-vgap: 10px;
+    -fx-padding: 10px;
+}
+
+/* Responsività */
+@media (max-width: 600px) {
+    .book-cover-image {
+        -fx-fit-width: 200px;
+        -fx-fit-height: 300px;
+    }
+
+    .action-button {
+        -fx-font-size: 12px;
+        -fx-padding: 8px 16px;
+    }
 }
 
 /* Effetti hover generali */
-.button {
-    -fx-transition: all 0.3s ease;
-}
-
 .button:hover {
-    -fx-scale-x: 1.03;
-    -fx-scale-y: 1.03;
-    -fx-translate-y: -2px;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
 
-.button:pressed {
-    -fx-scale-x: 0.97;
-    -fx-scale-y: 0.97;
-    -fx-translate-y: 0;
+/* Stile per il container delle valutazioni */
+#valutazioniAggregateContainer {
+    -fx-background-color: white;
+    -fx-padding: 15px;
+    -fx-spacing: 10px;
+    -fx-background-radius: 5px;
+}
+
+/* Stile per il container dei libri consigliati */
+#libriConsigliatiContainer {
+    -fx-background-color: white;
+    -fx-padding: 15px;
+    -fx-background-radius: 5px;
+}
+
+/* Scrollbar personalizzata */
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical .thumb,
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: -fx-light-brown;
+    -fx-background-radius: 5px;
+}
+
+.scroll-bar:vertical .thumb:hover,
+.scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: -fx-primary-brown;
+}
+
+/* Effetto ombra per elementi in rilievo */
+.elevated {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);
 }
