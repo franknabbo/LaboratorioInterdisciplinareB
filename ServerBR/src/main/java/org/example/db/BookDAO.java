@@ -72,115 +72,6 @@ public class BookDAO {
         return books;
     }
 
-//    public String getBookCover(String title, String author) {
-//
-//        try {
-//            // Prima controlla se esiste nel database
-//            String sql = "SELECT copertina FROM Libri WHERE LOWER(titolo) = LOWER(?) AND LOWER(autore) = LOWER(?)";
-//            PreparedStatement stmt = db.getConnection().prepareStatement(sql);
-//            stmt.setString(1, title);
-//            stmt.setString(2, author);
-//            ResultSet rs = stmt.executeQuery();
-//
-//            // Se trovata nel database, usa quella
-//            if (rs.next()) {
-//                String coverUrl = rs.getString("copertina");
-//                if (coverUrl != null && !coverUrl.isEmpty()) {
-//                    return coverUrl;
-//                }
-//            }
-//
-//
-//            // Rimuovi "By " all'inizio del nome dell'autore, se presente
-//            if (author != null && author.startsWith("By ")) {
-//                author = author.substring(3);
-//            }
-//
-//            // Codifica i parametri per l'URL
-//            String encodedTitle = URLEncoder.encode(title, "UTF-8");
-//            String encodedAuthor = URLEncoder.encode(author, "UTF-8");
-//
-//            // API di ricerca di OpenLibrary
-//            String searchUrl = "https://openlibrary.org/search.json?title=" +
-//                    encodedTitle + "&author=" + encodedAuthor;
-//
-//            // Effettua la richiesta di ricerca
-//            URL url = new URL(searchUrl);
-//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//            connection.setRequestMethod("GET");
-//            connection.setConnectTimeout(5000);
-//            connection.setReadTimeout(5000);
-//
-//            int responseCode = connection.getResponseCode();
-//
-//            if (responseCode == 200) {
-//                // Leggi la risposta JSON
-//                StringBuilder response = new StringBuilder();
-//                try (BufferedReader reader = new BufferedReader(
-//                        new InputStreamReader(connection.getInputStream()))) {
-//                    String line;
-//                    while ((line = reader.readLine()) != null) {
-//                        response.append(line);
-//                    }
-//                }
-//
-//                // Analizza il JSON
-//                JSONObject jsonResponse = new JSONObject(response.toString());
-//                JSONArray docs = jsonResponse.getJSONArray("docs");
-//
-//                // Verifica se sono stati trovati risultati
-//                if (docs.length() > 0) {
-//                    JSONObject firstBook = docs.getJSONObject(0);
-//
-//                    // Controlla se il libro ha un cover_i (ID copertina)
-//                    if (firstBook.has("cover_i")) {
-//                        int coverId = firstBook.getInt("cover_i");
-//                        String coverUrl = "https://covers.openlibrary.org/b/id/" + coverId + "-L.jpg";
-//
-//                        // Opzionale: aggiorna il database con l'URL della copertina trovata
-//                        updateCoverUrl(title, author, coverUrl);
-//
-//                        return coverUrl;
-//                    }
-//                    // Controlla se ha ISBN
-//                    else if (firstBook.has("isbn")) {
-//                        String isbn = firstBook.getJSONArray("isbn").getString(0);
-//                        String coverUrl = "https://covers.openlibrary.org/b/isbn/" + isbn + "-L.jpg";
-//
-//                        // Opzionale: aggiorna il database con l'URL della copertina trovata
-//                        updateCoverUrl(title, author, coverUrl);
-//
-//                        return coverUrl;
-//                    }
-//                }
-//            }
-//
-//            connection.disconnect();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        return null;
-//    }
-
-    /**
-     * Aggiorna l'URL della copertina nel database per un libro specifico
-     */
-    private void updateCoverUrl(String title, String author, String coverUrl) {
-        try {
-            String sql = "UPDATE Libri SET copertina = ? WHERE LOWER(titolo) = LOWER(?) AND LOWER(autore) = LOWER(?)";
-            PreparedStatement stmt = db.getConnection().prepareStatement(sql);
-            stmt.setString(1, coverUrl);
-            stmt.setString(2, title);
-            stmt.setString(3, author);
-            int rowsUpdated = stmt.executeUpdate();
-
-            if (rowsUpdated > 0) {
-            }
-        } catch (SQLException e) {
-        }
-    }
-
     /**
      * Metodo unificato per la ricerca di libri secondo vari criteri
      *
@@ -241,11 +132,6 @@ public class BookDAO {
         }
 
         return books;
-    }
-
-    // Aggiungi questo metodo alla classe BookDAO
-    public DataBaseConnection getDb() {
-        return db;
     }
 
 

@@ -19,10 +19,6 @@ public class Book {
         this.coverUrl = coverUrl;
     }
 
-    // Costruttore senza copertina per retrocompatibilità
-    public Book(int id, String title, String author, String category, String publisher, int publicationYear) {
-        this(id, title, author, category, publisher, publicationYear, null);
-    }
 
     // Getters
     public int getId() { return id; }

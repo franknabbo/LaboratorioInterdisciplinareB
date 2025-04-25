@@ -10,4 +10,6 @@ module org.example.bookreccomender2 {
 
     opens org.example.bookreccomender2 to javafx.fxml;
     exports org.example.bookreccomender2;
+    exports org.example.bookreccomender2.controller;
+    opens org.example.bookreccomender2.controller to javafx.fxml;
 }

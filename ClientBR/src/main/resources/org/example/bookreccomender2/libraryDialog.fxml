@@ -13,7 +13,7 @@
 <!-- Dialog di creazione libreria -->
 <DialogPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.bookreccomender2.LibraryDialogController"
+            fx:controller="org.example.bookreccomender2.controller.LibraryDialogController"
             prefWidth="400.0" stylesheets="@librarydialog.css">
     <content>
         <VBox spacing="15" alignment="CENTER_LEFT">

@@ -10,7 +10,7 @@
 
 <DialogPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.bookreccomender2.AddToLibraryDialogController"
+            fx:controller="org.example.bookreccomender2.controller.AddToLibraryDialogController"
             prefWidth="400.0" stylesheets="@addtolibrarydialog.css">
     <content>
         <VBox spacing="15" alignment="CENTER_LEFT">

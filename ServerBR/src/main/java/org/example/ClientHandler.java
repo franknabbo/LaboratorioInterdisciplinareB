@@ -167,10 +167,6 @@ public class ClientHandler implements Runnable {
             int number = Integer.parseInt(parts[1]);
             List<Book> books = bookDAO.getBooks(number);
             //stampa books
-            System.out.println("Libri recuperati: " + books.size());
-            for (Book book : books) {
-                System.out.println("Titolo: " + book.getTitle());
-            }
             return getString(books);
         } catch (Exception e) {
             return "ERRORE:" + e.getMessage();
@@ -188,8 +184,7 @@ public class ClientHandler implements Runnable {
             String searchType = parts[1];
             String searchTerm = parts[2];
             Integer year = null;
-            System.out.println("Tipo di ricerca: " + searchType);
-            System.out.println("Termine di ricerca: " + searchTerm);
+
 
 
             if (searchType.equals("AUTHOR_YEAR") && parts.length >= 4) {
@@ -264,7 +259,6 @@ public class ClientHandler implements Runnable {
             if (utenteDAO != null) utenteDAO.closeConnection();
             if (libraryDAO != null) libraryDAO.closeConnection();
 
-            System.out.println("Connessione con il client chiusa");
         } catch (IOException e) {
             System.err.println("Errore nella chiusura delle risorse: " + e.getMessage());
         }

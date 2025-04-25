@@ -1,5 +1,7 @@
 package org.example.bookreccomender2;
 
+import org.example.bookreccomender2.controller.*;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,11 +12,9 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
-
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.geometry.Insets;
@@ -22,15 +22,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
 
 import javafx.scene.control.Label;
 
@@ -66,8 +59,6 @@ public class EventHandler {
     @FXML
     private TextField yearField;
     @FXML
-    private Button searchButton;
-    @FXML
     private Button prevPageButton;
     @FXML
     private Button nextPageButton;
@@ -86,15 +77,17 @@ public class EventHandler {
     @FXML
     private ImageView coverImage;
     private int currentPage = 1;
-    private int booksPerPage = 25;
+    private final int booksPerPage = 25;
     private List<Book> currentSearchResults = new ArrayList<>();
-    private List<Book> allBooks = new ArrayList<>(); // Tutti i libri dalla ricerca
     private Book selectedBook;
     @FXML
     private VBox librariesContainer; // Aggiungi questa variabile
 
-    @FXML
-    private TextField libraryNameField;
+    private final AlertController alertController = new AlertController();
+    private final SceneController sceneController = new SceneController();
+    private final UserManager userManager = new UserManager();
+    private final BookClient bookClient = new BookClient();
+    private final LibraryController libraryController = new LibraryController();
 
     @FXML
     private TitledPane recensioneMiaPane;
@@ -107,150 +100,41 @@ public class EventHandler {
 
     @FXML
     protected void switchToRegister(ActionEvent event) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/register-view.fxml"));
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 700, 700);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        sceneController.switchToRegister(event);
     }
 
     @FXML
     protected void switchToHome(ActionEvent event) {
-        try {
-            String viewFile = SessionManager.isLoggedIn() ?
-                    "/org/example/bookreccomender2/homeLogged-view.fxml" :
-                    "/org/example/bookreccomender2/homeNotLogged-view.fxml";
-
-            Parent root = FXMLLoader.load(getClass().getResource(viewFile));
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 700, 700);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        sceneController.switchToHome(event);
     }
 
     @FXML
     protected void switchToLogin(ActionEvent event) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/login-view.fxml"));
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 700, 700);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        sceneController.switchToLogin(event);
     }
     @FXML
     private void switchToBookView(MouseEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/book-view.fxml"));
-            Parent root = loader.load();
-
-            // Ottieni il controller e inizializza i dati del libro
-            EventHandler controller = loader.getController();
-            controller.initBookData(selectedBook);
-
-            // Cambia scena
-            Scene scene = ((Node) event.getSource()).getScene();
-            Stage stage = (Stage) scene.getWindow();
-            scene = new Scene(root, 700, 700);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Errore", "Impossibile aprire la pagina del libro: " + e.getMessage());
-        }
+        sceneController.switchToBookView(event, selectedBook);
     }
 
     @FXML
     protected void switchToLibrary(ActionEvent event) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/library-view.fxml"));
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 700, 700);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        sceneController.switchToLibrary(event);
     }
 
+    @FXML
+    protected void switchToSelectedLibrary(MouseEvent event, String libraryName) { sceneController.switchToLibraryBooks(event, libraryName);}
 
     @FXML
     protected void loginUser(ActionEvent event) {
         String userId = userIdField.getText();
         String password = passwordField.getText();
-
-        if (userId.isEmpty() || password.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Errore");
-            alert.setHeaderText("Campi mancanti");
-            alert.setContentText("Inserisci userId e password.");
-            alert.showAndWait();
-            return;
-        }
-
-        // Crittografia della password
-        String encryptedPassword = encryptPassword(password);
-
-        // Connessione al server
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-
-            // Leggi il messaggio di benvenuto
-            String benvenuto = in.readLine();
-
-            // Invio della richiesta di login
-            out.println("LOGIN:" + userId + ":" + encryptedPassword);
-
-            // Gestione della risposta
-            String risposta = in.readLine();
-
-            if (risposta.startsWith("LOGIN OK")) {
-                // Estrai l'userId dalla risposta (formato: "LOGIN OK:userId")
-                String loggedUserId = risposta.split(":")[1];
-
-                // Imposta lo stato di login
-                SessionManager.login(loggedUserId);
-
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Login Completato");
-                alert.setHeaderText("Login avvenuto con successo!");
-                alert.setContentText("Benvenuto, " + loggedUserId);
-                alert.showAndWait();
-
-                // Reindirizza alla home page dopo il login
-                switchToHome(event);
-            } else {
-                String errorMessage = "Credenziali non valide.";
-                if (risposta.contains(":")) {
-                    errorMessage = risposta.split(":", 2)[1];
-                }
-
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Errore");
-                alert.setHeaderText("Login fallito");
-                alert.setContentText(errorMessage);
-                alert.showAndWait();
-            }
+        try {
+            userManager.loginUser(userId, password, event);
         } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Errore di connessione");
-            alert.setHeaderText("Impossibile connettersi al server");
-            alert.setContentText("Dettagli: " + e.getMessage());
-            alert.showAndWait();
-
-            System.out.println("Errore di connessione al server: " + e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
+
     }
 
     @FXML
@@ -271,134 +155,20 @@ public class EventHandler {
             alert.showAndWait();
             return;
         }
-
-        // Connessione al server
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-
-            // Leggi il messaggio di benvenuto
-            String benvenuto = in.readLine();
-            System.out.println(benvenuto);
-
-            // Crittografia della password
-            String encryptedPassword = encryptPassword(password);
-
-            // Invio della richiesta di registrazione con password crittografata
-            out.println("REGISTER:" + nome + ":" + cognome + ":" + codiceFiscale + ":" + email + ":" + encryptedPassword);
-
-            // Gestione della risposta
-            String risposta = in.readLine();
-            System.out.println("Risposta dal server: " + risposta);
-
-            if (risposta.startsWith("REGISTRAZIONE OK")) {
-                // Estrai l'userId dalla risposta
-                String userId = risposta.split(":")[1];
-
-                SessionManager.login(userId);
-
-                // Mostra alert di successo con userId
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Registrazione completata");
-                alert.setHeaderText("Registrazione avvenuta con successo!");
-                alert.setContentText("Il tuo userId è: " + userId + "\n\nUtilizza questo userId per accedere al sistema.");
-                alert.showAndWait();
-
-                // Reindirizza alla pagina di login
-                switchToHome(event);
-            } else {
-                // Mostra alert di errore
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Errore");
-                alert.setHeaderText("Registrazione fallita");
-                alert.setContentText("Non è stato possibile completare la registrazione.\n" +
-                        (risposta.contains(":") ? risposta.split(":", 2)[1] : ""));
-                alert.showAndWait();
-            }
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Errore di connessione");
-            alert.setHeaderText("Impossibile connettersi al server");
-            alert.setContentText("Dettagli: " + e.getMessage());
-            alert.showAndWait();
-
-            System.out.println("Errore di connessione al server: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    // Metodo per crittografare la password con SHA-256
-    private String encryptPassword(String password) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            System.out.println("Errore durante la crittografia: " + e.getMessage());
-            e.printStackTrace();
-            return password; // Fallback in caso di errore
-        }
-    }
-
-    @FXML
-    protected void logout(ActionEvent event) {
-        SessionManager.logout();
-
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/homeNotLogged-view.fxml"));
-
-            // Ottieni lo Stage usando una strategia alternativa
-            Stage stage = null;
-
-            // Prova a ottenere lo stage dall'evento
-            if (event.getSource() instanceof Node) {
-                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            }
-            // Se non funziona, prova a usare un elemento sempre presente nella scena
-            else if (usernameLabel != null && usernameLabel.getScene() != null) {
-                stage = (Stage) usernameLabel.getScene().getWindow();
-            }
-
-            if (stage != null) {
-                Scene scene = new Scene(root, 700, 700);
-                stage.setScene(scene);
-                stage.show();
-            } else {
-                // Fallback se non riusciamo a trovare lo stage
-                System.err.println("Impossibile trovare lo stage per la navigazione");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Errore");
-            alert.setHeaderText("Errore di navigazione");
-            alert.setContentText("Impossibile tornare alla home.\nDettagli: " + e.getMessage());
-            alert.showAndWait();
-        }
+        userManager.registerUser(event, nome, cognome, codiceFiscale, email, password);
     }
 
     @FXML
     public void initialize() {
-        if (usernameLabel != null && SessionManager.isLoggedIn()) {
-            usernameLabel.setText(SessionManager.getUserId());
+        if (usernameLabel != null && UserManager.isLoggedIn()) {
+            usernameLabel.setText(UserManager.getUserId());
         }
 
         // Configura il ComboBox per il tipo di ricerca
         if (searchTypeCombo != null) {
             searchTypeCombo.getSelectionModel().selectFirst();
             searchTypeCombo.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null && newValue.equals("Per autore e anno")) {
-                    yearField.setVisible(true);
-                } else {
-                    yearField.setVisible(false);
-                }
+                yearField.setVisible(newValue != null && newValue.equals("Per autore e anno"));
             });
         }
 
@@ -411,17 +181,16 @@ public class EventHandler {
         }
 
         // Carica le librerie se siamo nella vista librerie
-        if (SessionManager.isLoggedIn() && librariesContainer != null) {
+        if (UserManager.isLoggedIn() && librariesContainer != null) {
             loadLibraries();
         }
     }
 
     @FXML
-
     private void loadLibraries() {
         // Esegui in un thread separato per non bloccare l'UI
         new Thread(() -> {
-            List<String> libraries = getLibraryList();
+            List<String> libraries = libraryController.getLibraryList();
             Platform.runLater(() -> showLibraryInUI(libraries));
         }).start();
     }
@@ -433,7 +202,7 @@ public class EventHandler {
             List<String> libraries = getLibraryNames();
 
             if (libraries.isEmpty()) {
-                showAlert("Nessuna libreria", "Non hai ancora creato librerie. Creane una prima di aggiungere libri.");
+                alertController.showAlert("Nessuna libreria", "Non hai ancora creato librerie. Creane una prima di aggiungere libri.");
                 return;
             }
 
@@ -457,18 +226,18 @@ public class EventHandler {
 
                 if (selectedLibrary != null && !selectedLibrary.isEmpty()) {
                     // Aggiungi il libro alla libreria
-                    addBookToSelectedLibrary(selectedLibrary);
+                    libraryController.addBookToSelectedLibrary(selectedLibrary, selectedBook);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Errore", "Impossibile aprire la finestra di dialogo: " + e.getMessage());
+            alertController.showAlert("Errore", "Impossibile aprire la finestra di dialogo: " + e.getMessage());
         }
     }
 
     private List<String> getLibraryNames() {
         List<String> libraryNames = new ArrayList<>();
-        List<String> libraryEntries = getLibraryList();
+        List<String> libraryEntries = libraryController.getLibraryList();
 
         for (String library : libraryEntries) {
             if (library.startsWith("LIBRARY:")) {
@@ -482,49 +251,6 @@ public class EventHandler {
         return libraryNames;
     }
 
-    private void addBookToSelectedLibrary(String libraryName) {
-        if (selectedBook == null) {
-            showAlert("Errore", "Nessun libro selezionato");
-            return;
-        }
-
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-
-            // Leggi il messaggio di benvenuto
-            String welcome = in.readLine();
-
-            // Invia richiesta di aggiunta libro alla libreria
-            // Formato: ADD_BOOK_TO_LIBRARY:userId:libraryName:titolo|||autore|||categoria|||editore|||anno|||copertina
-            String bookData = selectedBook.getTitle() + "|||" +
-                    selectedBook.getAuthor() + "|||" +
-                    selectedBook.getCategory() + "|||" +
-                    selectedBook.getPublisher() + "|||" +
-                    selectedBook.getPublicationYear() + "|||" +
-                    selectedBook.getCoverUrl();
-
-            out.println("ADD_BOOK_TO_LIBRARY:" + SessionManager.getUserId() + ":" + libraryName + ":" + bookData);
-
-            // Gestisci la risposta
-            String response = in.readLine();
-
-            if (response.startsWith("BOOK_ADDED")) {
-                showAlertSucces("Libro aggiunto", "Il libro è stato aggiunto alla libreria '" + libraryName + "' con successo.");
-            } else if (response.startsWith("BOOK_EXISTS")) {
-                showAlert("Libro già presente", "Il libro è già presente nella libreria '" + libraryName + "'.");
-            } else {
-                String errorMessage = "Errore nell'aggiunta del libro.";
-                if (response.contains(":")) {
-                    errorMessage = response.split(":", 2)[1];
-                }
-                showAlert("Errore", errorMessage);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
-        }
-    }
     @FXML
     private void loadHomePageBooks() {
         // Utilizza BookClient per ottenere i libri
@@ -567,15 +293,14 @@ public class EventHandler {
         // Verifica se i campi sono compilati correttamente
         if (searchTerm.isEmpty()) {
             // Mostra un messaggio di errore o carica tutti i libri
-            showAlert("Ricerca vuota", "Inserisci un termine di ricerca");
+            alertController.showAlert("Ricerca vuota", "Inserisci un termine di ricerca");
             return;
         }
 
         if (searchType == null) {
-            showAlert("Tipo di ricerca mancante", "Seleziona un tipo di ricerca");
+            alertController.showAlert("Tipo di ricerca mancante", "Seleziona un tipo di ricerca");
             return;
         }
-
         // Converti il tipo di ricerca nel formato atteso dal server
         String serverSearchType;
         switch (searchType) {
@@ -589,12 +314,12 @@ public class EventHandler {
                 serverSearchType = "AUTHOR_YEAR";
                 // Verifica che l'anno sia valido
                 if (yearField.getText().trim().isEmpty()) {
-                    showAlert("Anno mancante", "Inserisci un anno per questo tipo di ricerca");
+                    alertController.showAlert("Anno mancante", "Inserisci un anno per questo tipo di ricerca");
                     return;
                 }
                 break;
             default:
-                showAlert("Tipo di ricerca non valido", "Seleziona un tipo di ricerca valido");
+                alertController.showAlert("Tipo di ricerca non valido", "Seleziona un tipo di ricerca valido");
                 return;
         }
 
@@ -610,7 +335,7 @@ public class EventHandler {
         // Esegui la ricerca in un thread separato
         new Thread(() -> {
             try {
-                currentSearchResults = performSearch(serverSearchType, searchTerm, year);
+                currentSearchResults = bookClient.performSearch(serverSearchType, searchTerm, year);
 
                 // Aggiorna l'UI nel thread JavaFX
                 Platform.runLater(() -> {
@@ -620,7 +345,7 @@ public class EventHandler {
                 });
             } catch (IOException e) {
                 Platform.runLater(() -> {
-                    showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
+                    alertController.showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
                     // showLoadingIndicator(false);
                 });
                 e.printStackTrace();
@@ -628,50 +353,40 @@ public class EventHandler {
         }).start();
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    private void showAlertSucces(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-    private void displayCurrentPageBooks() {
-        booksContainer.getChildren().clear();
-
-        int startIndex = (currentPage - 1) * booksPerPage;
-        int endIndex = Math.min(startIndex + booksPerPage, allBooks.size());
-
-        for (int i = startIndex; i < endIndex; i++) {
-            Book book = allBooks.get(i);
-            addBookToUI(book);
-        }
-    }
     @FXML
     private void showUserMenu(MouseEvent event) {
         // Crea menu contestuale
         ContextMenu contextMenu = new ContextMenu();
 
+        // Ottieni il nodo sorgente
+        Node source = (Node) event.getSource();
+
         // Crea l'opzione per il logout
         MenuItem logoutItem = new MenuItem("Logout");
         logoutItem.setGraphic(new FontIcon("fas-sign-out-alt"));
 
-        // Associa l'azione al click sull'elemento
-        logoutItem.setOnAction(e -> logout(new ActionEvent()));
+        // Associa l'azione al click sull'elemento, passando il nodo sorgente
+        logoutItem.setOnAction(e -> {
+            UserManager.logout();
+
+            // Ottieni lo stage direttamente qui
+            Stage stage = (Stage) source.getScene().getWindow();
+            try {
+                String viewFile = "/org/example/bookreccomender2/homeNotLogged-view.fxml";
+                Parent root = FXMLLoader.load(getClass().getResource(viewFile));
+                Scene scene = new Scene(root, 700, 700);
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
 
         // Aggiungi l'opzione al menu
         contextMenu.getItems().add(logoutItem);
 
         // Mostra il menu nel punto del click
-        contextMenu.show(((Node) event.getSource()).getScene().getWindow(),
-                event.getScreenX(), event.getScreenY());
+        contextMenu.show(source.getScene().getWindow(), event.getScreenX(), event.getScreenY());
     }
 
     public void initBookData(Book book) {
@@ -689,17 +404,17 @@ public class EventHandler {
 
         // Gestisci la visibilità delle sezioni in base allo stato di login
         if (recensioneMiaPane != null) {
-            recensioneMiaPane.setVisible(SessionManager.isLoggedIn());
-            recensioneMiaPane.setManaged(SessionManager.isLoggedIn());
+            recensioneMiaPane.setVisible(UserManager.isLoggedIn());
+            recensioneMiaPane.setManaged(UserManager.isLoggedIn());
         }
 
         if (consigliMieiPane != null) {
-            consigliMieiPane.setVisible(SessionManager.isLoggedIn());
-            consigliMieiPane.setManaged(SessionManager.isLoggedIn());
+            consigliMieiPane.setVisible(UserManager.isLoggedIn());
+            consigliMieiPane.setManaged(UserManager.isLoggedIn());
         }
         if (addToLibraryButton != null) {
-            addToLibraryButton.setVisible(SessionManager.isLoggedIn());
-            addToLibraryButton.setManaged(SessionManager.isLoggedIn());
+            addToLibraryButton.setVisible(UserManager.isLoggedIn());
+            addToLibraryButton.setManaged(UserManager.isLoggedIn());
         }
 
 
@@ -731,6 +446,8 @@ public class EventHandler {
             }
         }
     }
+
+
 
     private void addBookToUI(Book book) {
         // Crea l'elemento visuale del libro
@@ -884,65 +601,6 @@ public class EventHandler {
         }
     }
 
-    private List<Book> performSearch(String searchType, String searchTerm, String year) throws IOException {
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-
-            // Leggi il messaggio di benvenuto
-            String welcome = in.readLine();
-
-            // Invia la richiesta di ricerca
-            String request = "SEARCH:" + searchType + ":" + searchTerm;
-            if (year != null && searchType.equals("AUTHOR_YEAR")) {
-                request += ":" + year;
-            }
-            out.println(request);
-
-            // Parsa i risultati
-            return parseSearchResults(in);
-        }
-    }
-
-    private List<Book> parseSearchResults(BufferedReader in) throws IOException {
-        List<Book> results = new ArrayList<>();
-        String line;
-        boolean reading = false;
-
-        while ((line = in.readLine()) != null) {
-            if (line.equals("INIZIO_LISTA_LIBRI")) {
-                reading = true;
-                continue;
-            }
-
-            if (line.equals("END_BOOKS")) {
-                break;
-            }
-
-            if (reading && line.startsWith("BOOK:")) {
-                try {
-                    // Formato corretto da server: BOOK:titolo|||autore|||categoria|||editore|||anno_pubblicazione|||copertina
-                    String[] parts = line.split("BOOK:|\\|\\|\\|");
-                    if (parts.length >= 7) {
-                        String title = parts[1];
-                        String author = parts[2];
-                        String category = parts[3];
-                        String publisher = parts[4];
-                        String publicationYear = parts[5];
-                        String coverUrl = parts[6];
-                        // Crea un oggetto Book e aggiungilo alla lista
-                        Book book = new Book(title, author, category, publisher, publicationYear, coverUrl);
-                        results.add(book);
-                    }
-                } catch (Exception e) {
-                    System.err.println("Errore nel parsing: " + e.getMessage());
-                }
-            }
-        }
-
-        return results;
-    }
-
     private void displayCurrentPage() {
         if (booksContainer == null) return;
 
@@ -958,33 +616,6 @@ public class EventHandler {
             Book book = currentSearchResults.get(i);
             addBookToUI(book);
         }
-    }
-
-    //Get library list from db
-    private List<String> getLibraryList() {
-        List<String> libraries = new ArrayList<>();
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-
-            // Leggi il messaggio di benvenuto
-            String welcome = in.readLine();
-
-            // Invia richiesta di librerie
-            out.println("GET_LIBRARY:" + SessionManager.getUserId());
-
-            // Leggi la risposta
-            String line;
-            while ((line = in.readLine()) != null) {
-                if (line.equals("END_LIBRARIES")) {
-                    break;
-                }
-                libraries.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return libraries;
     }
 
     private void showLibraryInUI(List<String> libraryNames) {
@@ -1027,7 +658,7 @@ public class EventHandler {
                     // Modifica la parte relativa all'etichetta del nome
                     Label nameLabel = new Label(parts[1]); // Il nome è la seconda parte
                     nameLabel.getStyleClass().add("library-title");
-                     // Marrone scuro caldo
+                    // Marrone scuro caldo
                     nameLabel.setFont(Font.font("System", FontWeight.BOLD, 24.0)); // Aumentato la dimensione del font
                     nameLabel.setWrapText(true); // Permette al testo di andare a capo se troppo lungo
                     nameLabel.setTextFill(Color.valueOf("#4A3C32"));
@@ -1051,7 +682,7 @@ public class EventHandler {
 
                     // Aggiungi l'evento di click per aprire la libreria
                     final String libraryName = parts[1]; // Cattura il nome della libreria
-                    libraryButton.setOnMouseClicked(event -> openLibraryBooks(event, libraryName));
+                    libraryButton.setOnMouseClicked(event -> switchToSelectedLibrary(event, libraryName));
 
                     // Aggiungi il pulsante al container
                     librariesContainer.getChildren().add(libraryButton);
@@ -1096,82 +727,21 @@ public class EventHandler {
                 // Verifica che il nome non sia vuoto
                 if (libraryName != null && !libraryName.trim().isEmpty()) {
                     // Procedi con la creazione della libreria
-                    createLibraryWithName(libraryName);
+                    if(libraryController.createLibraryWithName(libraryName)){
+                        loadLibraries(); // Ricarica le librerie
+                    }
                 } else {
-                    showAlert("Nome libreria non valido", "Inserisci un nome valido per la libreria.");
+                    alertController.showAlert("Nome libreria non valido", "Inserisci un nome valido per la libreria.");
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Errore", "Impossibile aprire la finestra di dialogo: " + e.getMessage());
-        }
-    }
-    /**
-     * Crea una nuova libreria con il nome specificato
-     */
-    private void createLibraryWithName(String libraryName) {
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-
-            // Leggi il messaggio di benvenuto
-            String welcome = in.readLine();
-
-            // Invia richiesta di creazione libreria
-            out.println("CREATE_LIBRARY:" + SessionManager.getUserId() + ":" + libraryName);
-
-            // Gestisci la risposta
-            String response = in.readLine();
-
-            if (response.startsWith("LIBRARY_CREATED")) {
-                showAlertSucces("Libreria creata", "La libreria '" + libraryName + "' è stata creata con successo.");
-                loadLibraries(); // Ricarica le librerie
-
-
-            } else if (response.startsWith("LIBRARY_EXISTS")) {
-                showAlert("Libreria già esistente", "La libreria '" + libraryName + "' esiste già.");
-            } else {
-                String errorMessage = "Errore nella creazione della libreria.";
-                if (response.contains(":")) {
-                    errorMessage = response.split(":", 2)[1];
-                }
-                showAlert("Errore", errorMessage);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
+            alertController.showAlert("Errore", "Impossibile aprire la finestra di dialogo: " + e.getMessage());
         }
     }
 
-    @FXML
-    protected void openLibraryBooks(MouseEvent event, String libraryName) {
-        try {
-            this.currentLibraryName = libraryName;
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/library-books-view.fxml"));
-            Parent root = loader.load();
-
-            // Ottieni il controller e inizializza i dati
-            EventHandler controller = loader.getController();
-            controller.initLibraryBooksView(libraryName);
-
-            // Cambia scena
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 700, 700);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Errore", "Impossibile aprire la vista dei libri della libreria: " + e.getMessage());
-        }
-    }
 
     public void initLibraryBooksView(String libraryName) {
-        // Imposta il nome della libreria nell'intestazione
-        /*if (libraryTitleLabel != null) {
-            libraryTitleLabel.setText("Libreria: " + libraryName);
-        }*/
-
         // Salva il nome della libreria corrente
         this.currentLibraryName = libraryName;
 
@@ -1181,14 +751,12 @@ public class EventHandler {
 
     private void loadLibraryBooks(String libraryName) {
         // Ottieni l'userID attuale
-        String userId = SessionManager.getUserId();
+        String userId = UserManager.getUserId();
         new Thread(() -> {
-            try (BookClient client = new BookClient()) {
-                // Usa il nuovo metodo specifico
-                List<Book> books = client.getLibraryBooks(userId, libraryName);
+            try {
+                List<Book> books = bookClient.getLibraryBooks(userId, libraryName);
 
                 Platform.runLater(() -> {
-                    // Pulisci il container
                     if (booksContainer != null) {
                         booksContainer.getChildren().clear();
 
@@ -1216,86 +784,6 @@ public class EventHandler {
                 });
             }
         }).start();
-    }
-
-    private List<Book> getLibraryBooks(String libraryName) {
-        List<Book> books = new ArrayList<>();
-
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-
-            // Leggi il messaggio di benvenuto
-            String welcome = in.readLine();
-
-            // Invia richiesta per ottenere i libri della libreria
-            out.println("GET_LIBRARY_BOOKS:" + SessionManager.getUserId() + ":" + libraryName);
-
-            // Leggi la risposta
-            String line;
-            boolean reading = false;
-
-            while ((line = in.readLine()) != null) {
-                if (line.equals("INIZIO_LISTA_LIBRI")) {
-                    reading = true;
-                    continue;
-                }
-
-                if (line.equals("END_BOOKS")) {
-                    break;
-                }
-
-                if (reading && line.startsWith("BOOK:")) {
-                    try {
-                        String[] parts = line.split("BOOK:|\\|\\|\\|");
-                        if (parts.length >= 7) {
-                            String title = parts[1];
-                            String author = parts[2];
-                            String category = parts[3];
-                            String publisher = parts[4];
-                            String publicationYear = parts[5];
-                            String coverUrl = parts[6];
-
-                            Book book = new Book(title, author, category, publisher, publicationYear, coverUrl);
-                            books.add(book);
-                        }
-                    } catch (Exception e) {
-                        System.err.println("Errore nel parsing: " + e.getMessage());
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return books;
-    }
-
-    private void displayLibraryBooks(List<Book> books) {
-        if (booksContainer == null) {
-            System.err.println("ERRORE: booksContainer è null");
-            return;
-        }
-
-        System.out.println("Visualizzazione di " + books.size() + " libri"); // Debug
-
-        booksContainer.getChildren().clear();
-
-        if (books.isEmpty()) {
-            Label emptyLabel = new Label("Nessun libro in questa libreria");
-            emptyLabel.getStyleClass().add("empty-message");
-            booksContainer.getChildren().add(emptyLabel);
-            return;
-        }
-
-        for (Book book : books) {
-            try {
-                addBookToUI(book);
-            } catch (Exception e) {
-                System.err.println("Errore nell'aggiungere libro: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
     }
 
 

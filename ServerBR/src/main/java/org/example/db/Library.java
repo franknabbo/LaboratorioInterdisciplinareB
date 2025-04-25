@@ -22,14 +22,4 @@ public class Library {
     public String getNome() {
         return nome;
     }
-
-    public void setIdLibreria(int idLibreria) {
-        this.idLibreria = idLibreria;
-    }
-    public void setIdUtente(int idUtente) {
-        this.idUtente = idUtente;
-    }
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 }

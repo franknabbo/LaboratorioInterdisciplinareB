@@ -41,19 +41,16 @@ public class UtenteDAO {
     public String loginUtente(String userId, String password) {
         String sql = "SELECT * FROM UtentiRegistrati WHERE user_id = ? AND crypted_pass = ?";
         try {
-            System.out.println("Tentativo di login: userId=" + userId);
 
             PreparedStatement stmt = db.getConnection().prepareStatement(sql);
             stmt.setString(1, userId);
             stmt.setString(2, password);
 
-            System.out.println("Esecuzione query con password hash=" + password);
 
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
                 String risposta = "LOGIN OK:" + userId;
-                System.out.println("Login riuscito: " + risposta);
                 return risposta;
             } else {
                 // Query alternativa per verificare se l'utente esiste
@@ -65,7 +62,6 @@ public class UtenteDAO {
                 if (checkRs.next()) {
                     String passwordSalvata = checkRs.getString("crypted_pass");
                 } else {
-                    System.out.println("Utente non trovato: " + userId);
                 }
 
                 return "LOGIN FAILED:Credenziali non valide";

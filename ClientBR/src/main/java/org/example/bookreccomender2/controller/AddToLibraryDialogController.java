@@ -1,4 +1,4 @@
-package org.example.bookreccomender2;
+package org.example.bookreccomender2.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;

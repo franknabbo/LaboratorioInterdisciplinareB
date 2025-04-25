@@ -1,4 +1,4 @@
-package org.example.bookreccomender2;
+package org.example.bookreccomender2.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -10,9 +10,5 @@ public class LibraryDialogController {
     public String getLibraryNameField() {
         return libraryNameField.getText();
     }
-    public void setLibraryNameField(String libraryName) {
-        if (libraryName != null) {
-            this.libraryNameField.setText(libraryName);
-        }
-    }
+
 }

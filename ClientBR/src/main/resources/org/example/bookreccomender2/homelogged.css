@@ -224,3 +224,20 @@
     -fx-border-color: -fx-primary-color;
     -fx-border-width: 1px;
 }
+.user-avatar {
+    -fx-fill: -fx-primary-color;
+    -fx-effect: dropshadow(gaussian, rgba(139,69,19,0.3), 5, 0, 0, 1);
+}
+
+.library-button {
+    -fx-background-color: linear-gradient(to bottom, #ff8c42, #e67e22);
+    -fx-effect: dropshadow(three-pass-box, rgba(255,140,0,0.3), 5, 0, 0, 2);
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #ffa96b;
+    -fx-border-width: 1.5;
+    -fx-min-width: 100px;
+    -fx-font-size: 12px;
+    -fx-padding: 8 15 8 10;
+    -fx-text-fill: #ffffff;
+}
