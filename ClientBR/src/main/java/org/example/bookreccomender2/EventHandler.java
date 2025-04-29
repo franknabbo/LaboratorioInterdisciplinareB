@@ -79,6 +79,7 @@ public class EventHandler {
     private int currentPage = 1;
     private final int booksPerPage = 25;
     private List<Book> currentSearchResults = new ArrayList<>();
+    public  BookCached bookCached = BookCached.getInstance();
     private Book selectedBook;
     @FXML
     private VBox librariesContainer; // Aggiungi questa variabile
@@ -254,27 +255,38 @@ public class EventHandler {
     @FXML
     private void loadHomePageBooks() {
         // Utilizza BookClient per ottenere i libri
-        try {
-            BookClient client = new BookClient();
+        if(bookCached.hasCachedHomeBooks()) {
+            // Se i libri sono già stati caricati, usali dalla cache
+            currentSearchResults.addAll(bookCached.getCachedHomeBooks());
+
+            // Aggiorna controlli di paginazione
+            updatePageDisplay();
+
+            // Visualizza prima pagina
+            Platform.runLater(this::displayCurrentPage);
+
+        } else{
             try {
-                // Richiedi libri al server
-                List<Book> books = client.getBooks(0);
-                //stampa books
+                BookClient client = new BookClient();
+                try {
+                    // Richiedi libri al server
+                    List<Book> books = client.getBooks(0);
+                    bookCached.setCachedHomeBooks(books);
+                    currentSearchResults.addAll(books);
 
+                    // Aggiorna controlli di paginazione
+                    updatePageDisplay();
 
-                currentSearchResults.addAll(books);
-
-                // Aggiorna controlli di paginazione
-                updatePageDisplay();
-
-                // Visualizza prima pagina
-                Platform.runLater(this::displayCurrentPage);
-            } finally {
-                client.close();
+                    // Visualizza prima pagina
+                    Platform.runLater(this::displayCurrentPage);
+                } finally {
+                    client.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
     }
 
     private void setupSearchField() {
@@ -282,6 +294,7 @@ public class EventHandler {
 
         searchField.setOnAction(event -> handleSearch(event));
     }
+
     @FXML
     protected void handleSearch(ActionEvent event) {
         // Resetta la paginazione
@@ -341,13 +354,10 @@ public class EventHandler {
                 Platform.runLater(() -> {
                     displayCurrentPage();
                     updatePaginationControls();
-                    // showLoadingIndicator(false);
                 });
             } catch (IOException e) {
                 Platform.runLater(() -> {
-                    alertController.showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
-                    // showLoadingIndicator(false);
-                });
+                    alertController.showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());});
                 e.printStackTrace();
             }
         }).start();
@@ -446,8 +456,6 @@ public class EventHandler {
             }
         }
     }
-
-
 
     private void addBookToUI(Book book) {
         // Crea l'elemento visuale del libro
@@ -646,7 +654,6 @@ public class EventHandler {
                     HBox contentBox = new HBox();
                     contentBox.setAlignment(Pos.CENTER_LEFT);
                     contentBox.setSpacing(15);
-                    contentBox.setMaxWidth(Double.MAX_VALUE);
                     HBox.setHgrow(contentBox, Priority.ALWAYS);
 
                     // Aggiungi l'immagine della libreria
@@ -660,7 +667,6 @@ public class EventHandler {
                     nameLabel.getStyleClass().add("library-title");
                     // Marrone scuro caldo
                     nameLabel.setFont(Font.font("System", FontWeight.BOLD, 24.0)); // Aumentato la dimensione del font
-                    nameLabel.setWrapText(true); // Permette al testo di andare a capo se troppo lungo
                     nameLabel.setTextFill(Color.valueOf("#4A3C32"));
                     nameLabel.setStyle(nameLabel.getStyle() + "-fx-text-fill: #4A3C32;");
 // Aggiungere effetto ombra al testo

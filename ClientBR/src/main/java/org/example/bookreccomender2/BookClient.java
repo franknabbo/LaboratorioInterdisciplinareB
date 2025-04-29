@@ -92,43 +92,44 @@
         public List<Book> getLibraryBooks(String userId, String libraryName) throws IOException {
             List<Book> books = new ArrayList<>();
 
-            // Invia la richiesta
-            String request = "GET_LIBRARY_BOOKS:" + userId + ":" + libraryName;
-            out.println(request);
-            System.out.println("Richiesta inviata: " + request);
+            try (Socket socket = new Socket("localhost", 8080);
+                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-            // Legge la risposta
-            String line;
-            boolean reading = false;
+                // Invia la richiesta
+                String request = "GET_LIBRARY_BOOKS:" + userId + ":" + libraryName;
+                out.println(request);
+                // Legge la risposta
+                String line;
+                boolean reading = false;
 
-            while ((line = in.readLine()) != null) {
-                if (line.equals("INIZIO_LISTA_LIBRI_LIBRERIA")) {
-                    reading = true;
-                    continue;
-                }
+                while ((line = in.readLine()) != null) {
+                    if (line.equals("INIZIO_LISTA_LIBRI_LIBRERIA")) {
+                        reading = true;
+                        continue;
+                    }
 
-                if (line.equals("END_LIBRARY_BOOKS")) {
-                    break;
-                }
+                    if (line.equals("END_LIBRARY_BOOKS")) {
+                        break;
+                    }
 
-                if (reading && line.startsWith("BOOK:")) {
-                    try {
-                        String[] parts = line.split("BOOK:|\\|\\|\\|");
-                        if (parts.length >= 7) {
-                            Book book = getBook(parts);
-                            books.add(book);
-                            System.out.println("Libro aggiunto: " + book.getTitle());
-                        } else {
-                            System.err.println("Formato libro non valido: " + line);
+                    if (reading && line.startsWith("BOOK:")) {
+                        try {
+                            String[] parts = line.split("BOOK:|\\|\\|\\|");
+                            if (parts.length >= 7) {
+                                Book book = getBook(parts);
+                                books.add(book);
+                            } else {
+                                System.err.println("Formato libro non valido: " + line);
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Errore nel parsing: " + e.getMessage());
                         }
-                    } catch (Exception e) {
-                        System.err.println("Errore nel parsing: " + e.getMessage());
                     }
                 }
-            }
 
-            System.out.println("Libri ricevuti dalla libreria: " + books.size());
-            return books;
+                return books;
+            }
         }
 
         public List<Book> performSearch(String searchType, String searchTerm, String year) throws IOException {
