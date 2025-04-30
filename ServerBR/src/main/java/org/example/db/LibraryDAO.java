@@ -311,6 +311,28 @@ public class LibraryDAO {
         }
     }
 
+    // Metodo da aggiungere alla classe LibraryDAO
+    public boolean verificaLibroInLibreriaUtente(int idUtente, int idLibro) {
+        String sql = "SELECT COUNT(*) FROM librerie_personali lp " +
+                "JOIN contenuto_librerie cl ON lp.id_libreria = cl.id_libreria " +
+                "JOIN libri l ON cl.id_libro = l.id_libro " +
+                "WHERE lp.id_utente = ? AND l.id_libro = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
+            stmt.setInt(1, idUtente);
+            stmt.setInt(2, idLibro);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public void closeConnection() {
         db.closeConnection();
     }

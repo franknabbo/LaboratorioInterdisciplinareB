@@ -58,14 +58,62 @@ public class ClientHandler implements Runnable {
             return handleSearch(request);
         } else if (request.startsWith("CREATE_LIBRARY:")) {
             return handleCreateLibrary(request);
-        } else if(request.startsWith("GET_LIBRARY:")) {
+        } else if (request.startsWith("GET_LIBRARY:")) {
             return handleGetLibrary(request);
-        }else if(request.startsWith("ADD_BOOK_TO_LIBRARY")) {
+        } else if (request.startsWith("ADD_BOOK_TO_LIBRARY")) {
             return handleAddBookToLibrary(request);
-        }
-        else if (request.startsWith("GET_LIBRARY_BOOKS:")) {
+        } else if (request.startsWith("GET_LIBRARY_BOOKS:")) {
             return handleGetLibraryBooks(request);
-        } else { return "ERRORE:Comando non riconosciuto";}
+        } else if (request.startsWith("ADD_RATING:")) {
+            return handleAddRating(request);
+        } else {
+            return "ERRORE:Comando non riconosciuto";
+        }
+    }
+
+    private String handleAddRating(String request) {
+        try {
+            // Formato: ADD_RATING:idUtente:idLibro:stile:contenuto:gradevolezza:originalita:edizione:recensione
+            String[] parts = request.split(":", 9);
+            if (parts.length < 9) {
+                return "RATING_FAILED:Parametri insufficienti";
+            }
+
+            int idUtente = Integer.parseInt(parts[1]);
+            int idLibro = Integer.parseInt(parts[2]);
+            int stile = Integer.parseInt(parts[3]);
+            int contenuto = Integer.parseInt(parts[4]);
+            int gradevolezza = Integer.parseInt(parts[5]);
+            int originalita = Integer.parseInt(parts[6]);
+            int edizione = Integer.parseInt(parts[7]);
+            String recensione = parts[8];
+
+            // Verifica che l'utente abbia il libro nella sua libreria
+            boolean libroInLibreria = libraryDAO.verificaLibroInLibreriaUtente(idUtente, idLibro);
+            if (!libroInLibreria) {
+                return "RATING_FAILED:Il libro non è presente nella tua libreria";
+            }
+
+            // Crea l'oggetto valutazione
+            Rating rating = new Rating(idUtente, idLibro, stile, contenuto, gradevolezza,
+                    originalita, edizione, recensione);
+
+            // Salva la valutazione nel database
+            RatingDAO ratingDAO = new RatingDAO();
+            boolean success = ratingDAO.salvaSuDatabase(rating);
+
+            if (success) {
+                return "RATING_SUCCESS:Valutazione inserita con successo";
+            } else {
+                return "RATING_FAILED:Errore durante il salvataggio della valutazione";
+            }
+        } catch (NumberFormatException e) {
+            return "RATING_FAILED:Formato dei parametri non valido: " + e.getMessage();
+        } catch (IllegalArgumentException e) {
+            return "RATING_FAILED:" + e.getMessage();
+        } catch (Exception e) {
+            return "RATING_FAILED:Errore imprevisto: " + e.getMessage();
+        }
     }
 
     private String handleGetLibrary(String request) {
@@ -184,7 +232,6 @@ public class ClientHandler implements Runnable {
             String searchType = parts[1];
             String searchTerm = parts[2];
             Integer year = null;
-
 
 
             if (searchType.equals("AUTHOR_YEAR") && parts.length >= 4) {
