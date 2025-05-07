@@ -236,6 +236,44 @@ public class EventHandler {
         }
     }
 
+    //metodo per aprire la dialog per l'aggiunta della libreria
+    @FXML
+    private void addRating(ActionEvent event) throws IOException {
+        // Carica il dialog per l'aggiunta delle recensioni
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/addRatingDialog.fxml"));
+        Parent root = loader.load();
+
+        // Ottieni il controller
+        AddRatingDialogController controller = loader.getController();
+
+        // Passa il libro selezionato al controller
+        controller.setBook(selectedBook);
+
+        // Crea una nuova finestra di dialogo
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setDialogPane((DialogPane) root);
+        dialog.setTitle("Aggiungi Recensione");
+
+        // Mostra la dialog e attendi il risultato
+        Optional<ButtonType> result = dialog.showAndWait();
+
+        // Gestisci il risultato solo se l'utente ha premuto OK
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // Ottieni le valutazioni e la recensione dal controller
+            int styleRating = controller.getStyleRating();
+            int contentRating = controller.getContentRating();
+            int appealRating = controller.getAppealRating();
+            int originalityRating = controller.getOriginalityRating();
+            int editionRating = controller.getEditionRating();
+            String reviewText = controller.getReviewText();
+            int averageRating = controller.getAverageRating();
+
+            // Qui dovresti aggiungere il codice per salvare la recensione
+            // Per ora, mostriamo solo un messaggio di successo
+            alertController.showAlertSucces("Recensione aggiunta",
+                    "La tua recensione è stata aggiunta con successo.");
+        }
+    }
     private List<String> getLibraryNames() {
         List<String> libraryNames = new ArrayList<>();
         List<String> libraryEntries = libraryController.getLibraryList();

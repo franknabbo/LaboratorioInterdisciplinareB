@@ -73,7 +73,7 @@
                 <!-- Pulsanti azioni -->
                 <HBox spacing="20.0" alignment="CENTER">
                     <Button fx:id="valutaLibroButton" text="Valuta libro"
-                            styleClass="action-button"/>
+                            styleClass="action-button" onAction="#addRating"/>
                     <Button fx:id="consigliaLibriButton" text="Consiglia libri simili a questo"
                             styleClass="action-button"/>
                 </HBox>

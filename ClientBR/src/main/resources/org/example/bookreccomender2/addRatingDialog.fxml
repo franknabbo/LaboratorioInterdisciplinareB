@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<?import javafx.scene.image.ImageView?>
+<DialogPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.bookreccomender2.controller.AddRatingDialogController"
+            stylesheets="@addRatingDialog.css"
+            prefWidth="500" prefHeight="600"
+            styleClass="review-dialog">
+
+    <content>
+        <VBox spacing="15" alignment="TOP_CENTER" styleClass="main-content">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20" />
+            </padding>
+
+            <!-- Location header -->
+            <ImageView fx:id="bookCoverImage" fitWidth="120" fitHeight="180" preserveRatio="true" />
+
+            <Separator />
+            <TextArea fx:id="title" promptText="Titolo del libro"
+                      prefRowCount="2" wrapText="true" editable="false"
+                      styleClass="title-field" />
+
+            <!-- Rating section -->
+            <GridPane hgap="20" vgap="15" alignment="CENTER">
+                <!-- Stile -->
+                <Label text="Stile" styleClass="category-label"
+                       GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <HBox alignment="CENTER" spacing="5.0" styleClass="rating-container"
+                      GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <FontIcon fx:id="styleS1" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="styleS2" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="styleS3" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="styleS4" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="styleS5" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                </HBox>
+
+                <!-- Contenuto -->
+                <Label text="Contenuto" styleClass="category-label"
+                       GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <HBox alignment="CENTER" spacing="5.0" styleClass="rating-container"
+                      GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <FontIcon fx:id="contentS1" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="contentS2" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="contentS3" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="contentS4" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="contentS5" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                </HBox>
+
+                <!-- Gradevolezza -->
+                <Label text="Gradevolezza" styleClass="category-label"
+                       GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <HBox alignment="CENTER" spacing="5.0" styleClass="rating-container"
+                      GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <FontIcon fx:id="appealS1" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="appealS2" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="appealS3" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="appealS4" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="appealS5" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                </HBox>
+
+                <!-- Originalità -->
+                <Label text="Originalità" styleClass="category-label"
+                       GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <HBox alignment="CENTER" spacing="5.0" styleClass="rating-container"
+                      GridPane.columnIndex="1" GridPane.rowIndex="3">
+                    <FontIcon fx:id="originalityS1" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="originalityS2" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="originalityS3" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="originalityS4" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="originalityS5" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                </HBox>
+
+                <!-- Edizione -->
+                <Label text="Edizione" styleClass="category-label"
+                       GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <HBox alignment="CENTER" spacing="5.0" styleClass="rating-container"
+                      GridPane.columnIndex="1" GridPane.rowIndex="4">
+                    <FontIcon fx:id="editionS1" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="editionS2" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="editionS3" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="editionS4" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                    <FontIcon fx:id="editionS5" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                </HBox>
+
+                <!-- Voto finale -->
+                <Label text="Voto finale" styleClass="category-label"
+                       GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                <HBox alignment="CENTER" spacing="5.0" styleClass="rating-container"
+                        GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <FontIcon fx:id="finalS1" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                        <FontIcon fx:id="finalS2" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                        <FontIcon fx:id="finalS3" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                        <FontIcon fx:id="finalS4" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                        <FontIcon fx:id="finalS5" iconLiteral="fas-star" iconSize="20" styleClass="star-icon" />
+                </HBox>
+            </GridPane>
+
+            <Separator />
+
+            <!-- Review text area -->
+            <TextArea fx:id="reviewText" promptText="Scrivi la tua recensione qui..."
+                      prefRowCount="5" styleClass="review-text" wrapText="true" />
+        </VBox>
+    </content>
+
+    <buttonTypes>
+        <ButtonType fx:constant="OK" />
+        <ButtonType fx:constant="CANCEL" />
+    </buttonTypes>
+</DialogPane>
