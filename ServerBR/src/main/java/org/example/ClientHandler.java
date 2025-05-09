@@ -73,9 +73,9 @@ public class ClientHandler implements Runnable {
 
     private String handleAddRating(String request) {
         try {
-            // Formato: ADD_RATING:idUtente:idLibro:stile:contenuto:gradevolezza:originalita:edizione:recensione
+            // Formato: ADD_RATING:idUtente:idLibro:stile:contenuto:gradevolezza:originalita:edizione:recensione:votofinale
             String[] parts = request.split(":", 9);
-            if (parts.length < 9) {
+            if (parts.length < 10) {
                 return "RATING_FAILED:Parametri insufficienti";
             }
 
@@ -87,6 +87,7 @@ public class ClientHandler implements Runnable {
             int originalita = Integer.parseInt(parts[6]);
             int edizione = Integer.parseInt(parts[7]);
             String recensione = parts[8];
+            int votoFinale = Integer.parseInt(parts[9]);
 
             // Verifica che l'utente abbia il libro nella sua libreria
             boolean libroInLibreria = libraryDAO.verificaLibroInLibreriaUtente(idUtente, idLibro);
@@ -96,7 +97,7 @@ public class ClientHandler implements Runnable {
 
             // Crea l'oggetto valutazione
             Rating rating = new Rating(idUtente, idLibro, stile, contenuto, gradevolezza,
-                    originalita, edizione, recensione);
+                    originalita, edizione, recensione,votoFinale);
 
             // Salva la valutazione nel database
             RatingDAO ratingDAO = new RatingDAO();

@@ -89,6 +89,7 @@ public class EventHandler {
     private final UserManager userManager = new UserManager();
     private final BookClient bookClient = new BookClient();
     private final LibraryController libraryController = new LibraryController();
+    private final RatingController ratingController = new RatingController();
 
     @FXML
     private TitledPane recensioneMiaPane;
@@ -268,10 +269,8 @@ public class EventHandler {
             String reviewText = controller.getReviewText();
             int averageRating = controller.getAverageRating();
 
-            // Qui dovresti aggiungere il codice per salvare la recensione
-            // Per ora, mostriamo solo un messaggio di successo
-            alertController.showAlertSucces("Recensione aggiunta",
-                    "La tua recensione è stata aggiunta con successo.");
+            ratingController.addRating(UserManager.getUserId(), 10, styleRating, contentRating, appealRating,
+                    originalityRating, editionRating, reviewText, averageRating);
         }
     }
     private List<String> getLibraryNames() {

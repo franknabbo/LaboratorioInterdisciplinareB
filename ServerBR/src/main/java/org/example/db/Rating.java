@@ -17,7 +17,7 @@ public class Rating {
 
     // Costruttore
     public Rating(int idUtente, int idLibro, int stile, int contenuto, int gradevolezza,
-                  int originalita, int edizione, String recensione) {
+                  int originalita, int edizione, String recensione, int votoFinale) {
         this.idUtente = idUtente;
         this.idLibro = idLibro;
         setStile(stile);
@@ -26,8 +26,7 @@ public class Rating {
         setOriginalita(originalita);
         setEdizione(edizione);
         setRecensione(recensione);
-        calcolaVotoFinale();
-
+        setVotoFinale(votoFinale);
     }
 
     // Metodi setter con validazione
@@ -61,6 +60,10 @@ public class Rating {
             throw new IllegalArgumentException("La recensione non può superare i 256 caratteri");
         }
         this.recensione = recensione;
+    }
+
+    public void setVotoFinale(int votoFinale) {
+        this.votoFinale = votoFinale;
     }
 
     // Getters
@@ -105,11 +108,6 @@ public class Rating {
     }
 
 
-    // Metodo per calcolare il voto finale
-    private void calcolaVotoFinale() {
-        double media = (stile + contenuto + gradevolezza + originalita + edizione) / 5.0;
-        this.votoFinale = (int) Math.round(media);
-    }
 
     // Validazione del voto (da 1 a 5)
     private void validaVoto(int voto) {
