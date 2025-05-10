@@ -13,12 +13,12 @@ public class RatingDAO {
 
     // Metodo per salvare la valutazione nel database
     public boolean salvaSuDatabase(Rating r) {
-        String sql = "INSERT INTO ValutazioniLibri (idUtente, idLibro, stile, contenuto, gradevolezza, " +
+        String sql = "INSERT INTO valutazioniLibri (user_id, id_libro, stile, contenuto, gradevolezza, " +
                 "originalita, edizione, votoFinale, recensione) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
-            pstmt.setInt(1, r.getIdUtente());
+            pstmt.setString(1, r.getIdUtente());
             pstmt.setInt(2, r.getIdLibro());
             pstmt.setInt(3, r.getStile());
             pstmt.setInt(4, r.getContenuto());
@@ -35,4 +35,5 @@ public class RatingDAO {
             return false;
         }
     }
+
 }

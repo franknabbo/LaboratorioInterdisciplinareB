@@ -23,11 +23,12 @@ public class LibraryController {
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-            // Leggi il messaggio di benvenuto
-            String welcome = in.readLine();
 
             // Invia richiesta di creazione libreria
             out.println("CREATE_LIBRARY:" + UserManager.getUserId() + ":" + libraryName);
+
+            //leggi messaggio di welcome
+            String welcome = in.readLine();
 
             // Gestisci la risposta
             String response = in.readLine();
@@ -65,19 +66,13 @@ public class LibraryController {
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-            // Leggi il messaggio di benvenuto
-            String welcome = in.readLine();
-
             // Invia richiesta di aggiunta libro alla libreria
-            // Formato: ADD_BOOK_TO_LIBRARY:userId:libraryName:titolo|||autore|||categoria|||editore|||anno|||copertina
-            String bookData = selectedBook.getTitle() + "|||" +
-                    selectedBook.getAuthor() + "|||" +
-                    selectedBook.getCategory() + "|||" +
-                    selectedBook.getPublisher() + "|||" +
-                    selectedBook.getPublicationYear() + "|||" +
-                    selectedBook.getCoverUrl();
+            // Formato: ADD_BOOK_TO_LIBRARY:userId:libraryName:book_id
 
-            out.println("ADD_BOOK_TO_LIBRARY:" + UserManager.getUserId() + ":" + libraryName + ":" + bookData);
+
+            out.println("ADD_BOOK_TO_LIBRARY:" + UserManager.getUserId() + ":" + libraryName + ":" + selectedBook.getId());
+
+            String welcome = in.readLine();
 
             // Gestisci la risposta
             String response = in.readLine();

@@ -1,13 +1,11 @@
 package org.example.db;
 
     public class Utente {
-        private int id;
         private String nome;
         private String cognome;
         private String codiceFiscale;
         private String email;
         private String password; // password cifrata
-        private String userId; // nuovo campo
 
         public Utente(String nome, String cognome, String codiceFiscale, String email, String password) {
             this.nome = nome;

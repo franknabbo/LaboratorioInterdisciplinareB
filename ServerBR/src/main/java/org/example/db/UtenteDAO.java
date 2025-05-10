@@ -22,7 +22,6 @@ public class UtenteDAO {
             stmt.setString(2, utente.getCognome());
             stmt.setString(3, utente.getCodiceFiscale());
             stmt.setString(4, utente.getEmail());
-            // La password arriva già hashata dal client
             stmt.setString(5, utente.getPassword());
             stmt.setString(6, userId);
             int righe = stmt.executeUpdate();
@@ -53,17 +52,6 @@ public class UtenteDAO {
                 String risposta = "LOGIN OK:" + userId;
                 return risposta;
             } else {
-                // Query alternativa per verificare se l'utente esiste
-                PreparedStatement check = db.getConnection().prepareStatement(
-                        "SELECT crypted_pass FROM UtentiRegistrati WHERE user_id = ?");
-                check.setString(1, userId);
-                ResultSet checkRs = check.executeQuery();
-
-                if (checkRs.next()) {
-                    String passwordSalvata = checkRs.getString("crypted_pass");
-                } else {
-                }
-
                 return "LOGIN FAILED:Credenziali non valide";
             }
         } catch (SQLException e) {
@@ -74,6 +62,8 @@ public class UtenteDAO {
     public void closeConnection() {
         db.closeConnection();
     }
+
+
     public String generaUserId(String nome, String cognome) {
         String baseUserId = (nome.charAt(0) + cognome).toLowerCase().replaceAll("\\s+", "");
         String userId = baseUserId;

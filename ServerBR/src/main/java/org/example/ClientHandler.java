@@ -73,13 +73,15 @@ public class ClientHandler implements Runnable {
 
     private String handleAddRating(String request) {
         try {
+            boolean flag = false;
             // Formato: ADD_RATING:idUtente:idLibro:stile:contenuto:gradevolezza:originalita:edizione:recensione:votofinale
-            String[] parts = request.split(":", 9);
+            //ADD_RATING:fdelrosso:496:2:2:2:2:2:asd:
+            String[] parts = request.split(":");
             if (parts.length < 10) {
                 return "RATING_FAILED:Parametri insufficienti";
             }
 
-            int idUtente = Integer.parseInt(parts[1]);
+            String idUtente = parts[1];
             int idLibro = Integer.parseInt(parts[2]);
             int stile = Integer.parseInt(parts[3]);
             int contenuto = Integer.parseInt(parts[4]);
@@ -89,11 +91,18 @@ public class ClientHandler implements Runnable {
             String recensione = parts[8];
             int votoFinale = Integer.parseInt(parts[9]);
 
-            // Verifica che l'utente abbia il libro nella sua libreria
-            boolean libroInLibreria = libraryDAO.verificaLibroInLibreriaUtente(idUtente, idLibro);
-            if (!libroInLibreria) {
-                return "RATING_FAILED:Il libro non è presente nella tua libreria";
+            //controllo se il libro è nella libreria dell'utente
+            for(Library library : libraryDAO.getUserLibraries(idUtente)){
+                if(libraryDAO.bookExistsInLibrary(library.getIdLibreria(), idLibro)){
+                    flag = true;
+                    break;
+                }
             }
+
+            if(!flag){
+                return "RATING_FAILED:Il libro non è presente nella libreria dell'utente";
+            }
+
 
             // Crea l'oggetto valutazione
             Rating rating = new Rating(idUtente, idLibro, stile, contenuto, gradevolezza,
@@ -133,7 +142,7 @@ public class ClientHandler implements Runnable {
             response.append("LIBRARY:")
                     .append(library.getIdLibreria()).append("|||")
                     .append(library.getNome()).append("|||")
-                    .append(library.getIdUtente()).append("\n");
+                    .append(library.getUser_id()).append("\n");
         }
         response.append("END_LIBRARIES");
         return response.toString();
@@ -151,20 +160,8 @@ public class ClientHandler implements Runnable {
 
         // Utilizza il LibraryDAO per ottenere i libri della libreria
         List<Book> books = libraryDAO.getLibraryBooks(userId, libraryName);
+        return getString(books);
 
-        // Converti la lista di libri in una stringa formattata
-        StringBuilder response = new StringBuilder("INIZIO_LISTA_LIBRI_LIBRERIA\n");
-        for (Book book : books) {
-            response.append("BOOK:")
-                    .append(book.getTitle()).append("|||")
-                    .append(book.getAuthor()).append("|||")
-                    .append(book.getCategory()).append("|||")
-                    .append(book.getPublisher()).append("|||")
-                    .append(book.getPublicationYear()).append("|||")
-                    .append(book.getCoverUrl()).append("\n");
-        }
-        response.append("END_LIBRARY_BOOKS");
-        return response.toString();
     }
 
     private String handleRegistration(String request) {
@@ -215,7 +212,6 @@ public class ClientHandler implements Runnable {
 
             int number = Integer.parseInt(parts[1]);
             List<Book> books = bookDAO.getBooks(number);
-            //stampa books
             return getString(books);
         } catch (Exception e) {
             return "ERRORE:" + e.getMessage();
@@ -266,7 +262,7 @@ public class ClientHandler implements Runnable {
     }
 
     private String handleAddBookToLibrary(String request) {
-        // Parsa la richiesta: ADD_BOOK_TO_LIBRARY:userId:libraryName:titolo|||autore|||...
+        // Parsa la richiesta: ADD_BOOK_TO_LIBRARY:userID:libraryname:idbook
         String[] parts = request.split(":", 4);
         if (parts.length < 4) {
             return "BOOK_ADD_FAILED:Formato richiesta non valido";
@@ -274,26 +270,15 @@ public class ClientHandler implements Runnable {
 
         String userId = parts[1];
         String libraryName = parts[2];
-        String bookData = parts[3];
 
-        // Parsa i dati del libro
-        String[] bookParts = bookData.split("\\|\\|\\|");
-        if (bookParts.length < 6) {
-            return "BOOK_ADD_FAILED:Dati libro non validi";
+        try {
+            int bookId = Integer.parseInt(parts[3]);
+
+            // Aggiungi il libro alla libreria usando l'ID
+            return libraryDAO.addBookToLibrary(userId, libraryName, bookId);
+        } catch (NumberFormatException e) {
+            return "BOOK_ADD_FAILED:ID libro non valido";
         }
-
-        String title = bookParts[0];
-        String author = bookParts[1];
-        String category = bookParts[2];
-        String publisher = bookParts[3];
-        String year = bookParts[4];
-        String coverUrl = bookParts[5];
-
-        // Crea l'oggetto libro
-        Book book = new Book(0, title, author, category, publisher, Integer.parseInt(year), coverUrl);
-
-        // Aggiungi il libro alla libreria
-        return libraryDAO.addBookToLibrary(userId, libraryName, book);
     }
 
     private void closeResources() {
@@ -316,6 +301,7 @@ public class ClientHandler implements Runnable {
         StringBuilder response = new StringBuilder("INIZIO_LISTA_LIBRI\n");
         for (Book book : books) {
             response.append("BOOK:")
+                    .append(book.getId()).append("|||")
                     .append(book.getTitle()).append("|||")
                     .append(book.getAuthor()).append("|||")
                     .append(book.getCategory()).append("|||")

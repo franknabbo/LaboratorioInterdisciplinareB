@@ -2,12 +2,12 @@ package org.example.db;
 
 public class Library {
     private int idLibreria;
-    private int idUtente;
+    private String user_id;
     private String nome;
 
-    public Library(int idLibreria, int idUtente, String nome) {
+    public Library(int idLibreria, String user_id, String nome) {
         this.idLibreria = idLibreria;
-        this.idUtente = idUtente;
+        this.user_id = user_id;
         this.nome = nome;
     }
 
@@ -15,8 +15,8 @@ public class Library {
         return idLibreria;
     }
 
-    public int getIdUtente() {
-        return idUtente;
+    public String getUser_id() {
+        return user_id;
     }
 
     public String getNome() {

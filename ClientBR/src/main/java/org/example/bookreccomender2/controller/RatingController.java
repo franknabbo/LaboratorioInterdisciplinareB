@@ -17,7 +17,7 @@ public class RatingController {
     public RatingController() {
     }
 
-    public boolean addRating(String idUtente, int idLibro, int styleRating, int contentRating, int appealRating,
+    public boolean addRating(int idLibro, int styleRating, int contentRating, int appealRating,
                              int originalityRating, int editionRating, String reviewText, int averageRating) {
         try (Socket socket = new Socket("localhost", 8080);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -37,7 +37,8 @@ public class RatingController {
                 alertController.showAlertSucces("Recensione aggiunta", "La recensione è stata aggiunta con successo");
                 return true;
             } else {
-                alertController.showAlert("Errore pubblicazione recensione", "La recensione non è stata aggiunta");
+
+                alertController.showAlert("Errore pubblicazione recensione", response.split(":", 2)[1]);
                 return false;
             }
         } catch (IOException e) {

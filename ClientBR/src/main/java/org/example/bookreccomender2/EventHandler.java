@@ -125,7 +125,8 @@ public class EventHandler {
     }
 
     @FXML
-    protected void switchToSelectedLibrary(MouseEvent event, String libraryName) { sceneController.switchToLibraryBooks(event, libraryName);}
+    protected void switchToSelectedLibrary(MouseEvent event, String libraryName) {
+        sceneController.switchToLibraryBooks(event, libraryName);}
 
     @FXML
     protected void loginUser(ActionEvent event) {
@@ -269,7 +270,7 @@ public class EventHandler {
             String reviewText = controller.getReviewText();
             int averageRating = controller.getAverageRating();
 
-            ratingController.addRating(UserManager.getUserId(), 10, styleRating, contentRating, appealRating,
+            ratingController.addRating(selectedBook.getId(), styleRating, contentRating, appealRating,
                     originalityRating, editionRating, reviewText, averageRating);
         }
     }
@@ -794,6 +795,7 @@ public class EventHandler {
 
     private void loadLibraryBooks(String libraryName) {
         // Ottieni l'userID attuale
+
         String userId = UserManager.getUserId();
         new Thread(() -> {
             try {

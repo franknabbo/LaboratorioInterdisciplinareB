@@ -53,9 +53,9 @@
 
                     if (reading && line.startsWith("BOOK:")) {
                         try {
-                            // Formato corretto da server: BOOK:titolo|||autore|||categoria|||editore|||anno_pubblicazione|||copertina
+                            // Formato corretto da server: BOOK:id|||titolo|||autore|||categoria|||editore|||anno_pubblicazione|||copertina
                             String[] parts = line.split("BOOK:|\\|\\|\\|");
-                            if (parts.length >= 7) {
+                            if (parts.length >= 8) {
                                 Book book = getBook(parts);
                                 books.add(book);
                             } else {
@@ -72,21 +72,21 @@
         }
 
         private static Book getBook(String[] parts) {
-            String title = parts[1];
-            String author = parts[2];
-            String category = parts[3];
-            String publisher = parts[4];
-            String publicationYear = parts[5];
+            int id = Integer.parseInt(parts[1]);
+            String title = parts[2];
+            String author = parts[3];
+            String category = parts[4];
+            String publisher = parts[5];
+            String publicationYear = parts[6];
 
             // La parte coverUrl è opzionale, verifica se esiste
             String coverUrl = "null";
-            if (parts.length > 6) {
-                coverUrl = parts[6];
+            if (parts.length > 7) {
+                coverUrl = parts[7];
             }
 
-            // Crea il libro con il nuovo costruttore
-            Book book = new Book(title, author, category, publisher, publicationYear, coverUrl);
-            return book;
+            // Crea il libro con il costruttore che accetta 7 parametri
+            return new Book(id, title, author, category, publisher, publicationYear, coverUrl);
         }
 
         public List<Book> getLibraryBooks(String userId, String libraryName) throws IOException {
@@ -98,29 +98,40 @@
 
                 // Invia la richiesta
                 String request = "GET_LIBRARY_BOOKS:" + userId + ":" + libraryName;
+
+                // Leggi il messaggio di benvenuto
+                String welcome = in.readLine();
+
                 out.println(request);
                 // Legge la risposta
                 String line;
                 boolean reading = false;
 
                 while ((line = in.readLine()) != null) {
-                    if (line.equals("INIZIO_LISTA_LIBRI_LIBRERIA")) {
+                    if (line.equals("INIZIO_LISTA_LIBRI")) {
                         reading = true;
                         continue;
                     }
 
-                    if (line.equals("END_LIBRARY_BOOKS")) {
+                    if (line.equals("END_BOOKS")) {
                         break;
                     }
 
                     if (reading && line.startsWith("BOOK:")) {
                         try {
+                            // Formato corretto da server: BOOK:titolo|||autore|||categoria|||editore|||anno_pubblicazione|||copertina
                             String[] parts = line.split("BOOK:|\\|\\|\\|");
-                            if (parts.length >= 7) {
-                                Book book = getBook(parts);
+                            if (parts.length >= 8) {
+                                int id = Integer.parseInt(parts[1]);
+                                String title = parts[2];
+                                String author = parts[3];
+                                String category = parts[4];
+                                String publisher = parts[5];
+                                String publicationYear = parts[6];
+                                String coverUrl = parts[7];
+
+                                Book book = new Book(id, title, author, category, publisher, publicationYear, coverUrl);
                                 books.add(book);
-                            } else {
-                                System.err.println("Formato libro non valido: " + line);
                             }
                         } catch (Exception e) {
                             System.err.println("Errore nel parsing: " + e.getMessage());
@@ -171,15 +182,16 @@
                     try {
                         // Formato corretto da server: BOOK:titolo|||autore|||categoria|||editore|||anno_pubblicazione|||copertina
                         String[] parts = line.split("BOOK:|\\|\\|\\|");
-                        if (parts.length >= 7) {
-                            String title = parts[1];
-                            String author = parts[2];
-                            String category = parts[3];
-                            String publisher = parts[4];
-                            String publicationYear = parts[5];
-                            String coverUrl = parts[6];
-                            // Crea un oggetto Book e aggiungilo alla lista
-                            Book book = new Book(title, author, category, publisher, publicationYear, coverUrl);
+                        if (parts.length >= 8) {
+                            int id = Integer.parseInt(parts[1]);
+                            String title = parts[2];
+                            String author = parts[3];
+                            String category = parts[4];
+                            String publisher = parts[5];
+                            String publicationYear = parts[6];
+                            String coverUrl = parts[7];
+
+                            Book book = new Book(id, title, author, category, publisher, publicationYear, coverUrl);
                             results.add(book);
                         }
                     } catch (Exception e) {

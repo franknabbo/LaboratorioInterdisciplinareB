@@ -9,7 +9,8 @@ public class Book {
     private String publicationYear;
     private String coverUrl; // Nuovo campo per la copertina
 
-    public Book(String title, String author, String category, String publisher, String publicationYear, String coverUrl) {
+    public Book(int id, String title, String author, String category, String publisher, String publicationYear, String coverUrl) {
+        this.id = id;
         this.title = title;
         this.author = author;
         this.category = category;
@@ -28,7 +29,32 @@ public class Book {
     public String getCoverUrl() { return coverUrl; }
 
     // Setters
-    public void setId(int id) { this.id = id; }
-    public void setTitle(String title) { this.title = title; }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public void setPublicationYear(String publicationYear) {
+        this.publicationYear = publicationYear;
+    }
+
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
+    }
 }

@@ -3,8 +3,7 @@ package org.example.db;
 
 
 public class Rating {
-    private int idValutazione;
-    private int idUtente;
+    private String idUtente;
     private int idLibro;
     private int stile;           // Valutazione da 1 a 5
     private int contenuto;       // Valutazione da 1 a 5
@@ -16,7 +15,7 @@ public class Rating {
 
 
     // Costruttore
-    public Rating(int idUtente, int idLibro, int stile, int contenuto, int gradevolezza,
+    public Rating(String idUtente, int idLibro, int stile, int contenuto, int gradevolezza,
                   int originalita, int edizione, String recensione, int votoFinale) {
         this.idUtente = idUtente;
         this.idLibro = idLibro;
@@ -66,12 +65,7 @@ public class Rating {
         this.votoFinale = votoFinale;
     }
 
-    // Getters
-    public int getIdValutazione() {
-        return idValutazione;
-    }
-
-    public int getIdUtente() {
+    public String getIdUtente() {
         return idUtente;
     }
 

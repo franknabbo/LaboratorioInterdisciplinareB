@@ -23,31 +23,17 @@ public class LibraryDAO {
             return "LIBRARY_CREATION_FAILED:UserId o nome libreria mancante";
         }
 
-        // Recupera l'id_utente dal database usando userId
-        int idUtente = getUserIdNumeric(userId);
-        if (idUtente == -1) {
-            return "LIBRARY_CREATION_FAILED:Utente non trovato";
-        }
-
         // Verifica che non esista già una libreria con lo stesso nome
-        if (libraryExists(idUtente, libraryName)) {
+        if (libraryExists(userId, libraryName)) {
             return "LIBRARY_CREATION_FAILED:Esiste già una libreria con questo nome";
-        }
-
-        // Ottieni il prossimo ID disponibile per la libreria
-        int nextLibraryId = getNextLibraryId();
-        if (nextLibraryId == -1) {
-            return "LIBRARY_CREATION_FAILED:Errore nella generazione dell'ID libreria";
         }
 
         // Inserisci la nuova libreria nel database
         try {
             PreparedStatement stmt = db.getConnection().prepareStatement(
-                    "INSERT INTO librerie(id_libreria, id_utente, nome) VALUES (?, ?, ?)");
-
-            stmt.setInt(1, nextLibraryId);
-            stmt.setInt(2, idUtente);
-            stmt.setString(3, libraryName);
+                    "INSERT INTO librerie(user_id, nome) VALUES (?, ?)");
+            stmt.setString(1, userId);
+            stmt.setString(2, libraryName);
 
             int righe = stmt.executeUpdate();
 
@@ -67,14 +53,9 @@ public class LibraryDAO {
      */
     public List<Book> getLibraryBooks(String userId, String libraryName) {
         List<Book> books = new ArrayList<>();
-        int idUtente = getUserIdNumeric(userId);
-
-        if (idUtente == -1) {
-            return books; // Utente non trovato, ritorna lista vuota
-        }
 
         // Trova l'ID della libreria
-        int idLibreria = getLibraryId(idUtente, libraryName);
+        int idLibreria = getLibraryId(userId, libraryName);
         if (idLibreria == -1) {
             return books; // Libreria non trovata, ritorna lista vuota
         }
@@ -105,34 +86,15 @@ public class LibraryDAO {
         return books;
     }
 
-    /**
-     * Ottiene l'ID numerico dell'utente dal suo userId
-     */
-    public int getUserIdNumeric(String userId) {
-        try {
-            String sql = "SELECT id_utente FROM UtentiRegistrati WHERE user_id = ?";
-            PreparedStatement stmt = db.getConnection().prepareStatement(sql);
-            stmt.setString(1, userId);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt("id_utente");
-            }
-            return -1; // Utente non trovato
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
 
     /**
      * Verifica se esiste già una libreria con lo stesso nome per l'utente
      */
-    public boolean libraryExists(int idUtente, String libraryName) {
+    public boolean libraryExists(String user_id, String libraryName) {
         try {
-            String sql = "SELECT COUNT(*) FROM Librerie WHERE id_utente = ? AND nome = ?";
+            String sql = "SELECT COUNT(*) FROM Librerie WHERE user_id = ? AND nome = ?";
             PreparedStatement stmt = db.getConnection().prepareStatement(sql);
-            stmt.setInt(1, idUtente);
+            stmt.setString(1, user_id);
             stmt.setString(2, libraryName);
             ResultSet rs = stmt.executeQuery();
 
@@ -146,45 +108,23 @@ public class LibraryDAO {
         }
     }
 
-    /**
-     * Ottiene il prossimo ID disponibile per la libreria
-     */
-    private int getNextLibraryId() {
-        try {
-            PreparedStatement idStmt = db.getConnection().prepareStatement(
-                    "SELECT COALESCE(MAX(id_libreria), 0) + 1 AS next_id FROM librerie");
-            ResultSet idRs = idStmt.executeQuery();
-            if (idRs.next()) {
-                return idRs.getInt("next_id");
-            }
-            return -1;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
 
     /**
      * Ottiene tutte le librerie di un utente
      */
     public List<Library> getUserLibraries(String userId) {
         List<Library> libraries = new ArrayList<>();
-        int idUtente = getUserIdNumeric(userId);
-
-        if (idUtente == -1) {
-            return libraries; // Utente non trovato, ritorna lista vuota
-        }
 
         try {
-            String sql = "SELECT * FROM Librerie WHERE id_utente = ? ORDER BY nome";
+            String sql = "SELECT * FROM Librerie WHERE user_id = ? ORDER BY nome";
             PreparedStatement stmt = db.getConnection().prepareStatement(sql);
-            stmt.setInt(1, idUtente);
+            stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
                 Library library = new Library(
                         rs.getInt("id_libreria"),
-                        rs.getInt("id_utente"),
+                        rs.getString("user_id"),
                         rs.getString("nome")
                 );
                 libraries.add(library);
@@ -199,26 +139,19 @@ public class LibraryDAO {
     /**
      * Aggiunge un libro a una libreria specifica
      */
-    public String addBookToLibrary(String userId, String libraryName, Book book) {
+    public String addBookToLibrary(String userId, String libraryName, int idLibro) {
         // Verifica che userId, libraryName e book non siano vuoti
-        if (userId.isEmpty() || libraryName.isEmpty() || book == null) {
+        if (userId.isEmpty() || libraryName.isEmpty() || idLibro == 0) {
             return "BOOK_ADD_FAILED:Parametri mancanti";
         }
 
-        // Recupera l'id_utente
-        int idUtente = getUserIdNumeric(userId);
-        if (idUtente == -1) {
-            return "BOOK_ADD_FAILED:Utente non trovato";
-        }
 
         // Trova l'ID della libreria
-        int idLibreria = getLibraryId(idUtente, libraryName);
+        int idLibreria = getLibraryId(userId, libraryName); // ?
         if (idLibreria == -1) {
             return "BOOK_ADD_FAILED:Libreria non trovata";
         }
 
-        // Verifica che il libro esista nel database
-        int idLibro = getBookId(book.getTitle(), book.getAuthor());
         if (idLibro == -1) {
             return "BOOK_ADD_FAILED:Libro non trovato nel catalogo";
         }
@@ -251,11 +184,11 @@ public class LibraryDAO {
     /**
      * Ottiene l'ID di una libreria dato il nome e l'ID dell'utente
      */
-    private int getLibraryId(int idUtente, String libraryName) {
+    private int getLibraryId(String userId, String libraryName) {
         try {
-            String sql = "SELECT id_libreria FROM Librerie WHERE id_utente = ? AND nome = ?";
+            String sql = "SELECT id_libreria FROM Librerie WHERE user_id = ? AND nome = ?";
             PreparedStatement stmt = db.getConnection().prepareStatement(sql);
-            stmt.setInt(1, idUtente);
+            stmt.setString(1, userId);
             stmt.setString(2, libraryName);
             ResultSet rs = stmt.executeQuery();
 
@@ -270,30 +203,9 @@ public class LibraryDAO {
     }
 
     /**
-     * Ottiene l'ID di un libro dato il titolo e l'autore
-     */
-    private int getBookId(String title, String author) {
-        try {
-            String sql = "SELECT id_libro FROM Libri WHERE titolo = ? AND autore = ?";
-            PreparedStatement stmt = db.getConnection().prepareStatement(sql);
-            stmt.setString(1, title);
-            stmt.setString(2, author);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt("id_libro");
-            }
-            return -1; // Libro non trovato
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    /**
      * Verifica se un libro è già presente in una libreria
      */
-    private boolean bookExistsInLibrary(int idLibreria, int idLibro) {
+    public boolean bookExistsInLibrary(int idLibreria, int idLibro) {
         try {
             String sql = "SELECT COUNT(*) FROM librerie_libri WHERE id_libreria = ? AND id_libro = ?";
             PreparedStatement stmt = db.getConnection().prepareStatement(sql);
@@ -311,27 +223,6 @@ public class LibraryDAO {
         }
     }
 
-    // Metodo da aggiungere alla classe LibraryDAO
-    public boolean verificaLibroInLibreriaUtente(int idUtente, int idLibro) {
-        String sql = "SELECT COUNT(*) FROM librerie_personali lp " +
-                "JOIN contenuto_librerie cl ON lp.id_libreria = cl.id_libreria " +
-                "JOIN libri l ON cl.id_libro = l.id_libro " +
-                "WHERE lp.id_utente = ? AND l.id_libro = ?";
-
-        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
-            stmt.setInt(1, idUtente);
-            stmt.setInt(2, idLibro);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
 
     public void closeConnection() {
         db.closeConnection();
