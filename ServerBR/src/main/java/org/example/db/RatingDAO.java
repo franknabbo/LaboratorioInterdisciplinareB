@@ -2,7 +2,10 @@ package org.example.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RatingDAO {
     private final DataBaseConnection db;
@@ -34,6 +37,36 @@ public class RatingDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    //getRatingsFromBook
+    public List<Rating> getRatingsFromBook(int bookId) {
+        List<Rating> ratings = new ArrayList<>();
+        String sql = "SELECT * FROM valutazioniLibri WHERE id_libro = ?";
+
+        try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
+            pstmt.setInt(1, bookId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Rating rating = new Rating(
+                        rs.getString("user_id"),
+                        rs.getInt("id_libro"),
+                        rs.getInt("stile"),
+                        rs.getInt("contenuto"),
+                        rs.getInt("gradevolezza"),
+                        rs.getInt("originalita"),
+                        rs.getInt("edizione"),
+                        rs.getInt("votoFinale"),
+                        rs.getString("recensione")
+                );
+                ratings.add(rating);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return ratings;
     }
 
 }

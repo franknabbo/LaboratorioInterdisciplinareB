@@ -66,7 +66,9 @@ public class ClientHandler implements Runnable {
             return handleGetLibraryBooks(request);
         } else if (request.startsWith("ADD_RATING:")) {
             return handleAddRating(request);
-        } else {
+        } else if (request.startsWith("GET_RATING:")) {
+            return handleGetRatingFromBook(request);
+        }else {
             return "ERRORE:Comando non riconosciuto";
         }
     }
@@ -74,9 +76,9 @@ public class ClientHandler implements Runnable {
     private String handleAddRating(String request) {
         try {
             boolean flag = false;
-            // Formato: ADD_RATING:idUtente:idLibro:stile:contenuto:gradevolezza:originalita:edizione:recensione:votofinale
-            //ADD_RATING:fdelrosso:496:2:2:2:2:2:asd:
-            String[] parts = request.split(":");
+            // Formato: ADD_RATING:idUtente:idLibro:stile:contenuto:gradevolezza:originalita:edizione:votofinale:recensione
+
+            String[] parts = request.split(":(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
             if (parts.length < 10) {
                 return "RATING_FAILED:Parametri insufficienti";
             }
@@ -88,8 +90,9 @@ public class ClientHandler implements Runnable {
             int gradevolezza = Integer.parseInt(parts[5]);
             int originalita = Integer.parseInt(parts[6]);
             int edizione = Integer.parseInt(parts[7]);
-            String recensione = parts[8];
-            int votoFinale = Integer.parseInt(parts[9]);
+            int votoFinale = Integer.parseInt(parts[8]);
+            String recensione = parts[9];
+
 
             //controllo se il libro è nella libreria dell'utente
             for(Library library : libraryDAO.getUserLibraries(idUtente)){
@@ -106,7 +109,7 @@ public class ClientHandler implements Runnable {
 
             // Crea l'oggetto valutazione
             Rating rating = new Rating(idUtente, idLibro, stile, contenuto, gradevolezza,
-                    originalita, edizione, recensione,votoFinale);
+                    originalita, edizione, votoFinale, recensione);
 
             // Salva la valutazione nel database
             RatingDAO ratingDAO = new RatingDAO();
@@ -124,6 +127,45 @@ public class ClientHandler implements Runnable {
         } catch (Exception e) {
             return "RATING_FAILED:Errore imprevisto: " + e.getMessage();
         }
+    }
+
+
+    // Formato: GET_RATING_FROM_BOOK:idLibro
+    private String handleGetRatingFromBook(String request){
+        try {
+            String[] parts = request.split(":");
+            if (parts.length < 2) {
+                return "RATING_RETRIEVAL_FAILED:Parametri insufficienti";
+            }
+
+            int idLibro = Integer.parseInt(parts[1]);
+            RatingDAO ratingDAO = new RatingDAO();
+            List<Rating> ratings = ratingDAO.getRatingsFromBook(idLibro);
+
+            // Converti la lista di valutazioni in una stringa formattata
+            StringBuilder response = new StringBuilder("INIZIO_LISTA_RATING\n");
+            for (Rating rating : ratings) {
+                response.append("RATING:")
+                        .append(rating.getIdUtente()).append(":")
+                        .append(rating.getIdLibro()).append(":")
+                        .append(rating.getStile()).append(":")
+                        .append(rating.getContenuto()).append(":")
+                        .append(rating.getGradevolezza()).append(":")
+                        .append(rating.getOriginalita()).append(":")
+                        .append(rating.getEdizione()).append(":")
+                        .append(rating.getVotoFinale()).append(":")
+                        .append(rating.getRecensione()).append("\n");
+            }
+            response.append("END_RATINGS");
+            System.out.println(response.toString());
+            return response.toString();
+        } catch (NumberFormatException e) {
+            return "RATING_RETRIEVAL_FAILED:Formato dei parametri non valido: " + e.getMessage();
+        } catch (Exception e) {
+            return "RATING_RETRIEVAL_FAILED:Errore imprevisto: " + e.getMessage();
+        }
+
+
     }
 
     private String handleGetLibrary(String request) {

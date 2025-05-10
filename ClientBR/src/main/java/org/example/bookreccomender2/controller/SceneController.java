@@ -9,8 +9,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.bookreccomender2.Book;
 import org.example.bookreccomender2.EventHandler;
+import org.example.bookreccomender2.Rating;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SceneController {
 
@@ -23,7 +26,7 @@ public class SceneController {
     public void switchToRegister(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/register-view.fxml"));
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 700, 700);
             stage.setScene(scene);
             stage.show();
@@ -40,7 +43,7 @@ public class SceneController {
                     "/org/example/bookreccomender2/homeNotLogged-view.fxml";
 
             Parent root = FXMLLoader.load(getClass().getResource(viewFile));
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 700, 700);
             stage.setScene(scene);
             stage.show();
@@ -53,7 +56,7 @@ public class SceneController {
     public void switchToLogin(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/login-view.fxml"));
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 700, 700);
             stage.setScene(scene);
             stage.show();
@@ -77,6 +80,11 @@ public class SceneController {
             scene = new Scene(root, 700, 700);
             stage.setScene(scene);
             stage.show();
+            List<Rating> list = new ArrayList<>();
+            RatingController ratingController = new RatingController();
+
+            // todo fa il metodo ratingController.fetchRatings(selectedBook.getId()) e mette i risultati in vista
+
         } catch (IOException e) {
             e.printStackTrace();
             alertController.showAlert("Errore", "Impossibile aprire la pagina del libro: " + e.getMessage());
@@ -86,7 +94,7 @@ public class SceneController {
     public void switchToLibrary(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/library-view.fxml"));
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 700, 700);
             stage.setScene(scene);
             stage.show();

@@ -1,6 +1,4 @@
-package org.example.db;
-
-
+package org.example.bookreccomender2;
 
 public class Rating {
     private String idUtente;
@@ -16,7 +14,7 @@ public class Rating {
 
     // Costruttore
     public Rating(String idUtente, int idLibro, int stile, int contenuto, int gradevolezza,
-                  int originalita, int edizione, int votoFinale, String recensione ) {
+                  int originalita, int edizione, int votoFinale, String recensione) {
         this.idUtente = idUtente;
         this.idLibro = idLibro;
         setStile(stile);
@@ -101,7 +99,20 @@ public class Rating {
         return recensione;
     }
 
-
+    @Override
+    public String toString() {
+        return "Rating{" +
+                "idUtente='" + idUtente + '\'' +
+                ", idLibro=" + idLibro +
+                ", stile=" + stile +
+                ", contenuto=" + contenuto +
+                ", gradevolezza=" + gradevolezza +
+                ", originalita=" + originalita +
+                ", edizione=" + edizione +
+                ", votoFinale=" + votoFinale +
+                ", recensione='" + recensione + '\'' +
+                '}';
+    }
 
     // Validazione del voto (da 1 a 5)
     private void validaVoto(int voto) {
