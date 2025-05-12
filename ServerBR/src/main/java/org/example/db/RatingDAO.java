@@ -31,7 +31,6 @@ public class RatingDAO {
             pstmt.setInt(8, r.getVotoFinale());
             pstmt.setString(9, r.getRecensione());
 
-
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

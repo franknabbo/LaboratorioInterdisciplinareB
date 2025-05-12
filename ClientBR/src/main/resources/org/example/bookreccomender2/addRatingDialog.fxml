@@ -21,11 +21,7 @@
 
             <!-- Location header -->
             <ImageView fx:id="bookCoverImage" fitWidth="120" fitHeight="180" preserveRatio="true" />
-
             <Separator />
-            <TextArea fx:id="title" promptText="Titolo del libro"
-                      prefRowCount="2" wrapText="true" editable="false"
-                      styleClass="title-field" />
 
             <!-- Rating section -->
             <GridPane hgap="20" vgap="15" alignment="CENTER">

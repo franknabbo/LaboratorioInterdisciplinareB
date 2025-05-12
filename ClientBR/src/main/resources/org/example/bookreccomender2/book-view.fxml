@@ -6,6 +6,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import org.example.bookreccomender2.controller.UserManager?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -71,7 +72,8 @@
                 </TitledPane>
 
                 <!-- Pulsanti azioni -->
-                <HBox spacing="20.0" alignment="CENTER">
+                <!-- Pulsanti azioni -->
+                <HBox spacing="20.0" alignment="CENTER" fx:id="actionButtonsContainer">
                     <Button fx:id="valutaLibroButton" text="Valuta libro"
                             styleClass="action-button" onAction="#addRating"/>
                     <Button fx:id="consigliaLibriButton" text="Consiglia libri simili a questo"

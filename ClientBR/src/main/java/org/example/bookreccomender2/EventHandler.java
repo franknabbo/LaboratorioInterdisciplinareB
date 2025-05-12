@@ -75,6 +75,8 @@ public class EventHandler {
     @FXML
     private Label annoLabel;
     @FXML
+    private Button addRatingButton;
+    @FXML
     private ImageView coverImage;
     private int currentPage = 1;
     private final int booksPerPage = 25;
@@ -83,6 +85,12 @@ public class EventHandler {
     private Book selectedBook;
     @FXML
     private VBox librariesContainer; // Aggiungi questa variabile
+    @FXML
+    private Button valutaLibroButton;
+    @FXML
+    private Button consigliaLibriButton;
+    @FXML
+    private Button aggiungiLibreriaButton;
 
     private final AlertController alertController = new AlertController();
     private final SceneController sceneController = new SceneController();
@@ -117,6 +125,8 @@ public class EventHandler {
     @FXML
     private void switchToBookView(MouseEvent event) {
         sceneController.switchToBookView(event, selectedBook);
+        //se è loggato allora fa vedere i bot
+
     }
 
     @FXML
@@ -166,6 +176,10 @@ public class EventHandler {
         if (usernameLabel != null && UserManager.isLoggedIn()) {
             usernameLabel.setText(UserManager.getUserId());
         }
+        if(searchField != null) {
+            searchField.setPromptText("Cerca un libro...");
+        }
+        //configura la visulizzazione dei bottoni valuta zione e aggiunta alla libreria e consiglia libro solo se loggati
 
         // Configura il ComboBox per il tipo di ricerca
         if (searchTypeCombo != null) {
@@ -451,18 +465,19 @@ public class EventHandler {
         if (annoLabel != null) annoLabel.setText(book.getPublicationYear());
 
         // Gestisci la visibilità delle sezioni in base allo stato di login
-        if (recensioneMiaPane != null) {
-            recensioneMiaPane.setVisible(UserManager.isLoggedIn());
-            recensioneMiaPane.setManaged(UserManager.isLoggedIn());
+        if (valutaLibroButton != null) {
+            valutaLibroButton.setVisible(UserManager.isLoggedIn());
+            valutaLibroButton.setManaged(UserManager.isLoggedIn());
         }
 
-        if (consigliMieiPane != null) {
-            consigliMieiPane.setVisible(UserManager.isLoggedIn());
-            consigliMieiPane.setManaged(UserManager.isLoggedIn());
+        if (consigliaLibriButton != null) {
+            consigliaLibriButton.setVisible(UserManager.isLoggedIn());
+            consigliaLibriButton.setManaged(UserManager.isLoggedIn());
         }
-        if (addToLibraryButton != null) {
-            addToLibraryButton.setVisible(UserManager.isLoggedIn());
-            addToLibraryButton.setManaged(UserManager.isLoggedIn());
+
+        if (aggiungiLibreriaButton != null) {
+            aggiungiLibreriaButton.setVisible(UserManager.isLoggedIn());
+            aggiungiLibreriaButton.setManaged(UserManager.isLoggedIn());
         }
 
 
@@ -537,6 +552,10 @@ public class EventHandler {
                 });
 
                 coverView.setImage(coverImage);
+
+
+
+
             } catch (Exception e) {
                 coverView.setImage(new Image("/logoBookRecomender.png"));
             }
@@ -576,13 +595,13 @@ public class EventHandler {
         // Aggiungi copertina e contenitore di testo all'elemento libro
         bookItem.getChildren().addAll(coverView, contentBox);
 
+
         bookItem.setCursor(Cursor.HAND);
         bookItem.setOnMouseClicked(event -> {
             selectedBook = book;
             switchToBookView(event);
         });
 
-        // Aggiungi al container
         booksContainer.getChildren().add(bookItem);
     }
 
