@@ -40,7 +40,7 @@ public class RatingDAO {
     }
 
     //getRatingsFromBook
-    public List<Rating> getRatingsFromBook(int bookId) {
+    public Rating getRatingsFromBook(int bookId) {
         List<Rating> ratings = new ArrayList<>();
         String sql = "SELECT * FROM valutazioniLibri WHERE id_libro = ?";
 
@@ -66,7 +66,41 @@ public class RatingDAO {
             e.printStackTrace();
         }
 
-        return ratings;
+        return mediaTotale(ratings);
+    }
+//Metodo per fare una media totale delle valutazioni
+    public  Rating mediaTotale(List<Rating> ratings) {
+        double mediaStile = 0;
+        double mediaContenuto = 0;
+        double mediaGradevolezza = 0;
+        double mediaOriginalita = 0;
+        double mediaEdizione = 0;
+        double mediaVotoFinale = 0;
+        Rating media = new Rating();
+        if(ratings.isEmpty()){
+            return media;
+        }
+        for(Rating r : ratings){
+            mediaStile += r.getStile();
+            mediaContenuto += r.getContenuto();
+            mediaGradevolezza += r.getGradevolezza();
+            mediaOriginalita += r.getOriginalita();
+            mediaEdizione += r.getEdizione();
+            mediaVotoFinale += r.getVotoFinale();
+        }
+        mediaStile /= ratings.size();
+        mediaContenuto /= ratings.size();
+        mediaGradevolezza /= ratings.size();
+        mediaOriginalita /= ratings.size();
+        mediaEdizione /= ratings.size();
+        mediaVotoFinale /= ratings.size();
+        media.setStile((int) Math.round(mediaStile));
+        media.setContenuto((int) Math.round(mediaContenuto));
+        media.setGradevolezza((int) Math.round(mediaGradevolezza));
+        media.setOriginalita((int) Math.round(mediaOriginalita));
+        media.setEdizione((int) Math.round(mediaEdizione));
+        media.setVotoFinale((int) Math.round(mediaVotoFinale));
+        return media;
     }
 
 }

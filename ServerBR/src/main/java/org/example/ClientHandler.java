@@ -68,7 +68,7 @@ public class ClientHandler implements Runnable {
             return handleAddRating(request);
         } else if (request.startsWith("GET_RATING:")) {
             return handleGetRatingFromBook(request);
-        }else {
+        } else {
             return "ERRORE:Comando non riconosciuto";
         }
     }
@@ -95,14 +95,14 @@ public class ClientHandler implements Runnable {
 
 
             //controllo se il libro è nella libreria dell'utente
-            for(Library library : libraryDAO.getUserLibraries(idUtente)){
-                if(libraryDAO.bookExistsInLibrary(library.getIdLibreria(), idLibro)){
+            for (Library library : libraryDAO.getUserLibraries(idUtente)) {
+                if (libraryDAO.bookExistsInLibrary(library.getIdLibreria(), idLibro)) {
                     flag = true;
                     break;
                 }
             }
 
-            if(!flag){
+            if (!flag) {
                 return "RATING_FAILED:Il libro non è presente nella libreria dell'utente";
             }
 
@@ -131,7 +131,7 @@ public class ClientHandler implements Runnable {
 
 
     // Formato: GET_RATING_FROM_BOOK:idLibro
-    private String handleGetRatingFromBook(String request){
+    private String handleGetRatingFromBook(String request) {
         try {
             String[] parts = request.split(":");
             if (parts.length < 2) {
@@ -140,25 +140,24 @@ public class ClientHandler implements Runnable {
 
             int idLibro = Integer.parseInt(parts[1]);
             RatingDAO ratingDAO = new RatingDAO();
-            List<Rating> ratings = ratingDAO.getRatingsFromBook(idLibro);
-
-            // Converti la lista di valutazioni in una stringa formattata
-            StringBuilder response = new StringBuilder("INIZIO_LISTA_RATING\n");
-            for (Rating rating : ratings) {
-                response.append("RATING:")
-                        .append(rating.getIdUtente()).append(":")
-                        .append(rating.getIdLibro()).append(":")
-                        .append(rating.getStile()).append(":")
-                        .append(rating.getContenuto()).append(":")
-                        .append(rating.getGradevolezza()).append(":")
-                        .append(rating.getOriginalita()).append(":")
-                        .append(rating.getEdizione()).append(":")
-                        .append(rating.getVotoFinale()).append(":")
-                        .append(rating.getRecensione()).append("\n");
+            Rating ratings = ratingDAO.getRatingsFromBook(idLibro);
+            if (ratings == null) {
+                return "RATING_RETRIEVAL_FAILED:Nessuna valutazione trovata per il libro con ID: " + idLibro;
             }
-            response.append("END_RATINGS");
-            System.out.println(response.toString());
-            return response.toString();
+
+            String response = "RATING:" +
+                    ratings.getIdUtente() + "|||" +
+                    ratings.getIdLibro() + "|||" +
+                    ratings.getStile() + "|||" +
+                    ratings.getContenuto() + "|||" +
+                    ratings.getGradevolezza() + "|||" +
+                    ratings.getOriginalita() + "|||" +
+                    ratings.getEdizione() + "|||" +
+                    ratings.getVotoFinale() + "|||" +
+                    ratings.getRecensione() + "\n";
+            return response;
+
+
         } catch (NumberFormatException e) {
             return "RATING_RETRIEVAL_FAILED:Formato dei parametri non valido: " + e.getMessage();
         } catch (Exception e) {

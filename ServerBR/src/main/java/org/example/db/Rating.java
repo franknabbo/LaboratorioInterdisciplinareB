@@ -27,6 +27,7 @@ public class Rating {
         setRecensione(recensione);
         setVotoFinale(votoFinale);
     }
+    public Rating() {}
 
     // Metodi setter con validazione
     public void setStile(int stile) {
