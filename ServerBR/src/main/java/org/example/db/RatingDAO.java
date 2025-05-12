@@ -40,7 +40,7 @@ public class RatingDAO {
     }
 
     //getRatingsFromBook
-    public Rating getRatingsFromBook(int bookId) {
+    public List<Rating> getRatingsFromBook(int bookId) {
         List<Rating> ratings = new ArrayList<>();
         String sql = "SELECT * FROM valutazioniLibri WHERE id_libro = ?";
 
@@ -62,11 +62,13 @@ public class RatingDAO {
                 );
                 ratings.add(rating);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        ratings.addFirst(mediaTotale(ratings));
 
-        return mediaTotale(ratings);
+        return ratings;
     }
 //Metodo per fare una media totale delle valutazioni
     public  Rating mediaTotale(List<Rating> ratings) {
@@ -102,5 +104,6 @@ public class RatingDAO {
         media.setVotoFinale((int) Math.round(mediaVotoFinale));
         return media;
     }
+
 
 }

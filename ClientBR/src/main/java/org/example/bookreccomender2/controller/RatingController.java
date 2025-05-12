@@ -33,9 +33,6 @@ public class RatingController {
             // Leggi il messaggio di benvenuto
             String welcome = in.readLine();
 
-            //metti tra "" il testo della recensione
-            reviewText = "\"" + reviewText + "\"";
-
 
             // Invia richiesta di creazione rating
             out.println("ADD_RATING:" + UserManager.getUserId() + ":" + idLibro + ":" + styleRating + ":"
@@ -62,15 +59,15 @@ public class RatingController {
         try (Socket socket = new Socket("localhost", 8080);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-            String line;
+
             // Leggi il messaggio di benvenuto
             String welcome = in.readLine();
 
             // Invia richiesta di creazione rating
             out.println("GET_RATING:" + idLibro);
 
-            String response = in.readLine();
-
+            // Leggi la risposta
+             String line;
             boolean reading = false;
 
             while ((line = in.readLine()) != null) {
@@ -79,15 +76,16 @@ public class RatingController {
                     continue;
                 }
 
-                if (line.equals("END_RATINGS")) {
+                if (line.equals("END_RATING")) {
                     break;
                 }
 
                 if (reading && line.startsWith("RATING:")) {
                     try {
-                        String[] parts = line.split("RATING::(?=(?:[^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)");
-                        if (parts.length >= 10) {
+                        String[] parts = line.split("RATING:|\\|\\|\\|");
+                        if (parts.length >= 9) {
                             String idUtente = parts[1];
+                            int idLibroRating = Integer.parseInt(parts[2]);
                             int stile = Integer.parseInt(parts[3]);
                             int contenuto = Integer.parseInt(parts[4]);
                             int gradevolezza = Integer.parseInt(parts[5]);
@@ -96,21 +94,29 @@ public class RatingController {
                             int votoFinale = Integer.parseInt(parts[8]);
                             String recensione = parts[9].replace("\"", "");
 
-                            Rating rating = new Rating(idUtente, idLibro, stile, contenuto, gradevolezza, originalita, edizione, votoFinale, recensione);
+                            Rating rating = new Rating(idUtente, idLibroRating, stile, contenuto, gradevolezza,
+                                    originalita, edizione, votoFinale, recensione);
                             results.add(rating);
                         } else {
                             System.err.println("Formato rating non valido: " + line);
                         }
+
+
+
+
                     } catch (Exception e) {
                         System.err.println("Errore nel parsing: " + e.getMessage());
                     }
                 }
             }
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
+
+            return results;
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return results;
     }
 }
+
+
+

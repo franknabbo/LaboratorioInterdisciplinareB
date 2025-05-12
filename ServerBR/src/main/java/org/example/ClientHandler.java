@@ -140,23 +140,25 @@ public class ClientHandler implements Runnable {
 
             int idLibro = Integer.parseInt(parts[1]);
             RatingDAO ratingDAO = new RatingDAO();
-            Rating ratings = ratingDAO.getRatingsFromBook(idLibro);
+            List<Rating> ratings = ratingDAO.getRatingsFromBook(idLibro);
             if (ratings == null) {
                 return "RATING_RETRIEVAL_FAILED:Nessuna valutazione trovata per il libro con ID: " + idLibro;
             }
-
-            String response = "RATING:" +
-                    ratings.getIdUtente() + "|||" +
-                    ratings.getIdLibro() + "|||" +
-                    ratings.getStile() + "|||" +
-                    ratings.getContenuto() + "|||" +
-                    ratings.getGradevolezza() + "|||" +
-                    ratings.getOriginalita() + "|||" +
-                    ratings.getEdizione() + "|||" +
-                    ratings.getVotoFinale() + "|||" +
-                    ratings.getRecensione() + "\n";
-            return response;
-
+            StringBuilder response = new StringBuilder("INIZIO_LISTA_RATING\n");
+            for (Rating rating : ratings) {
+                response.append("RATING:")
+                        .append(rating.getIdUtente()).append("|||")
+                        .append(rating.getIdLibro()).append("|||")
+                        .append(rating.getStile()).append("|||")
+                        .append(rating.getContenuto()).append("|||")
+                        .append(rating.getGradevolezza()).append("|||")
+                        .append(rating.getOriginalita()).append("|||")
+                        .append(rating.getEdizione()).append("|||")
+                        .append(rating.getVotoFinale()).append("|||")
+                        .append(rating.getRecensione()).append("\n");
+            }
+            response.append("END_RATINGS");
+            return response.toString();
 
         } catch (NumberFormatException e) {
             return "RATING_RETRIEVAL_FAILED:Formato dei parametri non valido: " + e.getMessage();
