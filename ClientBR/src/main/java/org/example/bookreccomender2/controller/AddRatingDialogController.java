@@ -140,6 +140,33 @@ public class AddRatingDialogController {
         this.originalityRating = originality;
         this.editionRating = edition;
 
+        //toglie la possibilità all'utente di modificare il rating
+        styleS1.setDisable(true);
+        styleS2.setDisable(true);
+        styleS3.setDisable(true);
+        styleS4.setDisable(true);
+        styleS5.setDisable(true);
+        contentS1.setDisable(true);
+        contentS2.setDisable(true);
+        contentS3.setDisable(true);
+        contentS4.setDisable(true);
+        contentS5.setDisable(true);
+        appealS1.setDisable(true);
+        appealS2.setDisable(true);
+        appealS3.setDisable(true);
+        appealS4.setDisable(true);
+        appealS5.setDisable(true);
+        originalityS1.setDisable(true);
+        originalityS2.setDisable(true);
+        originalityS3.setDisable(true);
+        originalityS4.setDisable(true);
+        originalityS5.setDisable(true);
+        editionS1.setDisable(true);
+        editionS2.setDisable(true);
+        editionS3.setDisable(true);
+        editionS4.setDisable(true);
+        editionS5.setDisable(true);
+
         // Aggiorna la visualizzazione di tutte le stelle
         updateAllStarRatings();
 
@@ -234,6 +261,14 @@ public class AddRatingDialogController {
                     bookCoverImage.setImage(new Image("/logoBookRecomender.png"));
                 }
             }
+        }
+    }
+
+    //metodo per togliere la casella recensione
+    public void setReviewTextVisible(boolean visible) {
+        if (reviewText != null) {
+            reviewText.setVisible(visible);
+            reviewText.setManaged(visible);
         }
     }
 

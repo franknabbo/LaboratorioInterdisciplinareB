@@ -91,6 +91,8 @@ public class EventHandler {
     private Button consigliaLibriButton;
     @FXML
     private Button aggiungiLibreriaButton;
+    @FXML
+    private static List<Rating> ratingList = new ArrayList<>();
 
     private final AlertController alertController = new AlertController();
     private final SceneController sceneController = new SceneController();
@@ -125,8 +127,7 @@ public class EventHandler {
     @FXML
     private void switchToBookView(MouseEvent event) {
         sceneController.switchToBookView(event, selectedBook);
-        //se è loggato allora fa vedere i bot
-
+        ratingList = ratingController.fetchRating(selectedBook.getId());
     }
 
     @FXML
@@ -179,7 +180,6 @@ public class EventHandler {
         if (searchField != null) {
             searchField.setPromptText("Cerca un libro...");
         }
-        //configura la visulizzazione dei bottoni valuta zione e aggiunta alla libreria e consiglia libro solo se loggati
 
         // Configura il ComboBox per il tipo di ricerca
         if (searchTypeCombo != null) {
@@ -198,6 +198,7 @@ public class EventHandler {
         } else if (booksContainer != null && SceneController.currentPage.contains("library")) {
             loadLibraryBooks(currentLibraryName);
         }
+
 
         // Carica le librerie se siamo nella vista librerie
         if (UserManager.isLoggedIn() && librariesContainer != null) {
@@ -292,10 +293,34 @@ public class EventHandler {
     }
 
     //metodo per apirre la dialog e impostare il rating che viene riscevuto da server aggreato
+    @FXML
     private void openRating(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/addRatingDialog.fxml"));
         Parent root = loader.load();
 
+        // Ottieni il controller
+        AddRatingDialogController controller = loader.getController();
+
+        // Passa il libro selezionato al controller
+        controller.setBook(selectedBook);
+        // Crea una nuova finestra di dialogo
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setDialogPane((DialogPane) root);
+        dialog.setTitle("Recensione");
+
+        Rating ratingAggragato = ratingList.getFirst();
+
+        controller.setExistingRatings(ratingAggragato.getStile(),
+                ratingAggragato.getContenuto(),
+                ratingAggragato.getGradevolezza(),
+                ratingAggragato.getOriginalita(),
+                ratingAggragato.getEdizione());
+
+        //togli la recensione
+        controller.setReviewTextVisible(false);
+
+        // Mostra la dialog
+        Optional<ButtonType> result = dialog.showAndWait();
 
 
 
@@ -703,9 +728,6 @@ public class EventHandler {
             System.err.println("Errore: librariesContainer è null");
             return;
         }
-
-        // Pulisci il container
-        //librariesContainer.getChildren().clear();
 
         // Aggiungi le librerie al container
         for (String library : libraryNames) {

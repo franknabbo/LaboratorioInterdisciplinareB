@@ -17,6 +17,7 @@ import java.util.List;
 
 public class SceneController {
 
+
     private AlertController alertController = new AlertController();
     public static String currentPage = "homeNotLogged-view.fxml";
 
@@ -85,11 +86,6 @@ public class SceneController {
             scene = new Scene(root, 700, 700);
             stage.setScene(scene);
             stage.show();
-            List<Rating> list = new ArrayList<>();
-            RatingController ratingController = new RatingController();
-
-            // todo fa il metodo ratingController.fetchRatings(selectedBook.getId()) e mette i risultati in vista
-
         } catch (IOException e) {
             e.printStackTrace();
             alertController.showAlert("Errore", "Impossibile aprire la pagina del libro: " + e.getMessage());

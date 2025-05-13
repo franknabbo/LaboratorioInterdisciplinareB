@@ -66,10 +66,6 @@ public class LibraryController {
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-            // Invia richiesta di aggiunta libro alla libreria
-            // Formato: ADD_BOOK_TO_LIBRARY:userId:libraryName:book_id
-
-
             out.println("ADD_BOOK_TO_LIBRARY:" + UserManager.getUserId() + ":" + libraryName + ":" + selectedBook.getId());
 
             String welcome = in.readLine();

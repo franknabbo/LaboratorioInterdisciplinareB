@@ -70,13 +70,15 @@ public class RatingController {
              String line;
             boolean reading = false;
 
+
             while ((line = in.readLine()) != null) {
                 if (line.equals("INIZIO_LISTA_RATING")) {
                     reading = true;
+                    System.out.println(line);
                     continue;
                 }
 
-                if (line.equals("END_RATING")) {
+                if (line.equals("END_RATINGS")) {
                     break;
                 }
 
@@ -92,7 +94,7 @@ public class RatingController {
                             int originalita = Integer.parseInt(parts[6]);
                             int edizione = Integer.parseInt(parts[7]);
                             int votoFinale = Integer.parseInt(parts[8]);
-                            String recensione = parts[9].replace("\"", "");
+                            String recensione = parts[9];
 
                             Rating rating = new Rating(idUtente, idLibroRating, stile, contenuto, gradevolezza,
                                     originalita, edizione, votoFinale, recensione);
