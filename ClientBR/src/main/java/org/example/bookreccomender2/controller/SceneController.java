@@ -18,12 +18,14 @@ import java.util.List;
 public class SceneController {
 
     private AlertController alertController = new AlertController();
+    public static String currentPage = "homeNotLogged-view.fxml";
 
     public SceneController() {
     }
 
 
     public void switchToRegister(ActionEvent event) {
+        currentPage = "register-view.fxml";
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/register-view.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -37,6 +39,7 @@ public class SceneController {
 
 
     public void switchToHome(ActionEvent event) {
+        currentPage = "homeNotLogged-view.fxml";
         try {
             String viewFile = UserManager.isLoggedIn() ?
                     "/org/example/bookreccomender2/homeLogged-view.fxml" :
@@ -54,6 +57,7 @@ public class SceneController {
 
 
     public void switchToLogin(ActionEvent event) {
+        currentPage = "login-view.fxml";
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/login-view.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -66,6 +70,7 @@ public class SceneController {
     }
 
     public void switchToBookView(MouseEvent event, Book selectedBook) {
+        currentPage = "book-view.fxml";
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/book-view.fxml"));
             Parent root = loader.load();
@@ -92,6 +97,7 @@ public class SceneController {
     }
 
     public void switchToLibrary(ActionEvent event) {
+        currentPage = "library-view.fxml";
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/library-view.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -104,6 +110,7 @@ public class SceneController {
     }
 
     public void switchToLibraryBooks(MouseEvent event, String libraryName) {
+        currentPage = "library-books-view.fxml";
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/library-books-view.fxml"));
             Parent root = loader.load();

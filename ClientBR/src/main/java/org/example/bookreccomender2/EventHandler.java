@@ -193,8 +193,10 @@ public class EventHandler {
         setupSearchField();
 
         // Carica i libri solo se il container è disponibile
-        if (booksContainer != null) {
+        if (booksContainer != null && SceneController.currentPage.contains("home")) {
             loadHomePageBooks();
+        } else if (booksContainer != null && SceneController.currentPage.contains("library")) {
+            loadLibraryBooks(currentLibraryName);
         }
 
         // Carica le librerie se siamo nella vista librerie
@@ -691,7 +693,7 @@ public class EventHandler {
         }
 
         // Pulisci il container
-        librariesContainer.getChildren().clear();
+        //librariesContainer.getChildren().clear();
 
         // Aggiungi le librerie al container
         for (String library : libraryNames) {
