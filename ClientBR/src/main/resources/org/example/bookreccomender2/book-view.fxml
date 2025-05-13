@@ -59,6 +59,22 @@
                     </VBox>
                 </HBox>
 
+                <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="average-rating-container">
+                    <padding>
+                        <Insets top="5.0" right="10.0" bottom="5.0" left="10.0"/>
+                    </padding>
+                    <Label text="Valutazione media: " styleClass="section-label"/>
+                    <HBox fx:id="starRatingContainer" spacing="2.0" alignment="CENTER_LEFT">
+                        <FontIcon fx:id="star1" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+                        <FontIcon fx:id="star2" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+                        <FontIcon fx:id="star3" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+                        <FontIcon fx:id="star4" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+                        <FontIcon fx:id="star5" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+                    </HBox>
+                    <Label fx:id="ratingValueLabel" styleClass="rating-value"/>
+                </HBox>
+
+
                 <!-- Sezione valutazioni aggregate -->
                 <TitledPane text="Valutazioni degli utenti" expanded="true">
                     <VBox fx:id="valutazioniAggregateContainer" spacing="10.0">

@@ -29,6 +29,12 @@ public class Rating {
 
     }
 
+    public int getValue(){
+
+        return  votoFinale;
+
+    }
+
     // Metodi setter con validazione
     public void setStile(int stile) {
         validaVoto(stile);

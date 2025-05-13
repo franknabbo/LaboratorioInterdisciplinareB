@@ -152,6 +152,36 @@ GridPane Label {
     -fx-background-color: transparent;
 }
 
+.average-rating-container {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+.rating-star {
+    -fx-fill: #ffc107; /* Colore giallo/oro per le stelle */
+}
+.star-icon {
+    -fx-icon-color: #d3d3d3; /* colore grigio per stelle vuote */
+    -fx-icon-size: 20px;
+}
+
+.star-icon.filled {
+    -fx-icon-color: #ffc107; /* colore oro per stelle piene */
+}
+
+.rating-container {
+    -fx-spacing: 5;
+    -fx-alignment: center-left;
+}
+
+
+
+.section-label {
+    -fx-font-weight: bold;
+}
+
 .scroll-bar:vertical .thumb,
 .scroll-bar:horizontal .thumb {
     -fx-background-color: -fx-light-brown;

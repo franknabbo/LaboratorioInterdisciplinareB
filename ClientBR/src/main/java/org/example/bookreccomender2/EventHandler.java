@@ -44,6 +44,12 @@ public class EventHandler {
     @FXML
     private TextField taxCodeField;
     @FXML
+    private FontIcon star1, star2, star3, star4, star5;
+    @FXML
+    private HBox starRatingContainer;
+    @FXML
+    private Label ratingValueLabel;
+    @FXML
     private TextField emailField;
     @FXML
     private PasswordField passwordField;
@@ -129,6 +135,8 @@ public class EventHandler {
     private void switchToBookView(MouseEvent event) {
         sceneController.switchToBookView(event, selectedBook);
         ratingList = ratingController.fetchRating(selectedBook.getId());
+        //todo aggiunge le recensioni dalla seconda in poi nella boxpne valutazionilibri
+
     }
 
     @FXML
@@ -495,8 +503,39 @@ public class EventHandler {
         contextMenu.show(source.getScene().getWindow(), event.getScreenX(), event.getScreenY());
     }
 
+    // Metodo da chiamare quando carichi i dati del libro
+    private void updateBookRating() {
+        if (!ratingList.isEmpty()) {
+            Rating averageRating = ratingList.getFirst();
+            int rating = averageRating.getValue();
+            updateStarRating(rating);
+        } else {
+            // Se non ci sono valutazioni, imposta tutte le stelle come vuote
+            updateStarRating(0);
+        }
+    }
+
+    // Metodo per aggiornare le stelle in base alla valutazione
+    private void updateStarRating(int rating) {
+
+        FontIcon[] stars = {star1, star2, star3, star4, star5};
+
+        for (int i = 0; i < stars.length; i++) {
+            if (i < rating) {
+                stars[i].setIconLiteral("fas-star");
+                stars[i].setStyle("-fx-fill: #ffc107;"); // Colore giallo/oro
+            } else {
+                // Stella vuota
+                stars[i].setIconLiteral("far-star");
+                stars[i].setStyle("-fx-fill: #d3d3d3;"); // Colore grigio chiaro
+            }
+        }
+    }
+
     public void initBookData(Book book) {
         if (book == null) return;
+
+        updateBookRating();
 
         // Memorizza il libro selezionato
         this.selectedBook = book;
@@ -553,6 +592,9 @@ public class EventHandler {
             }
         }
     }
+
+
+
 
     private void addBookToUI(Book book) {
         if(SceneController.currentPage.contains("suggested-books")){
