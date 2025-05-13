@@ -59,19 +59,19 @@
                     </VBox>
                 </HBox>
 
-                <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="average-rating-container">
+                <!-- Sezione valutazione media -->
+                <HBox styleClass="average-rating-container" spacing="10.0" alignment="CENTER_LEFT">
                     <padding>
-                        <Insets top="5.0" right="10.0" bottom="5.0" left="10.0"/>
+                        <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
                     </padding>
-                    <Label text="Valutazione media: " styleClass="section-label"/>
-                    <HBox fx:id="starRatingContainer" spacing="2.0" alignment="CENTER_LEFT">
-                        <FontIcon fx:id="star1" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
-                        <FontIcon fx:id="star2" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
-                        <FontIcon fx:id="star3" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
-                        <FontIcon fx:id="star4" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
-                        <FontIcon fx:id="star5" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+                    <Label text="Valutazione media:" styleClass="section-label"/>
+                    <HBox fx:id="ratingStarsContainer" styleClass="rating-container">
+                        <FontIcon iconLiteral="fas-star" fx:id="star1" iconSize="20"/>
+                        <FontIcon iconLiteral="fas-star" fx:id="star2" iconSize="20"/>
+                        <FontIcon iconLiteral="fas-star" fx:id="star3" iconSize="20"/>
+                        <FontIcon iconLiteral="fas-star" fx:id="star4" iconSize="20"/>
+                        <FontIcon iconLiteral="fas-star" fx:id="star5" iconSize="20"/>
                     </HBox>
-                    <Label fx:id="ratingValueLabel" styleClass="rating-value"/>
                 </HBox>
 
 
@@ -79,8 +79,10 @@
                 <TitledPane text="Valutazioni degli utenti" expanded="true">
                     <VBox fx:id="valutazioniAggregateContainer" spacing="10.0">
                         <!-- Qui andranno i componenti per le statistiche delle valutazioni -->
+
                     </VBox>
                 </TitledPane>
+
 
                 <!-- Sezione libri consigliati -->
                 <TitledPane text="Libri consigliati dagli utenti" expanded="true">
@@ -93,7 +95,7 @@
                     <Button fx:id="valutaLibroButton" text="Valuta libro"
                             styleClass="action-button" onAction="#addRating"/>
                     <Button fx:id="consigliaLibriButton" text="Consiglia libri simili a questo"
-                            styleClass="action-button"/>
+                            styleClass="action-button" onAction="#switchToSuggestedBookList"/>
                 </HBox>
             </VBox>
 

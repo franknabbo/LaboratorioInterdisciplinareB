@@ -106,7 +106,7 @@ public class RatingController {
 
 
                     } catch (Exception e) {
-                        System.err.println("Errore nel parsing: " + e.getMessage());
+                        return results;
                     }
                 }
             }

@@ -22,6 +22,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
+
 import java.io.IOException;
 
 
@@ -31,12 +32,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class EventHandler {
     public Button addSelectedBook;
+    public HBox ratingStarsContainer;
     @FXML
     private TextField firstNameField;
     @FXML
@@ -88,7 +91,7 @@ public class EventHandler {
     private int currentPage = 1;
     private final int booksPerPage = 25;
     private List<Book> currentSearchResults = new ArrayList<>();
-    public  BookCached bookCached = BookCached.getInstance();
+    public BookCached bookCached = BookCached.getInstance();
     private Book selectedBook;
     @FXML
     private VBox librariesContainer; // Aggiungi questa variabile
@@ -131,6 +134,7 @@ public class EventHandler {
     protected void switchToLogin(ActionEvent event) {
         sceneController.switchToLogin(event);
     }
+
     @FXML
     private void switchToBookView(MouseEvent event) {
         sceneController.switchToBookView(event, selectedBook);
@@ -146,7 +150,9 @@ public class EventHandler {
 
     @FXML
     protected void switchToSelectedLibrary(MouseEvent event, String libraryName) {
-        sceneController.switchToLibraryBooks(event, libraryName);}
+        sceneController.switchToLibraryBooks(event, libraryName);
+    }
+
     @FXML
     protected void switchToSuggestedBookList(ActionEvent event) {
         sceneController.switchToSuggestedBookList(event);
@@ -336,7 +342,6 @@ public class EventHandler {
         Optional<ButtonType> result = dialog.showAndWait();
 
 
-
     }
 
 
@@ -359,7 +364,7 @@ public class EventHandler {
     @FXML
     private void loadHomePageBooks() {
         // Utilizza BookClient per ottenere i libri
-        if(bookCached.hasCachedHomeBooks()) {
+        if (bookCached.hasCachedHomeBooks()) {
             // Se i libri sono già stati caricati, usali dalla cache
             currentSearchResults.addAll(bookCached.getCachedHomeBooks());
 
@@ -369,7 +374,7 @@ public class EventHandler {
             // Visualizza prima pagina
             Platform.runLater(this::displayCurrentPage);
 
-        } else{
+        } else {
             try {
                 BookClient client = new BookClient();
                 try {
@@ -461,7 +466,8 @@ public class EventHandler {
                 });
             } catch (IOException e) {
                 Platform.runLater(() -> {
-                    alertController.showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());});
+                    alertController.showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
+                });
                 e.printStackTrace();
             }
         }).start();
@@ -503,42 +509,42 @@ public class EventHandler {
         contextMenu.show(source.getScene().getWindow(), event.getScreenX(), event.getScreenY());
     }
 
-    // Metodo da chiamare quando carichi i dati del libro
-    private void updateBookRating() {
-        if (!ratingList.isEmpty()) {
-            Rating averageRating = ratingList.getFirst();
-            int rating = averageRating.getValue();
-            updateStarRating(rating);
-        } else {
-            // Se non ci sono valutazioni, imposta tutte le stelle come vuote
-            updateStarRating(0);
-        }
-    }
+    public void updateBookRating(HBox ratingStarsContainer) {
+        // Ottieni la valutazione media
+        if (ratingList.isEmpty()) {
+            for (int i = 0; i < 5; i++) {
+                FontIcon star = (FontIcon) ratingStarsContainer.getChildren().get(i);
+                star.setIconColor(javafx.scene.paint.Color.valueOf("#d3d3d3"));
+            }
+        }else{
+            Rating rating = ratingList.getFirst(); // Ottieni la prima valutazione
 
-    // Metodo per aggiornare le stelle in base alla valutazione
-    private void updateStarRating(int rating) {
-
-        FontIcon[] stars = {star1, star2, star3, star4, star5};
-
-        for (int i = 0; i < stars.length; i++) {
-            if (i < rating) {
-                stars[i].setIconLiteral("fas-star");
-                stars[i].setStyle("-fx-fill: #ffc107;"); // Colore giallo/oro
-            } else {
-                // Stella vuota
-                stars[i].setIconLiteral("far-star");
-                stars[i].setStyle("-fx-fill: #d3d3d3;"); // Colore grigio chiaro
+            if (rating != null) {
+                int ratingValue = rating.getVotoFinale();
+                for (int i = 0; i < 5; i++) {
+                    FontIcon star = (FontIcon) ratingStarsContainer.getChildren().get(i);
+                    if (i < ratingValue) {
+                        star.setIconColor(javafx.scene.paint.Color.valueOf("#ffcc00"));
+                    } else {
+                        star.setIconColor(javafx.scene.paint.Color.valueOf("#d3d3d3"));
+                    }
+                }
             }
         }
+
+
     }
+
 
     public void initBookData(Book book) {
         if (book == null) return;
 
-        updateBookRating();
-
+        //
         // Memorizza il libro selezionato
         this.selectedBook = book;
+        ratingList = ratingController.fetchRating(selectedBook.getId());
+        updateBookRating(ratingStarsContainer);
+
 
         // Aggiorna i campi della vista con i dati del libro
         if (titoloLabel != null) titoloLabel.setText(book.getTitle());
@@ -594,10 +600,8 @@ public class EventHandler {
     }
 
 
-
-
     private void addBookToUI(Book book) {
-        if(SceneController.currentPage.contains("suggested-books")){
+        if (SceneController.currentPage.contains("suggested-books")) {
             // Crea l'elemento visuale del libro
             HBox bookItem = new HBox();
             bookItem.getStyleClass().add("book-item");
@@ -689,9 +693,9 @@ public class EventHandler {
             bookItem.setCursor(Cursor.DEFAULT);
             // Aggiungi l'elemento libro al container
             booksContainer.getChildren().add(bookItem);
+//ciao, le amiche di mia sorella mi fanno paura, sembrano più grandi di me e mi sento  giudicata un botto :(
 
-
-        }else{
+        } else {
             // Crea l'elemento visuale del libro
             HBox bookItem = new HBox();
             bookItem.getStyleClass().add("book-item");
@@ -782,7 +786,7 @@ public class EventHandler {
             booksContainer.getChildren().add(bookItem);
 
         }
-        }
+    }
 
     @FXML
     protected void goToNextPage(ActionEvent event) {
@@ -839,7 +843,6 @@ public class EventHandler {
             nextPageButton.setDisable(currentPage >= totalPages);
         }
 
-        // Chiama updatePaginationControls solo se almeno uno dei controlli esiste
         if (pageLabel != null || nextPageButton != null || prevPageButton != null) {
             updatePaginationControls();
         }
@@ -966,7 +969,7 @@ public class EventHandler {
                 // Verifica che il nome non sia vuoto
                 if (libraryName != null && !libraryName.trim().isEmpty()) {
                     // Procedi con la creazione della libreria
-                    if(libraryController.createLibraryWithName(libraryName)){
+                    if (libraryController.createLibraryWithName(libraryName)) {
                         loadLibraries(); // Ricarica le librerie
                     }
                 } else {
@@ -978,7 +981,6 @@ public class EventHandler {
             alertController.showAlert("Errore", "Impossibile aprire la finestra di dialogo: " + e.getMessage());
         }
     }
-
 
 
     public void initLibraryBooksView(String libraryName) {
