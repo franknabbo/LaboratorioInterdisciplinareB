@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      styleClass="rating-summary-container"
+      spacing="15">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <Label text="Valutazione Media" styleClass="ratings-title"/>
+
+    <!-- Media totale -->
+    <HBox alignment="CENTER" spacing="15">
+        <Label text="Valutazione complessiva:" styleClass="rating-label"/>
+        <HBox fx:id="mediaVotoFinaleStars" styleClass="star-container" alignment="CENTER">
+            <FontIcon fx:id="mediaTotS1" iconLiteral="fas-star" iconSize="24" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaTotS2" iconLiteral="fas-star" iconSize="24" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaTotS3" iconLiteral="fas-star" iconSize="24" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaTotS4" iconLiteral="fas-star" iconSize="24" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaTotS5" iconLiteral="fas-star" iconSize="24" styleClass="star-icon"/>
+        </HBox>
+        <Label fx:id="mediaVotoFinaleLabel" text="0.0" styleClass="rating-value"/>
+    </HBox>
+
+    <GridPane hgap="20" vgap="15">
+        <!-- Stile -->
+        <Label text="Stile:" styleClass="category-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <HBox alignment="CENTER" spacing="5.0" styleClass="rating-container"
+              GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <FontIcon fx:id="mediaStileS1" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaStileS2" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaStileS3" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaStileS4" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaStileS5" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+        </HBox>
+        <Label fx:id="mediaStileLabel" text="0.0" styleClass="rating-value"
+               GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+
+        <!-- Contenuto -->
+        <Label text="Contenuto:" styleClass="category-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <HBox alignment="CENTER" spacing="5.0" styleClass="rating-container"
+              GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <FontIcon fx:id="mediaContenutoS1" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaContenutoS2" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaContenutoS3" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaContenutoS4" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaContenutoS5" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+        </HBox>
+        <Label fx:id="mediaContenutoLabel" text="0.0" styleClass="rating-value"
+               GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+
+        <!-- Gradevolezza -->
+        <Label text="Gradevolezza:" styleClass="category-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <HBox alignment="CENTER" spacing="5.0" styleClass="rating-container"
+              GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <FontIcon fx:id="mediaGradevolezzaS1" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaGradevolezzaS2" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaGradevolezzaS3" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaGradevolezzaS4" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaGradevolezzaS5" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+        </HBox>
+        <Label fx:id="mediaGradevolezzaLabel" text="0.0" styleClass="rating-value"
+               GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+
+        <!-- Originalità -->
+        <Label text="Originalità:" styleClass="category-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <HBox alignment="CENTER" spacing="5.0" styleClass="rating-container"
+              GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <FontIcon fx:id="mediaOriginalitaS1" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaOriginalitaS2" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaOriginalitaS3" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaOriginalitaS4" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaOriginalitaS5" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+        </HBox>
+        <Label fx:id="mediaOriginalitaLabel" text="0.0" styleClass="rating-value"
+               GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+
+        <!-- Edizione -->
+        <Label text="Edizione:" styleClass="category-label"
+               GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <HBox alignment="CENTER" spacing="5.0" styleClass="rating-container"
+              GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <FontIcon fx:id="mediaEdizioneS1" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaEdizioneS2" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaEdizioneS3" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaEdizioneS4" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+            <FontIcon fx:id="mediaEdizioneS5" iconLiteral="fas-star" iconSize="20" styleClass="star-icon"/>
+        </HBox>
+        <Label fx:id="mediaEdizioneLabel" text="0.0" styleClass="rating-value"
+               GridPane.columnIndex="2" GridPane.rowIndex="4"/>
+    </GridPane>
+
+    <Label fx:id="totalRatingsLabel" text="Basato su 0 valutazioni" styleClass="ratings-count"/>
+</VBox>

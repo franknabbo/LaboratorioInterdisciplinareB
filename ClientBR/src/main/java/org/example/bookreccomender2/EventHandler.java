@@ -1,7 +1,7 @@
 package org.example.bookreccomender2;
 
 import org.example.bookreccomender2.controller.*;
-
+import org.example.bookreccomender2.Rating;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -176,7 +176,7 @@ public class EventHandler {
         if (usernameLabel != null && UserManager.isLoggedIn()) {
             usernameLabel.setText(UserManager.getUserId());
         }
-        if(searchField != null) {
+        if (searchField != null) {
             searchField.setPromptText("Cerca un libro...");
         }
         //configura la visulizzazione dei bottoni valuta zione e aggiunta alla libreria e consiglia libro solo se loggati
@@ -290,6 +290,18 @@ public class EventHandler {
                     originalityRating, editionRating, reviewText, averageRating);
         }
     }
+
+    //metodo per apirre la dialog e impostare il rating che viene riscevuto da server aggreato
+    private void openRating(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/addRatingDialog.fxml"));
+        Parent root = loader.load();
+
+
+
+
+    }
+
+
     private List<String> getLibraryNames() {
         List<String> libraryNames = new ArrayList<>();
         List<String> libraryEntries = libraryController.getLibraryList();
@@ -804,7 +816,8 @@ public class EventHandler {
             alertController.showAlert("Errore", "Impossibile aprire la finestra di dialogo: " + e.getMessage());
         }
     }
-
+    
+   
 
     public void initLibraryBooksView(String libraryName) {
         // Salva il nome della libreria corrente
