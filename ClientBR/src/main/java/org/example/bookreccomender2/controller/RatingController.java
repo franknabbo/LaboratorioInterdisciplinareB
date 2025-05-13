@@ -74,7 +74,6 @@ public class RatingController {
             while ((line = in.readLine()) != null) {
                 if (line.equals("INIZIO_LISTA_RATING")) {
                     reading = true;
-                    System.out.println(line);
                     continue;
                 }
 

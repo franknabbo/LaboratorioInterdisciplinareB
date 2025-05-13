@@ -125,4 +125,24 @@ public class SceneController {
             alertController.showAlert("Errore", "Impossibile aprire la vista dei libri della libreria: " + e.getMessage());
         }
     }
+
+    public void switchToSuggestedBookList(ActionEvent event) {
+        currentPage = "suggested-books-view.fxml";
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/suggest-book-view.fxml"));
+            Parent root = loader.load();
+
+            // Ottieni il controller e inizializza i dati
+            EventHandler controller = loader.getController();
+
+            // Cambia scena
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root, 700, 700);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            alertController.showAlert("Errore", "Impossibile aprire la vista dei libri suggeriti: " + e.getMessage());
+        }
+    }
 }

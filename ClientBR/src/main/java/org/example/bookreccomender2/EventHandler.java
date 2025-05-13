@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class EventHandler {
+    public Button addSelectedBook;
     @FXML
     private TextField firstNameField;
     @FXML
@@ -138,6 +139,10 @@ public class EventHandler {
     @FXML
     protected void switchToSelectedLibrary(MouseEvent event, String libraryName) {
         sceneController.switchToLibraryBooks(event, libraryName);}
+    @FXML
+    protected void switchToSuggestedBookList(ActionEvent event) {
+        sceneController.switchToSuggestedBookList(event);
+    }
 
     @FXML
     protected void loginUser(ActionEvent event) {
@@ -193,7 +198,7 @@ public class EventHandler {
         setupSearchField();
 
         // Carica i libri solo se il container è disponibile
-        if (booksContainer != null && SceneController.currentPage.contains("home")) {
+        if (booksContainer != null && SceneController.currentPage.contains("home") || SceneController.currentPage.contains("suggested-books")) {
             loadHomePageBooks();
         } else if (booksContainer != null && SceneController.currentPage.contains("library")) {
             loadLibraryBooks(currentLibraryName);
@@ -550,99 +555,192 @@ public class EventHandler {
     }
 
     private void addBookToUI(Book book) {
-        // Crea l'elemento visuale del libro
-        HBox bookItem = new HBox();
-        bookItem.getStyleClass().add("book-item");
-        bookItem.setSpacing(15.0);
+        if(SceneController.currentPage.contains("suggested-books")){
+            // Crea l'elemento visuale del libro
+            HBox bookItem = new HBox();
+            bookItem.getStyleClass().add("book-item");
+            bookItem.setSpacing(15.0);
 
-        // Copertina
-        ImageView coverView = new ImageView();
-        coverView.setFitWidth(120.0);
-        coverView.setFitHeight(180.0);
-        coverView.setPreserveRatio(true);
+            // Copertina
+            ImageView coverView = new ImageView();
+            coverView.setFitWidth(120.0);
+            coverView.setFitHeight(180.0);
+            coverView.setPreserveRatio(true);
 
-        // Carica l'immagine di copertina
-        if (!book.getCoverUrl().equals("null")) {
-            try {
-                // Estrai l'URL effettivo dall'URL ricevuto
-                String imageUrl = book.getCoverUrl();
-                int indexOfHttps = imageUrl.indexOf("https://");
-                int indexOfHttp = imageUrl.indexOf("http://");
+            // Carica l'immagine di copertina
+            if (!book.getCoverUrl().equals("null")) {
+                try {
+                    // Estrai l'URL effettivo dall'URL ricevuto
+                    String imageUrl = book.getCoverUrl();
+                    int indexOfHttps = imageUrl.indexOf("https://");
+                    int indexOfHttp = imageUrl.indexOf("http://");
 
-                if (indexOfHttps != -1) {
-                    imageUrl = imageUrl.substring(indexOfHttps);
-                } else if (indexOfHttp != -1) {
-                    imageUrl = imageUrl.substring(indexOfHttp);
-                } else if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-                    imageUrl = "/" + imageUrl; // Aggiungi slash per risorse locali
-                }
-
-                // Crea variabile finale per l'URL da usare nella lambda
-                final String finalImageUrl = imageUrl;
-
-                // Caricamento immagine
-                Image coverImage = new Image(finalImageUrl, true);
-
-                // Listener per errori
-                coverImage.errorProperty().addListener((observable, oldValue, newValue) -> {
-                    if (newValue) {
-                        Platform.runLater(() -> coverView.setImage(new Image("/logoBookRecomender.png")));
+                    if (indexOfHttps != -1) {
+                        imageUrl = imageUrl.substring(indexOfHttps);
+                    } else if (indexOfHttp != -1) {
+                        imageUrl = imageUrl.substring(indexOfHttp);
+                    } else if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                        imageUrl = "/" + imageUrl; // Aggiungi slash per risorse locali
                     }
-                });
 
-                coverView.setImage(coverImage);
+                    // Crea variabile finale per l'URL da usare nella lambda
+                    final String finalImageUrl = imageUrl;
 
+                    // Caricamento immagine
+                    Image coverImage = new Image(finalImageUrl, true);
 
+                    // Listener per errori
+                    coverImage.errorProperty().addListener((observable, oldValue, newValue) -> {
+                        if (newValue) {
+                            Platform.runLater(() -> coverView.setImage(new Image("/logoBookRecomender.png")));
+                        }
+                    });
 
+                    coverView.setImage(coverImage);
 
-            } catch (Exception e) {
+                } catch (Exception e) {
+                    coverView.setImage(new Image("/logoBookRecomender.png"));
+                }
+            } else {
                 coverView.setImage(new Image("/logoBookRecomender.png"));
             }
-        } else {
-            coverView.setImage(new Image("/logoBookRecomender.png"));
+
+            // Contenitore per i dettagli testuali
+            VBox contentBox = new VBox();
+            contentBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            contentBox.setSpacing(10.0);
+
+            // Titolo del libro
+            Label titleLabel = new Label(book.getTitle());
+            titleLabel.getStyleClass().add("book-title");
+
+            // Autore del libro
+            Label authorLabel = new Label("Autore: " + (book.getAuthor().length() >= 3 ? book.getAuthor().substring(3) : book.getAuthor()));
+            authorLabel.getStyleClass().add("book-author");
+            // Categoria del libro
+            Label categoryLabel = new Label("Categoria: " + book.getCategory());
+            categoryLabel.getStyleClass().add("book-category");
+            // Editore del libro
+            Label publisherLabel = new Label("Editore: " + book.getPublisher());
+            publisherLabel.getStyleClass().add("book-publisher");
+            // Anno di pubblicazione del libro
+            Label yearLabel = new Label("Anno: " + book.getPublicationYear());
+            yearLabel.getStyleClass().add("book-year");
+            //aggiunge la checkbox per ogni libro
+            CheckBox checkBox = new CheckBox();
+            checkBox.setStyle("-fx-font-size: 14px; -fx-text-fill: #000000;");
+            checkBox.setSelected(false);
+            checkBox.setOnAction(e -> {
+                if (checkBox.isSelected()) {
+                    addSelectedBook.setDisable(false);
+                } else {
+                    addSelectedBook.setDisable(true);
+                }
+            });
+            // Aggiungi la checkbox al contentBox
+            contentBox.getChildren().add(checkBox);
+            // Aggiungi gli elementi testuali al contentBox
+            contentBox.getChildren().addAll(titleLabel, authorLabel, categoryLabel, publisherLabel, yearLabel);
+            // Aggiungi copertina e contenitore di testo all'elemento libro
+            bookItem.getChildren().addAll(coverView, contentBox);
+            //make the bookItem not clickable
+            bookItem.setCursor(Cursor.DEFAULT);
+            // Aggiungi l'elemento libro al container
+            booksContainer.getChildren().add(bookItem);
+
+
+        }else{
+            // Crea l'elemento visuale del libro
+            HBox bookItem = new HBox();
+            bookItem.getStyleClass().add("book-item");
+            bookItem.setSpacing(15.0);
+
+            // Copertina
+            ImageView coverView = new ImageView();
+            coverView.setFitWidth(120.0);
+            coverView.setFitHeight(180.0);
+            coverView.setPreserveRatio(true);
+
+            // Carica l'immagine di copertina
+            if (!book.getCoverUrl().equals("null")) {
+                try {
+                    // Estrai l'URL effettivo dall'URL ricevuto
+                    String imageUrl = book.getCoverUrl();
+                    int indexOfHttps = imageUrl.indexOf("https://");
+                    int indexOfHttp = imageUrl.indexOf("http://");
+
+                    if (indexOfHttps != -1) {
+                        imageUrl = imageUrl.substring(indexOfHttps);
+                    } else if (indexOfHttp != -1) {
+                        imageUrl = imageUrl.substring(indexOfHttp);
+                    } else if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                        imageUrl = "/" + imageUrl; // Aggiungi slash per risorse locali
+                    }
+
+                    // Crea variabile finale per l'URL da usare nella lambda
+                    final String finalImageUrl = imageUrl;
+
+                    // Caricamento immagine
+                    Image coverImage = new Image(finalImageUrl, true);
+
+                    // Listener per errori
+                    coverImage.errorProperty().addListener((observable, oldValue, newValue) -> {
+                        if (newValue) {
+                            Platform.runLater(() -> coverView.setImage(new Image("/logoBookRecomender.png")));
+                        }
+                    });
+
+                    coverView.setImage(coverImage);
+
+                } catch (Exception e) {
+                    coverView.setImage(new Image("/logoBookRecomender.png"));
+                }
+            } else {
+                coverView.setImage(new Image("/logoBookRecomender.png"));
+            }
+
+            // Contenitore per i dettagli testuali
+            VBox contentBox = new VBox();
+            contentBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            contentBox.setSpacing(10.0);
+
+            // Titolo del libro
+            Label titleLabel = new Label(book.getTitle());
+            titleLabel.getStyleClass().add("book-title");
+
+            // Autore del libro
+            Label authorLabel = new Label("Autore: " + (book.getAuthor().length() >= 3 ? book.getAuthor().substring(3) : book.getAuthor()));
+            authorLabel.getStyleClass().add("book-author");
+
+            // Categoria del libro
+            Label categoryLabel = new Label("Categoria: " + book.getCategory());
+            categoryLabel.getStyleClass().add("book-category");
+
+            // Editore del libro
+            Label publisherLabel = new Label("Editore: " + book.getPublisher());
+            publisherLabel.getStyleClass().add("book-publisher");
+
+            // Anno di pubblicazione del libro
+            Label yearLabel = new Label("Anno: " + book.getPublicationYear());
+            yearLabel.getStyleClass().add("book-year");
+
+            // Aggiungi gli elementi testuali al contentBox
+            contentBox.getChildren().addAll(titleLabel, authorLabel, categoryLabel, publisherLabel, yearLabel);
+
+            // Aggiungi copertina e contenitore di testo all'elemento libro
+            bookItem.getChildren().addAll(coverView, contentBox);
+
+
+            bookItem.setCursor(Cursor.HAND);
+            bookItem.setOnMouseClicked(event -> {
+                selectedBook = book;
+                switchToBookView(event);
+            });
+
+            booksContainer.getChildren().add(bookItem);
+
         }
-
-        // Contenitore per i dettagli testuali
-        VBox contentBox = new VBox();
-        contentBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        contentBox.setSpacing(10.0);
-
-        // Titolo del libro
-        Label titleLabel = new Label(book.getTitle());
-        titleLabel.getStyleClass().add("book-title");
-
-        // Autore del libro
-        Label authorLabel = new Label("Autore: " + (book.getAuthor().length() >= 3 ? book.getAuthor().substring(3) : book.getAuthor()));
-        authorLabel.getStyleClass().add("book-author");
-
-        // Categoria del libro
-        Label categoryLabel = new Label("Categoria: " + book.getCategory());
-        categoryLabel.getStyleClass().add("book-category");
-
-        // Editore del libro
-        Label publisherLabel = new Label("Editore: " + book.getPublisher());
-        publisherLabel.getStyleClass().add("book-publisher");
-
-        // Anno di pubblicazione del libro
-        Label yearLabel = new Label("Anno: " + book.getPublicationYear());
-        yearLabel.getStyleClass().add("book-year");
-
-
-        // Aggiungi gli elementi testuali al contentBox
-        contentBox.getChildren().addAll(titleLabel, authorLabel, categoryLabel, publisherLabel, yearLabel);
-
-        // Aggiungi copertina e contenitore di testo all'elemento libro
-        bookItem.getChildren().addAll(coverView, contentBox);
-
-
-        bookItem.setCursor(Cursor.HAND);
-        bookItem.setOnMouseClicked(event -> {
-            selectedBook = book;
-            switchToBookView(event);
-        });
-
-        booksContainer.getChildren().add(bookItem);
-    }
+        }
 
     @FXML
     protected void goToNextPage(ActionEvent event) {
@@ -838,8 +936,8 @@ public class EventHandler {
             alertController.showAlert("Errore", "Impossibile aprire la finestra di dialogo: " + e.getMessage());
         }
     }
-    
-   
+
+
 
     public void initLibraryBooksView(String libraryName) {
         // Salva il nome della libreria corrente

@@ -16,7 +16,7 @@ public class Main extends Application {
         stage.setHeight(800);
 
         Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/homeNotLogged-view.fxml"));
-        Scene scene = new Scene(root    );
+        Scene scene = new Scene(root);
         stage.setTitle("BookRecomender");
         stage.setScene(scene);
         stage.show();
