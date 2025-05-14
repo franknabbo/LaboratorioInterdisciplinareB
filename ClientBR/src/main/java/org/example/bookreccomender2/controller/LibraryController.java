@@ -1,6 +1,7 @@
 package org.example.bookreccomender2.controller;
 
 import org.example.bookreccomender2.Book;
+import org.example.bookreccomender2.SocketConnection;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,9 +27,6 @@ public class LibraryController {
 
             // Invia richiesta di creazione libreria
             out.println("CREATE_LIBRARY:" + UserManager.getUserId() + ":" + libraryName);
-
-            //leggi messaggio di welcome
-            String welcome = in.readLine();
 
             // Gestisci la risposta
             String response = in.readLine();
@@ -62,13 +60,10 @@ public class LibraryController {
             return;
         }
 
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        try {
+            SocketConnection.sendMessage("ADD_BOOK_TO_LIBRARY:" + UserManager.getUserId() + ":" + libraryName + ":" + selectedBook.getId());
 
-            out.println("ADD_BOOK_TO_LIBRARY:" + UserManager.getUserId() + ":" + libraryName + ":" + selectedBook.getId());
-
-            String welcome = in.readLine();
+            BufferedReader in = SocketConnection.getIn();
 
             // Gestisci la risposta
             String response = in.readLine();
@@ -92,16 +87,10 @@ public class LibraryController {
 
     public List<String> getLibraryList() {
         List<String> libraries = new ArrayList<>();
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-
-            // Leggi il messaggio di benvenuto
-            String welcome = in.readLine();
-
+        try {
             // Invia richiesta di librerie
-            out.println("GET_LIBRARY:" + UserManager.getUserId());
-
+            SocketConnection.sendMessage("GET_LIBRARY:" + UserManager.getUserId());
+            BufferedReader in = SocketConnection.getIn();
             // Leggi la risposta
             String line;
             while ((line = in.readLine()) != null) {

@@ -372,24 +372,22 @@ public class EventHandler {
             Platform.runLater(this::displayCurrentPage);
 
         } else {
+            BookClient client = new BookClient();
             try {
-                BookClient client = new BookClient();
-                try {
-                    // Richiedi libri al server
-                    List<Book> books = client.getBooks(0);
-                    bookCached.setCachedHomeBooks(books);
-                    currentSearchResults.addAll(books);
+                // Richiedi libri al server
+                List<Book> books = client.getBooks(0);
+                bookCached.setCachedHomeBooks(books);
+                currentSearchResults.addAll(books);
 
-                    // Aggiorna controlli di paginazione
-                    updatePageDisplay();
+                // Aggiorna controlli di paginazione
+                updatePageDisplay();
 
-                    // Visualizza prima pagina
-                    Platform.runLater(this::displayCurrentPage);
-                } finally {
-                    client.close();
-                }
-            } catch (IOException e) {
+                // Visualizza prima pagina
+                Platform.runLater(this::displayCurrentPage);
+            }
+            catch (IOException e) {
                 e.printStackTrace();
+                alertController.showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
             }
         }
 
@@ -1030,12 +1028,12 @@ public class EventHandler {
             return;
         }
 
-        suggestionController.addSuggestedBook(UserManager.getUserId(), selectedBook.getId(), selectedBooks);
+        if(suggestionController.addSuggestedBook(UserManager.getUserId(), selectedBook.getId(), selectedBooks)){
+            alertController.showAlertSucces("Suggerimenti aggiunti", "I libri selezionati sono stati suggeriti con successo.");
+        }else{
+            alertController.showAlert("Suggerimenti non aggiunti", "I libri selezionati non sono stati suggeriti con successo.");
 
-        // Mostra un messaggio di conferma
-        alertController.showAlert("Suggerimenti aggiunti", "I libri selezionati sono stati suggeriti con successo.");
-
-        // Torna alla pagina del libro
+        }
     }
 
 }

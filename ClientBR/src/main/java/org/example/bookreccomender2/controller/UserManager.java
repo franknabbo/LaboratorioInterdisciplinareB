@@ -36,7 +36,7 @@ public class UserManager {
         UserManager.userId = null;
     }
 
-    public void loginUser(String userId, String password, ActionEvent event ) throws IOException {
+    public void loginUser(String userId, String password, ActionEvent event) throws IOException {
 
         if (userId.isEmpty() || password.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -51,16 +51,12 @@ public class UserManager {
         String encryptedPassword = encryptPassword(password);
 
         // Connessione al server
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        try {
 
-            // Leggi il messaggio di benvenuto
-            String benvenuto = in.readLine();
 
             // Invio della richiesta di login
-            out.println("LOGIN:" + userId + ":" + encryptedPassword);
-
+            SocketConnection.sendMessage("LOGIN:" + userId + ":" + encryptedPassword);
+            BufferedReader in = SocketConnection.getIn();
             // Gestione della risposta
             String risposta = in.readLine();
 
@@ -103,7 +99,7 @@ public class UserManager {
         }
     }
 
-    public void registerUser(ActionEvent event, String nome, String cognome, String codiceFiscale, String email, String password){
+    public void registerUser(ActionEvent event, String nome, String cognome, String codiceFiscale, String email, String password) {
         // Connessione al server
         try (Socket socket = new Socket("localhost", 8080);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -143,8 +139,7 @@ public class UserManager {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Errore");
                 alert.setHeaderText("Registrazione fallita");
-                alert.setContentText("Non è stato possibile completare la registrazione.\n" +
-                        (risposta.contains(":") ? risposta.split(":", 2)[1] : ""));
+                alert.setContentText("Non è stato possibile completare la registrazione.\n" + (risposta.contains(":") ? risposta.split(":", 2)[1] : ""));
                 alert.showAndWait();
             }
         } catch (IOException e) {
@@ -157,7 +152,6 @@ public class UserManager {
             System.out.println("Errore di connessione al server: " + e.getMessage());
             e.printStackTrace();
         }
-
     }
 
     // Metodo per crittografare la password con SHA-256

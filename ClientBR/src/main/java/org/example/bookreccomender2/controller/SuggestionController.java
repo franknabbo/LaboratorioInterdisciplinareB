@@ -1,6 +1,7 @@
 package org.example.bookreccomender2.controller;
 
 import org.example.bookreccomender2.Book;
+import org.example.bookreccomender2.SocketConnection;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,27 +16,24 @@ public class SuggestionController {
     public SuggestionController() {
     }
 
-    public void addSuggestedBook(String userId, int idLibroReferenced, List<Book> idLibroSuggested) {
+    public boolean addSuggestedBook(String userId, int idLibroReferenced, List<Book> idLibroSuggested) {
         //la stringa è composta da: ADD_SUGGESTED_BOOK:userId:idLibroReferenced:idLibroSuggested:idLibroSuggested2:idLibroSuggested3:
         StringBuilder message = new StringBuilder("ADD_SUGGESTED_BOOK:" + userId + ":" + idLibroReferenced);
         for (Book book : idLibroSuggested) {
             message.append(":").append(book.getId());
         }
         //invia la stringa al server
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))){
-            // Leggi il messaggio di benvenuto
-            String welcome = in.readLine();
+        try {
             // Invia la richiesta di aggiunta del libro suggerito
-            out.println(message);
+            SocketConnection.sendMessage(String.valueOf(message));
+            BufferedReader in = SocketConnection.getIn();
             // Leggi la risposta del server
             String response = in.readLine();
             // Gestisci la risposta
             if (response.startsWith("SUGGESTION_SUCCESS")) {
-                System.out.println("Suggerimento aggiunto con successo");
+                return true;
             } else {
-                System.out.println("Errore nell'aggiunta del suggerimento: " + response.split(":", 2)[1]);
+                return false;
             }
 
         } catch (UnknownHostException e) {

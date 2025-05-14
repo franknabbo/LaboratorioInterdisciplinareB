@@ -2,6 +2,7 @@ package org.example.bookreccomender2.controller;
 
 import org.example.bookreccomender2.Book;
 import org.example.bookreccomender2.Rating;
+import org.example.bookreccomender2.SocketConnection;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,9 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RatingController {
-    private static final String SERVER_ADDRESS = "localhost";
-    private static final int SERVER_PORT = 8080;
-
     private AlertController alertController = new AlertController();
     private Socket socket;
     private BufferedReader in;
@@ -26,19 +24,13 @@ public class RatingController {
 
     public boolean addRating(int idLibro, int styleRating, int contentRating, int appealRating,
                              int originalityRating, int editionRating, String reviewText, int averageRating) {
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-
-            // Leggi il messaggio di benvenuto
-            String welcome = in.readLine();
-
+        try {
 
             // Invia richiesta di creazione rating
-            out.println("ADD_RATING:" + UserManager.getUserId() + "|||" + idLibro + "|||" + styleRating + "|||"
+            SocketConnection.sendMessage("ADD_RATING:" + UserManager.getUserId() + "|||" + idLibro + "|||" + styleRating + "|||"
                     + contentRating + "|||" + appealRating + "|||" + originalityRating + "|||" + editionRating + "|||"
                     + averageRating + "|||" + reviewText);
-
+            BufferedReader in = SocketConnection.getIn();
             String response = in.readLine();
             // Gestisce la risposta
             if (response.startsWith("RATING_SUCCESS")) {
@@ -55,13 +47,7 @@ public class RatingController {
 
     public List<Rating> fetchRating(int idLibro) {
         List<Rating> results = new ArrayList<>();
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-
-            // Leggi il messaggio di benvenuto
-            String welcome = in.readLine();
-
+        try {
             // Invia richiesta di creazione rating
             out.println("GET_RATING:" + idLibro);
 

@@ -37,9 +37,6 @@ public class ClientHandler implements Runnable {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-            // Messaggio di benvenuto
-            out.println("BENVENUTO al servizio BookRecommender!");
-
             // Ciclo di gestione richieste
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
