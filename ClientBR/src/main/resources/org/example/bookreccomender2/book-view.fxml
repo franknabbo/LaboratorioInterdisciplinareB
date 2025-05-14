@@ -33,7 +33,7 @@
                     <!-- Copertina a sinistra -->
                     <StackPane styleClass="cover-container">
                         <ImageView fx:id="coverImage" styleClass="book-cover-image">
-                            <Image url="/logoBookRecomender.png"/>
+                            <Image url="/logoBookRecommender.png"/>
                         </ImageView>
                     </StackPane>
 
@@ -64,8 +64,8 @@
                     <padding>
                         <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
                     </padding>
-                    <Label text="Valutazione media:" styleClass="section-label"/>
-                    <HBox fx:id="ratingStarsContainer" styleClass="rating-container">
+                    <Label text="Valutazione media:" styleClass="section-label" onMouseClicked="#openRating"/>
+                    <HBox fx:id="ratingStarsContainer" styleClass="rating-container" onMouseClicked="#openRating">
                         <FontIcon iconLiteral="fas-star" fx:id="star1" iconSize="20"/>
                         <FontIcon iconLiteral="fas-star" fx:id="star2" iconSize="20"/>
                         <FontIcon iconLiteral="fas-star" fx:id="star3" iconSize="20"/>
@@ -73,7 +73,6 @@
                         <FontIcon iconLiteral="fas-star" fx:id="star5" iconSize="20"/>
                     </HBox>
                 </HBox>
-
 
                 <!-- Sezione valutazioni aggregate -->
                 <TitledPane text="Valutazioni degli utenti" expanded="true">

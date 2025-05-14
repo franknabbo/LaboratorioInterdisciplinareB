@@ -1,9 +1,7 @@
 package org.example.bookreccomender2.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -166,6 +164,12 @@ public class AddRatingDialogController {
         editionS3.setDisable(true);
         editionS4.setDisable(true);
         editionS5.setDisable(true);
+        // Imposta il rating finale
+        finalS1.setDisable(true);
+        finalS2.setDisable(true);
+        finalS3.setDisable(true);
+        finalS4.setDisable(true);
+        finalS5.setDisable(true);
 
         // Aggiorna la visualizzazione di tutte le stelle
         updateAllStarRatings();
@@ -243,22 +247,11 @@ public class AddRatingDialogController {
             if (bookCoverImage != null && book.getCoverUrl() != null) {
                 try {
                     String imageUrl = book.getCoverUrl();
-                    int indexOfHttps = imageUrl.indexOf("https://");
-                    int indexOfHttp = imageUrl.indexOf("http://");
-
-                    if (indexOfHttps != -1) {
-                        imageUrl = imageUrl.substring(indexOfHttps);
-                    } else if (indexOfHttp != -1) {
-                        imageUrl = imageUrl.substring(indexOfHttp);
-                    } else if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-                        imageUrl = "/" + imageUrl;
-                    }
-
                     Image cover = new Image(imageUrl, true);
                     bookCoverImage.setImage(cover);
                 } catch (Exception e) {
                     // In caso di errore, carica un'immagine di default
-                    bookCoverImage.setImage(new Image("/logoBookRecomender.png"));
+                    bookCoverImage.setImage(new Image("/logoBookRecommender.png"));
                 }
             }
         }

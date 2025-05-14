@@ -1,7 +1,6 @@
 package org.example.bookreccomender2;
 
 import org.example.bookreccomender2.controller.*;
-import org.example.bookreccomender2.Rating;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -92,7 +91,7 @@ public class EventHandler {
     private final int booksPerPage = 25;
     private List<Book> currentSearchResults = new ArrayList<>();
     public BookCached bookCached = BookCached.getInstance();
-    private Book selectedBook;
+    private static Book selectedBook;
     @FXML
     private VBox librariesContainer; // Aggiungi questa variabile
     @FXML
@@ -110,6 +109,8 @@ public class EventHandler {
     private final BookClient bookClient = new BookClient();
     private final LibraryController libraryController = new LibraryController();
     private final RatingController ratingController = new RatingController();
+    private final SuggestionController suggestionController = new SuggestionController();
+
 
     @FXML
     private TitledPane recensioneMiaPane;
@@ -138,9 +139,6 @@ public class EventHandler {
     @FXML
     private void switchToBookView(MouseEvent event) {
         sceneController.switchToBookView(event, selectedBook);
-        ratingList = ratingController.fetchRating(selectedBook.getId());
-        //todo aggiunge le recensioni dalla seconda in poi nella boxpne valutazionilibri
-
     }
 
     @FXML
@@ -313,7 +311,7 @@ public class EventHandler {
 
     //metodo per apirre la dialog e impostare il rating che viene riscevuto da server aggreato
     @FXML
-    private void openRating(ActionEvent event) throws IOException {
+    private void openRating(MouseEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/addRatingDialog.fxml"));
         Parent root = loader.load();
 
@@ -343,7 +341,6 @@ public class EventHandler {
 
 
     }
-
 
     private List<String> getLibraryNames() {
         List<String> libraryNames = new ArrayList<>();
@@ -535,13 +532,11 @@ public class EventHandler {
 
     }
 
-
     public void initBookData(Book book) {
         if (book == null) return;
 
-        //
         // Memorizza il libro selezionato
-        this.selectedBook = book;
+        selectedBook = book;
         ratingList = ratingController.fetchRating(selectedBook.getId());
         updateBookRating(ratingStarsContainer);
 
@@ -576,32 +571,23 @@ public class EventHandler {
                 try {
                     // Estrai l'URL effettivo
                     String imageUrl = book.getCoverUrl();
-                    int indexOfHttps = imageUrl.indexOf("https://");
-                    int indexOfHttp = imageUrl.indexOf("http://");
-
-                    if (indexOfHttps != -1) {
-                        imageUrl = imageUrl.substring(indexOfHttps);
-                    } else if (indexOfHttp != -1) {
-                        imageUrl = imageUrl.substring(indexOfHttp);
-                    } else if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-                        imageUrl = "/" + imageUrl;
-                    }
-
                     // Carica l'immagine
                     Image cover = new Image(imageUrl, true);
                     coverImage.setImage(cover);
                 } catch (Exception e) {
-                    coverImage.setImage(new Image("/logoBookRecomender.png"));
+                    coverImage.setImage(new Image("/logoBookRecommender.png"));
                 }
             } else {
-                coverImage.setImage(new Image("/logoBookRecomender.png"));
+                coverImage.setImage(new Image("/logoBookRecommender.png"));
             }
         }
     }
 
-
     private void addBookToUI(Book book) {
         if (SceneController.currentPage.contains("suggested-books")) {
+            if(book.getId() == selectedBook.getId()){
+                return;
+            }
             // Crea l'elemento visuale del libro
             HBox bookItem = new HBox();
             bookItem.getStyleClass().add("book-item");
@@ -618,37 +604,22 @@ public class EventHandler {
                 try {
                     // Estrai l'URL effettivo dall'URL ricevuto
                     String imageUrl = book.getCoverUrl();
-                    int indexOfHttps = imageUrl.indexOf("https://");
-                    int indexOfHttp = imageUrl.indexOf("http://");
-
-                    if (indexOfHttps != -1) {
-                        imageUrl = imageUrl.substring(indexOfHttps);
-                    } else if (indexOfHttp != -1) {
-                        imageUrl = imageUrl.substring(indexOfHttp);
-                    } else if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-                        imageUrl = "/" + imageUrl; // Aggiungi slash per risorse locali
-                    }
-
-                    // Crea variabile finale per l'URL da usare nella lambda
-                    final String finalImageUrl = imageUrl;
-
                     // Caricamento immagine
-                    Image coverImage = new Image(finalImageUrl, true);
-
+                    Image coverImage = new Image(imageUrl, true);
                     // Listener per errori
                     coverImage.errorProperty().addListener((observable, oldValue, newValue) -> {
                         if (newValue) {
-                            Platform.runLater(() -> coverView.setImage(new Image("/logoBookRecomender.png")));
+                            Platform.runLater(() -> coverView.setImage(new Image("/logoBookRecommender.png")));
                         }
                     });
 
                     coverView.setImage(coverImage);
 
                 } catch (Exception e) {
-                    coverView.setImage(new Image("/logoBookRecomender.png"));
+                    coverView.setImage(new Image("/logoBookRecommender.png"));
                 }
             } else {
-                coverView.setImage(new Image("/logoBookRecomender.png"));
+                coverView.setImage(new Image("/logoBookRecommender.png"));
             }
 
             // Contenitore per i dettagli testuali
@@ -710,39 +681,24 @@ public class EventHandler {
             // Carica l'immagine di copertina
             if (!book.getCoverUrl().equals("null")) {
                 try {
-                    // Estrai l'URL effettivo dall'URL ricevuto
-                    String imageUrl = book.getCoverUrl();
-                    int indexOfHttps = imageUrl.indexOf("https://");
-                    int indexOfHttp = imageUrl.indexOf("http://");
-
-                    if (indexOfHttps != -1) {
-                        imageUrl = imageUrl.substring(indexOfHttps);
-                    } else if (indexOfHttp != -1) {
-                        imageUrl = imageUrl.substring(indexOfHttp);
-                    } else if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-                        imageUrl = "/" + imageUrl; // Aggiungi slash per risorse locali
-                    }
-
-                    // Crea variabile finale per l'URL da usare nella lambda
-                    final String finalImageUrl = imageUrl;
 
                     // Caricamento immagine
-                    Image coverImage = new Image(finalImageUrl, true);
+                    Image coverImage = new Image(book.getCoverUrl(), true);
 
                     // Listener per errori
                     coverImage.errorProperty().addListener((observable, oldValue, newValue) -> {
                         if (newValue) {
-                            Platform.runLater(() -> coverView.setImage(new Image("/logoBookRecomender.png")));
+                            Platform.runLater(() -> coverView.setImage(new Image("/logoBookRecommender.png")));
                         }
                     });
 
                     coverView.setImage(coverImage);
 
                 } catch (Exception e) {
-                    coverView.setImage(new Image("/logoBookRecomender.png"));
+                    coverView.setImage(new Image("/logoBookRecommender.png"));
                 }
             } else {
-                coverView.setImage(new Image("/logoBookRecomender.png"));
+                coverView.setImage(new Image("/logoBookRecommender.png"));
             }
 
             // Contenitore per i dettagli testuali
@@ -982,7 +938,6 @@ public class EventHandler {
         }
     }
 
-
     public void initLibraryBooksView(String libraryName) {
         // Salva il nome della libreria corrente
         this.currentLibraryName = libraryName;
@@ -1029,5 +984,58 @@ public class EventHandler {
         }).start();
     }
 
+    @FXML
+    private void addSuggestions(ActionEvent event) {
+        List<Book> selectedBooks = new ArrayList<>();
+
+        // Scansiona tutti i container dei libri per trovare le checkbox selezionate
+        for (Node node : booksContainer.getChildren()) {
+            if (node instanceof HBox) {
+                HBox bookItem = (HBox) node;
+                // Cerca nel contenuto del libro
+                for (Node child : bookItem.getChildren()) {
+                    if (child instanceof VBox) {
+                        VBox contentBox = (VBox) child;
+                        // Cerca la checkbox
+                        for (Node contentChild : contentBox.getChildren()) {
+                            if (contentChild instanceof CheckBox) {
+                                CheckBox checkBox = (CheckBox) contentChild;
+                                if (checkBox.isSelected()) {
+                                    // Trova l'indice dell'elemento nel container
+                                    int index = booksContainer.getChildren().indexOf(bookItem);
+                                    // Calcola l'indice reale nella lista dei risultati
+                                    int realIndex = (currentPage - 1) * booksPerPage + index;
+
+                                    if (realIndex < currentSearchResults.size()) {
+                                        selectedBooks.add(currentSearchResults.get(realIndex));
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Verifica se ci sono libri selezionati
+        if (selectedBooks.isEmpty()) {
+            alertController.showAlert("Nessun libro selezionato", "Seleziona almeno un libro da suggerire.");
+            return;
+        }
+
+        // Controlla se sono stati selezionati più di 3 libri
+        if (selectedBooks.size() > 3) {
+            alertController.showAlert("Troppi libri selezionati", "Puoi selezionare al massimo 3 libri da suggerire.");
+            return;
+        }
+
+        suggestionController.addSuggestedBook(UserManager.getUserId(), selectedBook.getId(), selectedBooks);
+
+        // Mostra un messaggio di conferma
+        alertController.showAlert("Suggerimenti aggiunti", "I libri selezionati sono stati suggeriti con successo.");
+
+        // Torna alla pagina del libro
+    }
 
 }

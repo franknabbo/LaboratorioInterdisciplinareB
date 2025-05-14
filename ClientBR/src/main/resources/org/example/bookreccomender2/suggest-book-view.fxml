@@ -26,7 +26,7 @@
             </padding>
 
             <!-- Bottone per salvare i libri consigliati -->
-            <Button fx:id="addSelectedBook" text="Aggiungi Suggerimenti" onAction="#switchToLibrary" styleClass="library-button">
+            <Button fx:id="addSelectedBook" text="Aggiungi Suggerimenti" onAction="#addSuggestions" styleClass="library-button">
                 <graphic>
                     <FontIcon iconLiteral="fas-book" iconSize="14"/>
                 </graphic>

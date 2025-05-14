@@ -69,8 +69,9 @@ public class RatingDAO {
 
         return ratings;
     }
-//Metodo per fare una media totale delle valutazioni
-    public  Rating mediaTotale(List<Rating> ratings) {
+
+    //Metodo per fare una media totale delle valutazioni
+    private Rating mediaTotale(List<Rating> ratings) {
         double mediaStile = 0;
         double mediaContenuto = 0;
         double mediaGradevolezza = 0;
@@ -78,10 +79,10 @@ public class RatingDAO {
         double mediaEdizione = 0;
         double mediaVotoFinale = 0;
         Rating media = new Rating();
-        if(ratings.isEmpty()){
+        if (ratings.isEmpty()) {
             return media;
         }
-        for(Rating r : ratings){
+        for (Rating r : ratings) {
             mediaStile += r.getStile();
             mediaContenuto += r.getContenuto();
             mediaGradevolezza += r.getGradevolezza();

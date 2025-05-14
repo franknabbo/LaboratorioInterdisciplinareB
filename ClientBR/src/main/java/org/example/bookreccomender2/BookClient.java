@@ -12,6 +12,7 @@
         private Socket socket;
         private BufferedReader in;
         private PrintWriter out;
+        private SocketConnection socketConnection;
 
         /**
          * Crea una nuova connessione al server

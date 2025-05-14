@@ -2,11 +2,13 @@ package org.example;
 
 import org.example.db.*;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientHandler implements Runnable {
@@ -16,12 +18,16 @@ public class ClientHandler implements Runnable {
     private final BookDAO bookDAO;
     private final UtenteDAO utenteDAO;
     private LibraryDAO libraryDAO;
+    private SuggestedBookDAO suggestedBookDAO;
+    private final RatingDAO ratingDAO;
 
     public ClientHandler(Socket socket) {
         this.clientSocket = socket;
         this.bookDAO = new BookDAO();
         this.utenteDAO = new UtenteDAO();
         this.libraryDAO = new LibraryDAO();
+        this.suggestedBookDAO = new SuggestedBookDAO();
+        this.ratingDAO = new RatingDAO();
     }
 
     @Override
@@ -68,30 +74,68 @@ public class ClientHandler implements Runnable {
             return handleAddRating(request);
         } else if (request.startsWith("GET_RATING:")) {
             return handleGetRatingFromBook(request);
-        } else {
+        } else if(request.startsWith(("ADD_SUGGESTED_BOOK:"))) {
+            return handleAddSuggestedBook(request);
+        }else {
             return "ERRORE:Comando non riconosciuto";
         }
+    }
+
+    private String handleAddSuggestedBook(String request) {
+
+        // Formato: ADD_SUGGESTED_BOOK:userId:idLibroReferenced:idLibroSuggested:idLibroSuggested2:idLibroSuggested3:...
+        //rimuovi add_suggested_book: dalla stringa request
+
+        request = request.replace("ADD_SUGGESTED_BOOK:", "");
+
+
+        String[] parts = request.split(":");
+
+        String userId = parts[0];
+        int idLibroReferenced = Integer.parseInt(parts[1]);
+        int idLibroSuggested = Integer.parseInt(parts[2]);
+
+        List<Integer> idLibri = new ArrayList<>();
+        for(int i = 2; i < parts.length; i++){
+            idLibri.add(Integer.parseInt(parts[i]));
+        }
+
+        // Aggiungi il libro suggerito
+        if(suggestedBookDAO.addSuggestedBook(userId, idLibroReferenced, idLibri)){
+            return "ADD_SUGGESTED_BOOK_SUCCESS:Libro suggerito aggiunto con successo";
+        }else{
+            return "ADD_SUGGESTED_BOOK_FAILED:Errore durante l'aggiunta del libro suggerito";
+        }
+
     }
 
     private String handleAddRating(String request) {
         try {
             boolean flag = false;
-            // Formato: ADD_RATING:idUtente:idLibro:stile:contenuto:gradevolezza:originalita:edizione:votofinale:recensione
-
-            String[] parts = request.split(":(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-            if (parts.length < 10) {
+            // Formato: ADD_RATING:idUtente|||idLibro|||stile|||contenuto|||gradevolezza|||originalit|||edizione|||votofinale|||recensione
+            //rimuovi add_rating: dalla stringa request
+            String[] parts = request.split(":");
+            if (parts.length < 2) {
                 return "RATING_FAILED:Parametri insufficienti";
             }
+            String[] parts2 = parts[1].split("\\|\\|\\|");
 
-            String idUtente = parts[1];
-            int idLibro = Integer.parseInt(parts[2]);
-            int stile = Integer.parseInt(parts[3]);
-            int contenuto = Integer.parseInt(parts[4]);
-            int gradevolezza = Integer.parseInt(parts[5]);
-            int originalita = Integer.parseInt(parts[6]);
-            int edizione = Integer.parseInt(parts[7]);
-            int votoFinale = Integer.parseInt(parts[8]);
-            String recensione = parts[9];
+
+            if (parts2.length < 9) {
+                return "RATING_FAILED:Parametri insufficienti";
+            }
+            // Parsa i parametr
+
+            String idUtente = parts2[0];
+            int idLibro = Integer.parseInt(parts2[1]);
+            int stile = Integer.parseInt(parts2[2]);
+            int contenuto = Integer.parseInt(parts2[3]);
+            int gradevolezza = Integer.parseInt(parts2[4]);
+            int originalita = Integer.parseInt(parts2[5]);
+            int edizione = Integer.parseInt(parts2[6]);
+            int votoFinale = Integer.parseInt(parts2[7]);
+            String recensione = parts2[8];
+
 
 
             //controllo se il libro è nella libreria dell'utente
@@ -112,7 +156,6 @@ public class ClientHandler implements Runnable {
                     originalita, edizione, votoFinale, recensione);
 
             // Salva la valutazione nel database
-            RatingDAO ratingDAO = new RatingDAO();
             boolean success = ratingDAO.salvaSuDatabase(rating);
 
             if (success) {
@@ -129,8 +172,6 @@ public class ClientHandler implements Runnable {
         }
     }
 
-
-    // Formato: GET_RATING_FROM_BOOK:idLibro
     private String handleGetRatingFromBook(String request) {
         try {
             String[] parts = request.split(":");

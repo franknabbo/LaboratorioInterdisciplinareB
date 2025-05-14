@@ -35,9 +35,9 @@ public class RatingController {
 
 
             // Invia richiesta di creazione rating
-            out.println("ADD_RATING:" + UserManager.getUserId() + ":" + idLibro + ":" + styleRating + ":"
-                    + contentRating + ":" + appealRating + ":" + originalityRating + ":" + editionRating + ":"
-                    + averageRating + ":" + reviewText);
+            out.println("ADD_RATING:" + UserManager.getUserId() + "|||" + idLibro + "|||" + styleRating + "|||"
+                    + contentRating + "|||" + appealRating + "|||" + originalityRating + "|||" + editionRating + "|||"
+                    + averageRating + "|||" + reviewText);
 
             String response = in.readLine();
             // Gestisce la risposta
@@ -45,7 +45,6 @@ public class RatingController {
                 alertController.showAlertSucces("Recensione aggiunta", "La recensione è stata aggiunta con successo");
                 return true;
             } else {
-
                 alertController.showAlert("Errore pubblicazione recensione", response.split(":", 2)[1]);
                 return false;
             }
