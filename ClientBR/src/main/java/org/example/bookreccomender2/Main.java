@@ -15,6 +15,8 @@ public class Main extends Application {
         stage.setWidth(1000);
         stage.setHeight(800);
 
+        SocketConnection.connect("localhost", 8080);
+
         Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/homeNotLogged-view.fxml"));
         Scene scene = new Scene(root);
         stage.setTitle("BookRecomender");

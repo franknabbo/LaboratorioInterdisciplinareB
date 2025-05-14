@@ -15,12 +15,6 @@ import java.util.List;
 
 public class RatingController {
     private AlertController alertController = new AlertController();
-    private Socket socket;
-    private BufferedReader in;
-    private PrintWriter out;
-
-    public RatingController() {
-    }
 
     public boolean addRating(int idLibro, int styleRating, int contentRating, int appealRating,
                              int originalityRating, int editionRating, String reviewText, int averageRating) {
@@ -49,7 +43,8 @@ public class RatingController {
         List<Rating> results = new ArrayList<>();
         try {
             // Invia richiesta di creazione rating
-            out.println("GET_RATING:" + idLibro);
+            SocketConnection.sendMessage("GET_RATING:" + idLibro);
+            BufferedReader in = SocketConnection.getIn();
 
             // Leggi la risposta
              String line;
@@ -86,8 +81,6 @@ public class RatingController {
                         } else {
                             System.err.println("Formato rating non valido: " + line);
                         }
-
-
 
 
                     } catch (Exception e) {

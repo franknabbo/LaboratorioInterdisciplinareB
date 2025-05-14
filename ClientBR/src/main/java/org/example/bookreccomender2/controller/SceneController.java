@@ -21,9 +21,6 @@ public class SceneController {
     private AlertController alertController = new AlertController();
     public static String currentPage = "homeNotLogged-view.fxml";
 
-    public SceneController() {
-    }
-
 
     public void switchToRegister(ActionEvent event) {
         currentPage = "register-view.fxml";

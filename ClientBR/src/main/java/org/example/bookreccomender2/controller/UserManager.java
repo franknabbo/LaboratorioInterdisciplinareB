@@ -2,6 +2,7 @@ package org.example.bookreccomender2.controller;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
+import org.example.bookreccomender2.SocketConnection;
 
 
 import java.io.BufferedReader;
@@ -101,20 +102,12 @@ public class UserManager {
 
     public void registerUser(ActionEvent event, String nome, String cognome, String codiceFiscale, String email, String password) {
         // Connessione al server
-        try (Socket socket = new Socket("localhost", 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-
-            // Leggi il messaggio di benvenuto
-            String benvenuto = in.readLine();
-            System.out.println(benvenuto);
-
-            // Crittografia della password
+        try {
             String encryptedPassword = encryptPassword(password);
 
-            // Invio della richiesta di registrazione con password crittografata
-            out.println("REGISTER:" + nome + ":" + cognome + ":" + codiceFiscale + ":" + email + ":" + encryptedPassword);
-
+            SocketConnection.sendMessage("REGISTER:" + nome + ":" + cognome + ":" + codiceFiscale + ":" + email + ":" + encryptedPassword);
+            // Gestione della risposta
+            BufferedReader in = SocketConnection.getIn();
             // Gestione della risposta
             String risposta = in.readLine();
             System.out.println("Risposta dal server: " + risposta);

@@ -17,17 +17,19 @@ public class SocketConnection {
         out = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    public BufferedReader getIn() {
+    public static BufferedReader getIn() {
         return in;
     }
 
-    public PrintWriter getOut() {
+    public static PrintWriter getOut() {
         return out;
     }
 
     public static Socket getConnection() {return socket;}
 
-
+    public static void sendMessage(String message) {
+        out.println(message);
+    }
 
     public void close() throws IOException {
         in.close();
