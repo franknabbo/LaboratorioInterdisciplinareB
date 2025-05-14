@@ -75,7 +75,7 @@
                 </HBox>
 
                 <!-- Sezione valutazioni aggregate -->
-                <TitledPane text="Valutazioni degli utenti" expanded="true">
+                <TitledPane text="Valutazioni degli utenti" expanded="false" onMouseClicked="#showRating">
                     <VBox fx:id="valutazioniAggregateContainer" spacing="10.0">
                         <!-- Qui andranno i componenti per le statistiche delle valutazioni -->
 
@@ -84,7 +84,7 @@
 
 
                 <!-- Sezione libri consigliati -->
-                <TitledPane text="Libri consigliati dagli utenti" expanded="true">
+                <TitledPane text="Libri consigliati dagli utenti" expanded="false">
                     <FlowPane fx:id="libriConsigliatiContainer" hgap="10.0" vgap="10.0"/>
                 </TitledPane>
 

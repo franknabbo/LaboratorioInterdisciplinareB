@@ -1,5 +1,6 @@
 package org.example.bookreccomender2;
 
+import javafx.scene.layout.GridPane;
 import org.example.bookreccomender2.controller.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -43,6 +44,8 @@ public class EventHandler {
     private TextField firstNameField;
     @FXML
     private TextField lastNameField;
+    @FXML
+    private VBox valutazioniAggregateContainer;
     @FXML
     private TextField taxCodeField;
     @FXML
@@ -139,6 +142,8 @@ public class EventHandler {
     @FXML
     private void switchToBookView(MouseEvent event) {
         sceneController.switchToBookView(event, selectedBook);
+
+
     }
 
     @FXML
@@ -323,7 +328,7 @@ public class EventHandler {
         // Crea una nuova finestra di dialogo
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setDialogPane((DialogPane) root);
-        dialog.setTitle("Recensione");
+        dialog.setTitle("Valutazione media");
 
         Rating ratingAggragato = ratingList.getFirst();
 
@@ -338,8 +343,36 @@ public class EventHandler {
 
         // Mostra la dialog
         Optional<ButtonType> result = dialog.showAndWait();
+    }
 
+    @FXML
+    private void openRating(Rating rating) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/addRatingDialog.fxml"));
+        Parent root = loader.load();
 
+        // Ottieni il controller
+        AddRatingDialogController controller = loader.getController();
+
+        // Passa il libro selezionato al controller
+        controller.setBook(selectedBook);
+        // Crea una nuova finestra di dialogo
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setDialogPane((DialogPane) root);
+        dialog.setTitle("Recensione di: " + rating.getUserId());
+
+        Rating ratingAggragato = rating;
+
+        controller.setExistingRatings(ratingAggragato.getStile(),
+                ratingAggragato.getContenuto(),
+                ratingAggragato.getGradevolezza(),
+                ratingAggragato.getOriginalita(),
+                ratingAggragato.getEdizione());
+
+        //togli la recensione
+        controller.setReviewTextVisible(false);
+
+        // Mostra la dialog
+        Optional<ButtonType> result = dialog.showAndWait();
     }
 
     private List<String> getLibraryNames() {
@@ -390,7 +423,6 @@ public class EventHandler {
                 alertController.showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
             }
         }
-
     }
 
     private void setupSearchField() {
@@ -504,6 +536,8 @@ public class EventHandler {
         contextMenu.show(source.getScene().getWindow(), event.getScreenX(), event.getScreenY());
     }
 
+
+
     public void updateBookRating(HBox ratingStarsContainer) {
         // Ottieni la valutazione media
         if (ratingList.isEmpty()) {
@@ -526,7 +560,12 @@ public class EventHandler {
                 }
             }
         }
+    }
 
+
+    public void showRating(){
+
+        loadAndDisplayBookReviews(selectedBook.getId());
 
     }
 
@@ -580,6 +619,108 @@ public class EventHandler {
             }
         }
     }
+
+    private void loadAndDisplayBookReviews(int bookId) {
+        valutazioniAggregateContainer.getChildren().clear();
+
+        // Ottieni le recensioni dal database tramite il controller
+        List<Rating> ratings = ratingList;
+
+        if (ratings.isEmpty() || ratings.size() <= 1) {
+            Label noReviewsLabel = new Label("Nessuna recensione disponibile per questo libro.");
+            noReviewsLabel.getStyleClass().add("no-reviews-label");
+            valutazioniAggregateContainer.getChildren().add(noReviewsLabel);
+            return;
+        }
+
+        // La prima valutazione è la media totale, non mostrare come recensione
+        for (int i = 1; i < ratings.size(); i++) {
+            Rating rating = ratings.get(i);
+            VBox reviewBox = createReviewBox(rating);
+
+            reviewBox.setOnMouseClicked(event -> {
+                try {
+                    openRating(rating);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            // Aggiungi stile per indicare che è cliccabile
+            reviewBox.setCursor(Cursor.HAND);
+            reviewBox.setOnMouseEntered(e -> reviewBox.setStyle(reviewBox.getStyle() + "-fx-border-color: #8B4513;"));
+            reviewBox.setOnMouseExited(e -> reviewBox.setStyle(reviewBox.getStyle() + "-fx-border-color: #ddd;"));
+
+
+            valutazioniAggregateContainer.getChildren().add(reviewBox);
+        }
+    }
+
+    private VBox createReviewBox(Rating rating) {
+        VBox reviewBox = new VBox(10);
+        reviewBox.getStyleClass().add("review-box");
+
+        // Intestazione con ID utente e valutazione
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        Label userLabel = new Label(rating.getUserId() + ":");
+        userLabel.getStyleClass().add("review-user");
+
+        HBox starsBox = createRatingStars(rating.getVotoFinale());
+
+        header.getChildren().addAll(userLabel, starsBox);
+
+        // Testo della recensione
+        Label reviewText = new Label(rating.getRecensione());
+        reviewText.setWrapText(true);
+        reviewText.getStyleClass().add("review-text");
+
+        // Dettagli della valutazione
+        GridPane ratingDetails = new GridPane();
+        ratingDetails.setHgap(10);
+        ratingDetails.setVgap(5);
+
+//        ratingDetails.add(new Label("Stile:"), 0, 0);
+//        ratingDetails.add(new Label(String.valueOf(rating.getStile())), 1, 0);
+//
+//        ratingDetails.add(new Label("Contenuto:"), 0, 1);
+//        ratingDetails.add(new Label(String.valueOf(rating.getContenuto())), 1, 1);
+//
+//        ratingDetails.add(new Label("Gradevolezza:"), 0, 2);
+//        ratingDetails.add(new Label(String.valueOf(rating.getGradevolezza())), 1, 2);
+//
+//        ratingDetails.add(new Label("Originalità:"), 0, 3);
+//        ratingDetails.add(new Label(String.valueOf(rating.getOriginalita())), 1, 3);
+//
+//        ratingDetails.add(new Label("Edizione:"), 0, 4);
+//        ratingDetails.add(new Label(String.valueOf(rating.getEdizione())), 1, 4);
+
+        reviewBox.getChildren().addAll(header, reviewText, ratingDetails);
+
+        return reviewBox;
+    }
+
+    private HBox createRatingStars(int rating) {
+        HBox starsBox = new HBox(5);
+        starsBox.setAlignment(Pos.CENTER_LEFT);
+
+        for (int i = 1; i <= 5; i++) {
+            FontIcon star = new FontIcon();
+            star.setIconLiteral("fas-star");
+            star.setIconSize(16);
+
+            if (i <= rating) {
+                star.setIconColor(Color.GOLD);
+            } else {
+                star.setIconColor(Color.GRAY);
+            }
+
+            starsBox.getChildren().add(star);
+        }
+
+        return starsBox;
+    }
+
 
     private void addBookToUI(Book book) {
         if (SceneController.currentPage.contains("suggested-books")) {

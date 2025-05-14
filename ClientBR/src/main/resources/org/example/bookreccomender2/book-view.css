@@ -131,6 +131,8 @@ GridPane Label {
     -fx-scale-y: 1.05;
 }
 
+
+
 /* Stile per il container delle valutazioni */
 #valutazioniAggregateContainer {
     -fx-background-color: white;
@@ -197,4 +199,25 @@ GridPane Label {
 /* Effetto ombra per elementi in rilievo */
 .elevated {
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);
+}
+
+.review-box {
+    -fx-background-color: #f9f9f9;
+    -fx-padding: 10px;
+    -fx-background-radius: 5px;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 5px;
+}
+
+.review-user {
+    -fx-font-weight: bold;
+}
+
+.review-text {
+    -fx-padding: 10px 0;
+}
+
+.no-reviews-label {
+    -fx-font-style: italic;
+    -fx-text-fill: #888;
 }

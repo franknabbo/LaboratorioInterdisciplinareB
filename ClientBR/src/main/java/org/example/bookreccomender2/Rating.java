@@ -80,6 +80,12 @@ public class Rating {
         return idLibro;
     }
 
+    public String getUserId(){
+
+        return idUtente;
+
+    }
+
     public int getStile() {
         return stile;
     }
@@ -95,6 +101,8 @@ public class Rating {
     public int getOriginalita() {
         return originalita;
     }
+
+
 
     public int getEdizione() {
         return edizione;
