@@ -26,11 +26,19 @@
             </padding>
 
             <!-- Bottone per salvare i libri consigliati -->
-            <Button fx:id="addSelectedBook" text="Aggiungi Suggerimenti" onAction="#addSuggestions" styleClass="library-button">
+            <Button fx:id="addSelectedBook" text="Aggiungi Suggerimenti" onAction="#addSuggestions" styleClass="library-button" disable="true">
                 <graphic>
                     <FontIcon iconLiteral="fas-book" iconSize="14"/>
                 </graphic>
             </Button>
+
+            <Button fx:id="clearSelectionButton" text="Annulla" onAction="#clearBookSelection"
+                    styleClass="library-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-times" iconSize="14"/>
+                </graphic>
+            </Button>
+
 
             <Label text="BookRecommender" styleClass="header-label">
                 <font>

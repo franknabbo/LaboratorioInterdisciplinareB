@@ -75,6 +75,8 @@ public class EventHandler {
     @FXML
     private Button nextPageButton;
     @FXML
+    private Button clearSelectionButton;
+    @FXML
     private Label pageLabel;
     @FXML
     private Label titoloLabel;
@@ -350,8 +352,10 @@ public class EventHandler {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/addRatingDialog.fxml"));
         Parent root = loader.load();
 
+
         // Ottieni il controller
         AddRatingDialogController controller = loader.getController();
+        controller.setReviewTextEditable(false);
 
         // Passa il libro selezionato al controller
         controller.setBook(selectedBook);
@@ -360,16 +364,15 @@ public class EventHandler {
         dialog.setDialogPane((DialogPane) root);
         dialog.setTitle("Recensione di: " + rating.getUserId());
 
-        Rating ratingAggragato = rating;
-
-        controller.setExistingRatings(ratingAggragato.getStile(),
-                ratingAggragato.getContenuto(),
-                ratingAggragato.getGradevolezza(),
-                ratingAggragato.getOriginalita(),
-                ratingAggragato.getEdizione());
+        controller.setExistingRatings(rating.getStile(),
+                rating.getContenuto(),
+                rating.getGradevolezza(),
+                rating.getOriginalita(),
+                rating.getEdizione());
 
         //togli la recensione
-        controller.setReviewTextVisible(false);
+        controller.setReviewTextVisible(true);
+        controller.setReviewText(rating.getRecensione());
 
         // Mostra la dialog
         Optional<ButtonType> result = dialog.showAndWait();
@@ -417,8 +420,7 @@ public class EventHandler {
 
                 // Visualizza prima pagina
                 Platform.runLater(this::displayCurrentPage);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 alertController.showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
             }
@@ -537,7 +539,6 @@ public class EventHandler {
     }
 
 
-
     public void updateBookRating(HBox ratingStarsContainer) {
         // Ottieni la valutazione media
         if (ratingList.isEmpty()) {
@@ -545,7 +546,7 @@ public class EventHandler {
                 FontIcon star = (FontIcon) ratingStarsContainer.getChildren().get(i);
                 star.setIconColor(javafx.scene.paint.Color.valueOf("#d3d3d3"));
             }
-        }else{
+        } else {
             Rating rating = ratingList.getFirst(); // Ottieni la prima valutazione
 
             if (rating != null) {
@@ -563,7 +564,7 @@ public class EventHandler {
     }
 
 
-    public void showRating(){
+    public void showRating() {
 
         loadAndDisplayBookReviews(selectedBook.getId());
 
@@ -670,32 +671,12 @@ public class EventHandler {
 
         header.getChildren().addAll(userLabel, starsBox);
 
-        // Testo della recensione
-        Label reviewText = new Label(rating.getRecensione());
-        reviewText.setWrapText(true);
-        reviewText.getStyleClass().add("review-text");
-
         // Dettagli della valutazione
         GridPane ratingDetails = new GridPane();
         ratingDetails.setHgap(10);
         ratingDetails.setVgap(5);
 
-//        ratingDetails.add(new Label("Stile:"), 0, 0);
-//        ratingDetails.add(new Label(String.valueOf(rating.getStile())), 1, 0);
-//
-//        ratingDetails.add(new Label("Contenuto:"), 0, 1);
-//        ratingDetails.add(new Label(String.valueOf(rating.getContenuto())), 1, 1);
-//
-//        ratingDetails.add(new Label("Gradevolezza:"), 0, 2);
-//        ratingDetails.add(new Label(String.valueOf(rating.getGradevolezza())), 1, 2);
-//
-//        ratingDetails.add(new Label("Originalità:"), 0, 3);
-//        ratingDetails.add(new Label(String.valueOf(rating.getOriginalita())), 1, 3);
-//
-//        ratingDetails.add(new Label("Edizione:"), 0, 4);
-//        ratingDetails.add(new Label(String.valueOf(rating.getEdizione())), 1, 4);
-
-        reviewBox.getChildren().addAll(header, reviewText, ratingDetails);
+        reviewBox.getChildren().addAll(header, ratingDetails);
 
         return reviewBox;
     }
@@ -724,7 +705,7 @@ public class EventHandler {
 
     private void addBookToUI(Book book) {
         if (SceneController.currentPage.contains("suggested-books")) {
-            if(book.getId() == selectedBook.getId()){
+            if (book.getId() == selectedBook.getId()) {
                 return;
             }
             // Crea l'elemento visuale del libro
@@ -786,12 +767,9 @@ public class EventHandler {
             CheckBox checkBox = new CheckBox();
             checkBox.setStyle("-fx-font-size: 14px; -fx-text-fill: #000000;");
             checkBox.setSelected(false);
+
             checkBox.setOnAction(e -> {
-                if (checkBox.isSelected()) {
-                    addSelectedBook.setDisable(false);
-                } else {
-                    addSelectedBook.setDisable(true);
-                }
+                updateAddSuggestionsButtonState();
             });
             // Aggiungi la checkbox al contentBox
             contentBox.getChildren().add(checkBox);
@@ -1157,24 +1135,85 @@ public class EventHandler {
             }
         }
 
+
         // Verifica se ci sono libri selezionati
         if (selectedBooks.isEmpty()) {
             alertController.showAlert("Nessun libro selezionato", "Seleziona almeno un libro da suggerire.");
             return;
         }
 
-        // Controlla se sono stati selezionati più di 3 libri
-        if (selectedBooks.size() > 3) {
-            alertController.showAlert("Troppi libri selezionati", "Puoi selezionare al massimo 3 libri da suggerire.");
-            return;
-        }
-
-        if(suggestionController.addSuggestedBook(UserManager.getUserId(), selectedBook.getId(), selectedBooks)){
+        if (suggestionController.addSuggestedBook(UserManager.getUserId(), selectedBook.getId(), selectedBooks)) {
             alertController.showAlertSucces("Suggerimenti aggiunti", "I libri selezionati sono stati suggeriti con successo.");
-        }else{
+            //torna nella schermata principale
+            try {
+                switchToHome(event);
+            } catch (Exception e) {
+                alertController.showAlert("Errore", "Impossibile tornare alla schermata principale.");
+            }
+        } else {
             alertController.showAlert("Suggerimenti non aggiunti", "I libri selezionati non sono stati suggeriti con successo.");
 
         }
     }
+
+    /**
+     * Aggiorna lo stato del pulsante "Aggiungi Suggerimenti" in base al numero di libri selezionati
+     */
+    private void updateAddSuggestionsButtonState() {
+        int selectedCount = 0;
+
+        // Conta i libri selezionati
+        for (Node node : booksContainer.getChildren()) {
+            if (node instanceof HBox) {
+                HBox bookItem = (HBox) node;
+                for (Node child : bookItem.getChildren()) {
+                    if (child instanceof VBox) {
+                        VBox contentBox = (VBox) child;
+                        for (Node contentChild : contentBox.getChildren()) {
+                            if (contentChild instanceof CheckBox) {
+                                CheckBox checkBox = (CheckBox) contentChild;
+                                if (checkBox.isSelected()) {
+                                    selectedCount++;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Abilita il pulsante solo se sono selezionati tra 1 e 3 libri
+        addSelectedBook.setDisable(selectedCount < 1 || selectedCount > 3);
+    }
+
+    @FXML
+    private void clearBookSelection(ActionEvent event) {
+        // Deseleziona tutte le checkbox
+        for (Node node : booksContainer.getChildren()) {
+            if (node instanceof HBox) {
+                HBox bookItem = (HBox) node;
+                for (Node child : bookItem.getChildren()) {
+                    if (child instanceof VBox) {
+                        VBox contentBox = (VBox) child;
+                        for (Node contentChild : contentBox.getChildren()) {
+                            if (contentChild instanceof CheckBox) {
+                                CheckBox checkBox = (CheckBox) contentChild;
+                                checkBox.setSelected(false);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        updateAddSuggestionsButtonState();
+        try {
+            switchToHome(event);
+        } catch (Exception e) {
+            alertController.showAlert("Errore", "Impossibile tornare alla schermata precedente.");
+        }
+    }
+
+
 
 }

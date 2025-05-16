@@ -99,7 +99,7 @@ public class ClientHandler implements Runnable {
 
         // Aggiungi il libro suggerito
         if(suggestedBookDAO.addSuggestedBook(userId, idLibroReferenced, idLibri)){
-            return "ADD_SUGGESTED_BOOK_SUCCESS:Libro suggerito aggiunto con successo";
+            return "SUGGESTION_SUCCESS:Libro suggerito aggiunto con successo";
         }else{
             return "ADD_SUGGESTED_BOOK_FAILED:Errore durante l'aggiunta del libro suggerito";
         }

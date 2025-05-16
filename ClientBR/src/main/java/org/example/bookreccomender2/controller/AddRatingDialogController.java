@@ -290,6 +290,11 @@ public class AddRatingDialogController {
         updateAverageRating();
     }
 
+    public void setReviewTextEditable(boolean editable) {
+        if (reviewText != null) {
+            reviewText.setEditable(editable);
+        }
+    }
     public String getReviewText() {
         return reviewText.getText();
     }
