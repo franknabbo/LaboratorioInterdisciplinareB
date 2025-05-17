@@ -98,7 +98,9 @@ public class EventHandler {
     public BookCached bookCached = BookCached.getInstance();
     private static Book selectedBook;
     @FXML
-    private VBox librariesContainer; // Aggiungi questa variabile
+    private VBox librariesContainer;
+    @FXML
+    private VBox libriConsigliatiContainer;
     @FXML
     private Button valutaLibroButton;
     @FXML
@@ -107,6 +109,7 @@ public class EventHandler {
     private Button aggiungiLibreriaButton;
     @FXML
     private static List<Rating> ratingList = new ArrayList<>();
+    private static List<Book> suggestedBookList = new ArrayList<>();
 
     private final AlertController alertController = new AlertController();
     private final SceneController sceneController = new SceneController();
@@ -116,13 +119,6 @@ public class EventHandler {
     private final RatingController ratingController = new RatingController();
     private final SuggestionController suggestionController = new SuggestionController();
 
-
-    @FXML
-    private TitledPane recensioneMiaPane;
-    @FXML
-    private TitledPane consigliMieiPane;
-    @FXML
-    private Button addToLibraryButton;
     private String currentLibraryName;
 
 
@@ -538,6 +534,14 @@ public class EventHandler {
         contextMenu.show(source.getScene().getWindow(), event.getScreenX(), event.getScreenY());
     }
 
+    private void showSuggestionsInUI(List<Book> books) {
+
+        libriConsigliatiContainer.getChildren().clear();
+        for(Book book : books) {
+            addBookToUI(book);
+        }
+    }
+
 
     public void updateBookRating(HBox ratingStarsContainer) {
         // Ottieni la valutazione media
@@ -572,11 +576,14 @@ public class EventHandler {
 
     public void initBookData(Book book) {
         if (book == null) return;
-
+        SceneController.currentPage = "book-view.fxml";
         // Memorizza il libro selezionato
         selectedBook = book;
         ratingList = ratingController.fetchRating(selectedBook.getId());
+        suggestedBookList = suggestionController.getSuggestedBooks(selectedBook.getId());
+
         updateBookRating(ratingStarsContainer);
+        showSuggestionsInUI(suggestedBookList);
 
 
         // Aggiorna i campi della vista con i dati del libro
@@ -722,7 +729,6 @@ public class EventHandler {
             // Carica l'immagine di copertina
             if (!book.getCoverUrl().equals("null")) {
                 try {
-                    // Estrai l'URL effettivo dall'URL ricevuto
                     String imageUrl = book.getCoverUrl();
                     // Caricamento immagine
                     Image coverImage = new Image(imageUrl, true);
@@ -783,7 +789,8 @@ public class EventHandler {
             booksContainer.getChildren().add(bookItem);
 //ciao, le amiche di mia sorella mi fanno paura, sembrano più grandi di me e mi sento  giudicata un botto :(
 
-        } else {
+        }
+        else if(SceneController.currentPage.contains("home")) {
             // Crea l'elemento visuale del libro
             HBox bookItem = new HBox();
             bookItem.getStyleClass().add("book-item");
@@ -857,6 +864,76 @@ public class EventHandler {
             });
 
             booksContainer.getChildren().add(bookItem);
+
+        } else if(SceneController.currentPage.contains("book-view.fxml")) {
+            // Crea l'elemento visivo del libro
+            HBox bookItem = new HBox();
+            bookItem.getStyleClass().add("book-item");
+            bookItem.setSpacing(15.0);
+
+            // Copertina
+            ImageView coverView = new ImageView();
+            coverView.setFitWidth(120.0);
+            coverView.setFitHeight(180.0);
+            coverView.setPreserveRatio(true);
+
+            // Carica l'immagine di copertina
+            if (!book.getCoverUrl().equals("null")) {
+                try {
+                    String imageUrl = book.getCoverUrl();
+                    // Caricamento immagine
+                    Image coverImage = new Image(imageUrl, true);
+                    // Listener per errori
+                    coverImage.errorProperty().addListener((observable, oldValue, newValue) -> {
+                        if (newValue) {
+                            Platform.runLater(() -> coverView.setImage(new Image("/logoBookRecommender.png")));
+                        }
+                    });
+
+                    coverView.setImage(coverImage);
+
+                } catch (Exception e) {
+                    coverView.setImage(new Image("/logoBookRecommender.png"));
+                }
+            } else {
+                coverView.setImage(new Image("/logoBookRecommender.png"));
+            }
+
+            // Contenitore per i dettagli testuali
+            VBox contentBox = new VBox();
+            contentBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            contentBox.setSpacing(10.0);
+
+            // Titolo del libro
+            Label titleLabel = new Label(book.getTitle());
+            titleLabel.getStyleClass().add("book-title");
+
+            // Autore del libro
+            Label authorLabel = new Label("Autore: " + (book.getAuthor().length() >= 3 ? book.getAuthor().substring(3) : book.getAuthor()));
+            authorLabel.getStyleClass().add("book-author");
+
+            // Categoria del libro
+            Label categoryLabel = new Label("Categoria: " + book.getCategory());
+            categoryLabel.getStyleClass().add("book-category");
+
+            // Editore del libro
+            Label publisherLabel = new Label("Editore: " + book.getPublisher());
+            publisherLabel.getStyleClass().add("book-publisher");
+
+            // Anno di pubblicazione del libro
+            Label yearLabel = new Label("Anno: " + book.getPublicationYear());
+            yearLabel.getStyleClass().add("book-year");
+            // Aggiungi gli elementi testuali al contentBox
+            contentBox.getChildren().addAll(titleLabel, authorLabel, categoryLabel, publisherLabel, yearLabel);
+            // Aggiungi copertina e contenitore di testo all'elemento libro
+            bookItem.getChildren().addAll(coverView, contentBox);
+            bookItem.setCursor(Cursor.HAND);
+            bookItem.setOnMouseClicked(event -> {
+                selectedBook = book;
+                switchToBookView(event);
+            });
+            // Aggiungi l'elemento libro al container
+            libriConsigliatiContainer.getChildren().add(bookItem);
 
         }
     }
@@ -1213,7 +1290,6 @@ public class EventHandler {
             alertController.showAlert("Errore", "Impossibile tornare alla schermata precedente.");
         }
     }
-
 
 
 }

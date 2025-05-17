@@ -85,7 +85,8 @@
 
                 <!-- Sezione libri consigliati -->
                 <TitledPane text="Libri consigliati dagli utenti" expanded="false">
-                    <FlowPane fx:id="libriConsigliatiContainer" hgap="10.0" vgap="10.0"/>
+                    <VBox fx:id="libriConsigliatiContainer" spacing="10.0"/>
+                    <!-- Qui andranno i componenti per i libri consigliati -->
                 </TitledPane>
 
                 <!-- Pulsanti azioni -->

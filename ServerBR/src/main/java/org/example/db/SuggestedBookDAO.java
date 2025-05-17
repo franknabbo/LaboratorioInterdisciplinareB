@@ -2,6 +2,7 @@ package org.example.db;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SuggestedBookDAO {
@@ -13,15 +14,6 @@ public class SuggestedBookDAO {
 
     //Metodo per ottenere i libri suggeriti di un determinato libro, contanto quelli che sonos stati consigliati piu volte
 
-
-    //Metodo per inserire i libri suggeriti di uno specifico libro
-    //CREATE TABLE IF NOT EXISTS public.consiglilibri
-    //(
-    //    user_id character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    //    id_libro_referenced integer NOT NULL,
-    //    id_libro_suggested integer NOT NULL,
-    //    CONSTRAINT consiglilibri_pkey PRIMARY KEY (user_id, id_libro_referenced, id_libro_suggested)
-    //);
     private int isSuggestedBookAlreadyAdded(String userId, int idLibroReferenced) {
         String sql = "SELECT * FROM consiglilibri WHERE user_id = ? AND id_libro_referenced = ?";
         try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
@@ -83,5 +75,22 @@ public class SuggestedBookDAO {
             }
         }
         return true;
+    }
+
+    //Metodo per ottenere i libri suggeriti di un determinato libro, contanto quelli che sonos stati consigliati piu volte possono essere al massimo 3
+    public List<Integer> getSuggestedBooks(int idLibroReferenced) {
+        String sql = "SELECT id_libro_suggested, COUNT(*) as count FROM consiglilibri WHERE id_libro_referenced = ? GROUP BY id_libro_suggested ORDER BY count DESC LIMIT 3";
+        try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
+            pstmt.setInt(1, idLibroReferenced);
+            var exc = pstmt.executeQuery();
+            List<Integer> suggestedBooks = new ArrayList<>();
+            while (exc.next()) {
+                suggestedBooks.add(exc.getInt("id_libro_suggested"));
+            }
+            return suggestedBooks;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

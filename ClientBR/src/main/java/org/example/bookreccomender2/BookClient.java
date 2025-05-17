@@ -49,7 +49,7 @@ public class BookClient {
         return books;
     }
 
-    private static Book getBook(String[] parts) {
+    public static Book getBook(String[] parts) {
         int id = Integer.parseInt(parts[1]);
         String title = parts[2];
         String author = parts[3];

@@ -134,6 +134,32 @@ public class BookDAO {
         return books;
     }
 
+    // Metodo per ottenere i dettagli di un libro specifico
+    public Book getBookDetails(int bookId) {
+        Book book = null;
+        String sql = "SELECT * FROM Libri WHERE id_libro = ?";
+
+        try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
+            pstmt.setInt(1, bookId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                book = new Book(
+                        rs.getInt("id_libro"),
+                        rs.getString("titolo"),
+                        rs.getString("autore"),
+                        rs.getString("categoria"),
+                        rs.getString("editore"),
+                        rs.getInt("anno_pubblicazione"),
+                        rs.getString("copertina")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return book;
+    }
+
 
     public void closeConnection() {
         db.closeConnection();

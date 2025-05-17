@@ -139,6 +139,17 @@ public class AddRatingDialogController {
         this.editionRating = edition;
 
         //toglie la possibilità all'utente di modificare il rating
+        setDisableStarIcon(styleS1, styleS2, styleS3, styleS4, styleS5, contentS1, contentS2, contentS3, contentS4, contentS5, appealS1, appealS2, appealS3, appealS4, appealS5);
+        setDisableStarIcon(originalityS1, originalityS2, originalityS3, originalityS4, originalityS5, editionS1, editionS2, editionS3, editionS4, editionS5, finalS1, finalS2, finalS3, finalS4, finalS5);
+
+        // Aggiorna la visualizzazione di tutte le stelle
+        updateAllStarRatings();
+
+        // Calcola e aggiorna la media
+        updateAverageRating();
+    }
+
+    private void setDisableStarIcon(FontIcon styleS1, FontIcon styleS2, FontIcon styleS3, FontIcon styleS4, FontIcon styleS5, FontIcon contentS1, FontIcon contentS2, FontIcon contentS3, FontIcon contentS4, FontIcon contentS5, FontIcon appealS1, FontIcon appealS2, FontIcon appealS3, FontIcon appealS4, FontIcon appealS5) {
         styleS1.setDisable(true);
         styleS2.setDisable(true);
         styleS3.setDisable(true);
@@ -154,28 +165,6 @@ public class AddRatingDialogController {
         appealS3.setDisable(true);
         appealS4.setDisable(true);
         appealS5.setDisable(true);
-        originalityS1.setDisable(true);
-        originalityS2.setDisable(true);
-        originalityS3.setDisable(true);
-        originalityS4.setDisable(true);
-        originalityS5.setDisable(true);
-        editionS1.setDisable(true);
-        editionS2.setDisable(true);
-        editionS3.setDisable(true);
-        editionS4.setDisable(true);
-        editionS5.setDisable(true);
-        // Imposta il rating finale
-        finalS1.setDisable(true);
-        finalS2.setDisable(true);
-        finalS3.setDisable(true);
-        finalS4.setDisable(true);
-        finalS5.setDisable(true);
-
-        // Aggiorna la visualizzazione di tutte le stelle
-        updateAllStarRatings();
-
-        // Calcola e aggiorna la media
-        updateAverageRating();
     }
 
     private void resetAllRatings() {

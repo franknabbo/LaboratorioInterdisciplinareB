@@ -73,7 +73,9 @@ public class ClientHandler implements Runnable {
             return handleGetRatingFromBook(request);
         } else if(request.startsWith(("ADD_SUGGESTED_BOOK:"))) {
             return handleAddSuggestedBook(request);
-        }else {
+        } else if(request.startsWith(("GET_SUGGESTED_BOOKS:"))) {
+            return handleGetSuggestedBooks(request);
+        } else {
             return "ERRORE:Comando non riconosciuto";
         }
     }
@@ -96,7 +98,6 @@ public class ClientHandler implements Runnable {
         for(int i = 2; i < parts.length; i++){
             idLibri.add(Integer.parseInt(parts[i]));
         }
-
         // Aggiungi il libro suggerito
         if(suggestedBookDAO.addSuggestedBook(userId, idLibroReferenced, idLibri)){
             return "SUGGESTION_SUCCESS:Libro suggerito aggiunto con successo";
@@ -104,6 +105,25 @@ public class ClientHandler implements Runnable {
             return "ADD_SUGGESTED_BOOK_FAILED:Errore durante l'aggiunta del libro suggerito";
         }
 
+    }
+
+    private String handleGetSuggestedBooks(String request) {
+        // Formato:  GET_SUGGESTED_BOOKS:idLibro
+        String[] parts = request.split(":");
+        if (parts.length < 2) {
+            return "SUGGESTION_RETRIEVAL_FAILED:Parametri insufficienti";
+        }
+        int idLibro = Integer.parseInt(parts[1]);
+        List<Integer> suggestedBooks = suggestedBookDAO.getSuggestedBooks(idLibro);
+        if (suggestedBooks == null) {
+            return "SUGGESTION_RETRIEVAL_FAILED:Nessun libro suggerito trovato per il libro con ID: " + idLibro;
+        }
+        List<Book> books = new ArrayList<>();
+        for (Integer suggestedBook : suggestedBooks) {
+            // Aggiungi il libro suggerito alla risposta
+            books.add(bookDAO.getBookDetails(suggestedBook));
+        }
+        return getString(books);
     }
 
     private String handleAddRating(String request) {
