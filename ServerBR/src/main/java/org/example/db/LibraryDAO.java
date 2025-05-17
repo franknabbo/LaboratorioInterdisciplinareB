@@ -1,3 +1,8 @@
+// Francesco Del Rosso (Matricola: 758295) Como
+// Davide Cartolano (Matricola: 757603) Como
+// Tommaso Ferloni (Matricola: 757581) Como
+// Andrea Riva (Matricola: 757580) Como
+
 package org.example.db;
 
 import java.sql.Connection;
@@ -6,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class LibraryDAO {
     private final DataBaseConnection db;

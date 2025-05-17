@@ -1,3 +1,8 @@
+// Francesco Del Rosso (Matricola: 758295) Como
+// Davide Cartolano (Matricola: 757603) Como
+// Tommaso Ferloni (Matricola: 757581) Como
+// Andrea Riva (Matricola: 757580) Como
+
 package org.example;
 
 import org.example.db.*;
@@ -10,6 +15,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class ClientHandler implements Runnable {
     private final Socket clientSocket;

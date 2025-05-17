@@ -1,3 +1,8 @@
+// Francesco Del Rosso (Matricola: 758295) Como
+// Davide Cartolano (Matricola: 757603) Como
+// Tommaso Ferloni (Matricola: 757581) Como
+// Andrea Riva (Matricola: 757580) Como
+
 package org.example.bookreccomender2.controller;
 
 import javafx.event.ActionEvent;
@@ -13,6 +18,11 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+// Francesco Del Rosso (Matricola: 758295) Como
+// Davide Cartolano (Matricola: 757603) Como
+// Tommaso Ferloni (Matricola: 757581) Como
+// Andrea Riva (Matricola: 757580) Como
+
 
 public class UserManager {
     private static boolean loggedIn = false;

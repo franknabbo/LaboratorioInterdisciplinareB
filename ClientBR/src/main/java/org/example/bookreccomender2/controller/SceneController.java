@@ -1,3 +1,8 @@
+// Francesco Del Rosso (Matricola: 758295) Como
+// Davide Cartolano (Matricola: 757603) Como
+// Tommaso Ferloni (Matricola: 757581) Como
+// Andrea Riva (Matricola: 757580) Como
+
 package org.example.bookreccomender2.controller;
 
 import javafx.event.ActionEvent;
@@ -9,11 +14,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.bookreccomender2.Book;
 import org.example.bookreccomender2.EventHandler;
-import org.example.bookreccomender2.Rating;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
+
+
 
 public class SceneController {
 

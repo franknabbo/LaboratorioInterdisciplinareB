@@ -1,7 +1,12 @@
+// Francesco Del Rosso (Matricola: 758295) Como
+// Davide Cartolano (Matricola: 757603) Como
+// Tommaso Ferloni (Matricola: 757581) Como
+// Andrea Riva (Matricola: 757580) Como
 package org.example.bookreccomender2;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class BookCached {
     private static BookCached instance;
