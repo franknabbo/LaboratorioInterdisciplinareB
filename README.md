@@ -28,8 +28,8 @@ Obbiettivi raggiunti:
 | Registrazione     | ✅             |  ✅    |
 | Login             | ✅             |   ✅   |
 | Creare librerie  |  ✅            |   ✅   |
-| Inserire valutazione    | ❌         |  ❌      |
-| Inserire consigli  | ❌           |  ❌      |
+| Inserire valutazione    | ✅        |  ✅      |
+| Inserire consigli  | ✅          |  ✅      |
 
 
 
