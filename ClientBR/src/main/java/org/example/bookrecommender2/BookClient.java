@@ -117,6 +117,10 @@ public class BookClient {
 
     }
 
+    //todo modifcare ricerca perchè deve cambiare se è nelle librerie oppure nei libri consigliati
+    // (potremmo aggiungere un paramentro alla richeista per capire dove farlo cercare, se consigliati basta ccambiare la query nel from mettere librerie_libri
+    // per libreria specifica mandare l'id della libreria e cambiare query)
+
     public List<Book> performSearch(String searchType, String searchTerm, String year) throws IOException {
         // Leggi il messaggio di benvenuto
         // Invia la richiesta di ricerca
