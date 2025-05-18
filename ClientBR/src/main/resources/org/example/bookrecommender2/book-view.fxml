@@ -6,11 +6,11 @@
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<?import org.example.bookreccomender2.controller.UserManager?>
+<?import org.example.bookrecommender2.controller.UserManager?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.bookreccomender2.EventHandler"
+            fx:controller="org.example.bookrecommender2.EventHandler"
             stylesheets="@book-view.css"
             prefHeight="600.0" prefWidth="800.0">
 

@@ -8,7 +8,7 @@
 <?import javafx.scene.image.ImageView?>
 <DialogPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.bookreccomender2.controller.AddRatingDialogController"
+            fx:controller="org.example.bookrecommender2.controller.AddRatingDialogController"
             stylesheets="@addRatingDialog.css"
             prefWidth="500" prefHeight="600"
             styleClass="review-dialog">

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
+import java.util.Scanner;
 
 import org.example.db.Book;
 import org.example.db.BookDAO;
@@ -18,8 +19,30 @@ public class Main {
     public static final int PORT = 8080;
 
     public static void main(String[] args) {
-        DataBaseConnection db = new DataBaseConnection();
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            Scanner scanner = new Scanner(System.in);
+            do {
+
+                System.out.print("Inserisci l'host del database: ");
+                String HOST = scanner.nextLine();
+                System.out.print("Inserisci la porta del database: ");
+                String DB_PORT = scanner.nextLine();
+                System.out.print("Inserisci il nome del database: ");
+                String DB_NAME = scanner.nextLine();
+                DataBaseConnection.setHOST(HOST);
+                DataBaseConnection.setPORT(DB_PORT);
+                DataBaseConnection.setDbName(DB_NAME);
+                System.out.print("Inserisci il nome utente per il database: ");
+                String USER = scanner.nextLine();
+                System.out.print("Inserisci la password per l'utente " + USER + ": ");
+                String PASSWORD = scanner.nextLine();
+                DataBaseConnection.setUSER(USER);
+                DataBaseConnection.setPASSWORD(PASSWORD);
+
+                if (!DataBaseConnection.testConnection())
+                    System.out.println("Errore Credenziali Sbagliate");
+            } while (!DataBaseConnection.testConnection());
+
             System.out.println("Server avviato sulla porta " + PORT);
             while (true) {
                 Socket clientSocket = serverSocket.accept();

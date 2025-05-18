@@ -4,14 +4,14 @@
 // Andrea Riva (Matricola: 757580) Como
 
 
-package org.example.bookreccomender2.controller;
+package org.example.bookrecommender2.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.example.bookreccomender2.Book;
+import org.example.bookrecommender2.Book;
 
 public class AddRatingDialogController {
 
@@ -61,7 +61,6 @@ public class AddRatingDialogController {
     @FXML private FontIcon finalS4;
     @FXML private FontIcon finalS5;
 
-    private Book book;
     private int styleRating = 0;
     private int contentRating = 0;
     private int appealRating = 0;
@@ -231,7 +230,6 @@ public class AddRatingDialogController {
     }
 
     public void setBook(Book book) {
-        this.book = book;
         if (book != null) {
             // Imposta il titolo del libro
             if (title != null) {

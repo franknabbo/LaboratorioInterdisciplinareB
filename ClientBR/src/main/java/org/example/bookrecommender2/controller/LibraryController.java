@@ -2,10 +2,10 @@
 // Davide Cartolano (Matricola: 757603) Como
 // Tommaso Ferloni (Matricola: 757581) Como
 // Andrea Riva (Matricola: 757580) Como
-package org.example.bookreccomender2.controller;
+package org.example.bookrecommender2.controller;
 
-import org.example.bookreccomender2.Book;
-import org.example.bookreccomender2.SocketConnection;
+import org.example.bookrecommender2.Book;
+import org.example.bookrecommender2.SocketConnection;
 
 import java.io.BufferedReader;
 import java.io.IOException;

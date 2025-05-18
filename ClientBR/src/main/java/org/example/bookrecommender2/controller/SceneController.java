@@ -3,7 +3,7 @@
 // Tommaso Ferloni (Matricola: 757581) Como
 // Andrea Riva (Matricola: 757580) Como
 
-package org.example.bookreccomender2.controller;
+package org.example.bookrecommender2.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -12,8 +12,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import org.example.bookreccomender2.Book;
-import org.example.bookreccomender2.EventHandler;
+import org.example.bookrecommender2.Book;
+import org.example.bookrecommender2.EventHandler;
 
 import java.io.IOException;
 
@@ -23,14 +23,14 @@ import java.io.IOException;
 public class SceneController {
 
 
-    private AlertController alertController = new AlertController();
+    private final AlertController alertController = new AlertController();
     public static String currentPage = "homeNotLogged-view.fxml";
 
 
     public void switchToRegister(ActionEvent event) {
         currentPage = "register-view.fxml";
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/register-view.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookrecommender2/register-view.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 700, 700);
             stage.setScene(scene);
@@ -45,8 +45,8 @@ public class SceneController {
         currentPage = "homeNotLogged-view.fxml";
         try {
             String viewFile = UserManager.isLoggedIn() ?
-                    "/org/example/bookreccomender2/homeLogged-view.fxml" :
-                    "/org/example/bookreccomender2/homeNotLogged-view.fxml";
+                    "/org/example/bookrecommender2/homeLogged-view.fxml" :
+                    "/org/example/bookrecommender2/homeNotLogged-view.fxml";
 
             Parent root = FXMLLoader.load(getClass().getResource(viewFile));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -62,7 +62,7 @@ public class SceneController {
     public void switchToLogin(ActionEvent event) {
         currentPage = "login-view.fxml";
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/login-view.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookrecommender2/login-view.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 700, 700);
             stage.setScene(scene);
@@ -75,7 +75,7 @@ public class SceneController {
     public void switchToBookView(MouseEvent event, Book selectedBook) {
         currentPage = "book-view.fxml";
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/book-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookrecommender2/book-view.fxml"));
             Parent root = loader.load();
 
             // Ottieni il controller e inizializza i dati del libro
@@ -97,7 +97,7 @@ public class SceneController {
     public void switchToLibrary(ActionEvent event) {
         currentPage = "library-view.fxml";
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/library-view.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookrecommender2/library-view.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 700, 700);
             stage.setScene(scene);
@@ -110,7 +110,7 @@ public class SceneController {
     public void switchToLibraryBooks(MouseEvent event, String libraryName) {
         currentPage = "library-books-view.fxml";
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/library-books-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookrecommender2/library-books-view.fxml"));
             Parent root = loader.load();
 
             // Ottieni il controller e inizializza i dati
@@ -131,7 +131,7 @@ public class SceneController {
     public void switchToSuggestedBookList(ActionEvent event) {
         currentPage = "suggested-books-view.fxml";
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/suggest-book-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookrecommender2/suggest-book-view.fxml"));
             Parent root = loader.load();
 
             // Ottieni il controller e inizializza i dati

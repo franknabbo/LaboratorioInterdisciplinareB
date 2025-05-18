@@ -3,7 +3,7 @@
 // Tommaso Ferloni (Matricola: 757581) Como
 // Andrea Riva (Matricola: 757580) Como
 
-package org.example.bookreccomender2;
+package org.example.bookrecommender2;
 
 
 import javafx.application.Application;
@@ -23,7 +23,7 @@ public class Main extends Application {
 
         SocketConnection.connect("localhost", 8080);
 
-        Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookreccomender2/homeNotLogged-view.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/org/example/bookrecommender2/homeNotLogged-view.fxml"));
         Scene scene = new Scene(root);
         stage.setTitle("BookRecomender");
         stage.setScene(scene);

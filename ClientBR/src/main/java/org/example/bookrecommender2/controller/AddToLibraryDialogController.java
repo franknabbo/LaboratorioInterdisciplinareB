@@ -3,7 +3,7 @@
 // Tommaso Ferloni (Matricola: 757581) Como
 // Andrea Riva (Matricola: 757580) Como
 
-package org.example.bookreccomender2.controller;
+package org.example.bookrecommender2.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;

@@ -7,28 +7,31 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
+<!-- Dialog di creazione libreria -->
 <DialogPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.bookreccomender2.controller.AddToLibraryDialogController"
-            prefWidth="400.0" stylesheets="@addtolibrarydialog.css">
+            fx:controller="org.example.bookrecommender2.controller.LibraryDialogController"
+            prefWidth="400.0" stylesheets="@librarydialog.css">
     <content>
         <VBox spacing="15" alignment="CENTER_LEFT">
             <padding>
                 <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
             </padding>
 
-            <Label text="Seleziona una libreria:" styleClass="dialog-label">
+            <Label text="Inserisci il nome della libreria:" styleClass="dialog-label">
                 <font>
                     <Font size="14.0"/>
                 </font>
             </Label>
 
-            <ComboBox fx:id="libraryComboBox" prefWidth="350.0" styleClass="dialog-combo-box">
-                <VBox.margin>
-                    <Insets top="5.0"/>
-                </VBox.margin>
-            </ComboBox>
+            <TextField fx:id="libraryNameField" promptText="Nome libreria" styleClass="dialog-text-field" prefWidth="350.0">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </TextField>
         </VBox>
     </content>
 

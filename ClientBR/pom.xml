@@ -79,7 +79,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.example.bookreccomender2/org.example.bookreccomender2.HelloApplication
+                            <mainClass>org.example.bookrecommender2/org.example.bookrecommender2.HelloApplication
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>

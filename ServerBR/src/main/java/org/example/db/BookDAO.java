@@ -159,8 +159,7 @@ public class BookDAO {
                         rs.getString("copertina")
                 );
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException _) {
         }
         return book;
     }

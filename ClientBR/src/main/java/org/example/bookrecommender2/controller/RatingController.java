@@ -3,25 +3,20 @@
 // Tommaso Ferloni (Matricola: 757581) Como
 // Andrea Riva (Matricola: 757580) Como
 
-package org.example.bookreccomender2.controller;
+package org.example.bookrecommender2.controller;
 
-import org.example.bookreccomender2.Book;
-import org.example.bookreccomender2.Rating;
-import org.example.bookreccomender2.SocketConnection;
+import org.example.bookrecommender2.Rating;
+import org.example.bookrecommender2.SocketConnection;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RatingController {
-    private AlertController alertController = new AlertController();
+    private final AlertController alertController = new AlertController();
 
-    public boolean addRating(int idLibro, int styleRating, int contentRating, int appealRating,
+    public void addRating(int idLibro, int styleRating, int contentRating, int appealRating,
                              int originalityRating, int editionRating, String reviewText, int averageRating) {
         try {
 
@@ -34,10 +29,8 @@ public class RatingController {
             // Gestisce la risposta
             if (response.startsWith("RATING_SUCCESS")) {
                 alertController.showAlertSucces("Recensione aggiunta", "La recensione è stata aggiunta con successo");
-                return true;
             } else {
                 alertController.showAlert("Errore pubblicazione recensione", response.split(":", 2)[1]);
-                return false;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -3,31 +3,24 @@
 // Tommaso Ferloni (Matricola: 757581) Como
 // Andrea Riva (Matricola: 757580) Como
 
-package org.example.bookreccomender2.controller;
+package org.example.bookrecommender2.controller;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
-import org.example.bookreccomender2.SocketConnection;
+import org.example.bookrecommender2.SocketConnection;
 
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-// Francesco Del Rosso (Matricola: 758295) Como
-// Davide Cartolano (Matricola: 757603) Como
-// Tommaso Ferloni (Matricola: 757581) Como
-// Andrea Riva (Matricola: 757580) Como
 
 
 public class UserManager {
     private static boolean loggedIn = false;
     private static String userId = null;
-    private SceneController sceneController = new SceneController();
+    private final SceneController sceneController = new SceneController();
 
     public static boolean isLoggedIn() {
         return loggedIn;
@@ -170,7 +163,6 @@ public class UserManager {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("Errore durante la crittografia: " + e.getMessage());
             e.printStackTrace();
             return password; // Fallback in caso di errore
         }

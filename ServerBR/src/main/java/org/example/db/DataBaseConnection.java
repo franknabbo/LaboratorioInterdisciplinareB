@@ -4,6 +4,7 @@
 // Andrea Riva (Matricola: 757580) Como
 
 package org.example.db;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
@@ -12,27 +13,28 @@ import java.util.Scanner;
 
 public class DataBaseConnection {
     // Configurazione del database con porta modificabile
-    private static final String HOST = "localhost";
-    private static final String PORT = "5432"; // Modifica qui se necessario
-    private static final String DB_NAME = "BookRecommender";
-    private static final String URL = "jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB_NAME;
+    private static String HOST;
+    private static String PORT;
+    private static String DB_NAME;
     private static String USER;
     private static String PASSWORD;
 
+    // Rimuovere la definizione statica dell'URL
+    // private static final String URL = "jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB_NAME;
+
     private Connection connection;
+
+    // Metodo per ottenere l'URL aggiornato
+    private static String getURL() {
+        return "jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB_NAME;
+    }
 
     // Costruttore per aprire la connessione
     public DataBaseConnection() {
         try {
-            //Get User password from input
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("Inserisci il nome utente per il database: ");
-            USER = scanner.nextLine();
-            System.out.print("Inserisci la password per l'utente " + USER + ": ");
-            PASSWORD = scanner.nextLine();
-            // Connessione al database
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            if(!checkTablesExist()){
+            // Connessione al database con URL aggiornato
+            connection = DriverManager.getConnection(getURL(), USER, PASSWORD);
+            if (!checkTablesExist()) {
                 createTablesAndInsert();
             }
         } catch (SQLException e) {
@@ -48,6 +50,15 @@ public class DataBaseConnection {
             }
 
             e.printStackTrace();
+        }
+    }
+
+    //Metodo per provare la connessione se le crendenziali sono corrette
+    public static boolean testConnection() {
+        try (Connection testConnection = DriverManager.getConnection(getURL(), USER, PASSWORD)) {
+            return testConnection != null;
+        } catch (SQLException e) {
+            return false;
         }
     }
 
@@ -71,6 +82,7 @@ public class DataBaseConnection {
 
     /**
      * Legge il contenuto di un file dalle risorse
+     *
      * @param resourcePath percorso del file nelle risorse
      * @return contenuto del file come stringa
      * @throws IOException se si verifica un errore di lettura
@@ -120,5 +132,45 @@ public class DataBaseConnection {
 
     public Connection getConnection() {
         return connection;
+    }
+
+    public static String getUSER() {
+        return USER;
+    }
+
+    public static void setUSER(String USER) {
+        DataBaseConnection.USER = USER;
+    }
+
+    public static String getPASSWORD() {
+        return PASSWORD;
+    }
+
+    public static void setPASSWORD(String PASSWORD) {
+        DataBaseConnection.PASSWORD = PASSWORD;
+    }
+
+    public static String getHOST() {
+        return HOST;
+    }
+
+    public static void setHOST(String HOST) {
+        DataBaseConnection.HOST = HOST;
+    }
+
+    public static String getPORT() {
+        return PORT;
+    }
+
+    public static void setPORT(String PORT) {
+        DataBaseConnection.PORT = PORT;
+    }
+
+    public static String getDbName() {
+        return DB_NAME;
+    }
+
+    public static void setDbName(String dbName) {
+        DB_NAME = dbName;
     }
 }

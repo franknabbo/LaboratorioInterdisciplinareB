@@ -3,10 +3,10 @@
 // Tommaso Ferloni (Matricola: 757581) Como
 // Andrea Riva (Matricola: 757580) Como
 
-package org.example.bookreccomender2;
+package org.example.bookrecommender2;
 
 import javafx.scene.layout.GridPane;
-import org.example.bookreccomender2.controller.*;
+import org.example.bookrecommender2.controller.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -40,8 +40,8 @@ import javafx.scene.text.FontWeight;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-
 
 
 public class EventHandler {
@@ -116,7 +116,6 @@ public class EventHandler {
     private Button aggiungiLibreriaButton;
     @FXML
     private static List<Rating> ratingList = new ArrayList<>();
-    private static List<Book> suggestedBookList = new ArrayList<>();
 
     private final AlertController alertController = new AlertController();
     private final SceneController sceneController = new SceneController();
@@ -145,11 +144,7 @@ public class EventHandler {
     }
 
     @FXML
-    private void switchToBookView(MouseEvent event) {
-        sceneController.switchToBookView(event, selectedBook);
-
-
-    }
+    private void switchToBookView(MouseEvent event) {sceneController.switchToBookView(event, selectedBook);}
 
     @FXML
     protected void switchToLibrary(ActionEvent event) {
@@ -157,9 +152,7 @@ public class EventHandler {
     }
 
     @FXML
-    protected void switchToSelectedLibrary(MouseEvent event, String libraryName) {
-        sceneController.switchToLibraryBooks(event, libraryName);
-    }
+    protected void switchToSelectedLibrary(MouseEvent event, String libraryName) {sceneController.switchToLibraryBooks(event, libraryName);}
 
     @FXML
     protected void switchToSuggestedBookList(ActionEvent event) {
@@ -180,12 +173,30 @@ public class EventHandler {
 
     @FXML
     protected void registerUser(ActionEvent event) {
-        // Raccogli i dati dai campi di input
         String nome = firstNameField.getText();
         String cognome = lastNameField.getText();
         String codiceFiscale = taxCodeField.getText();
         String email = emailField.getText();
         String password = passwordField.getText();
+
+        //Controllo codice fiscale
+        if (codiceFiscale.length() != 16) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Errore");
+            alert.setHeaderText("Codice Fiscale non valido");
+            alert.setContentText("Il codice fiscale deve essere lungo 16 caratteri.");
+            alert.showAndWait();
+            return;
+        }
+        // Controllo email
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Errore");
+            alert.setHeaderText("Email non valida");
+            alert.setContentText("Inserisci un'email valida.");
+            alert.showAndWait();
+            return;
+        }
 
         // Controlla che i campi non siano vuoti
         if (nome.isEmpty() || cognome.isEmpty() || codiceFiscale.isEmpty() || email.isEmpty() || password.isEmpty()) {
@@ -221,7 +232,7 @@ public class EventHandler {
 
         // Carica i libri solo se il container è disponibile
         if (booksContainer != null && SceneController.currentPage.contains("home") || SceneController.currentPage.contains("suggested-books")) {
-            loadHomePageBooks();
+            loadHomePageBooks(SceneController.currentPage);
         } else if (booksContainer != null && SceneController.currentPage.contains("library")) {
             loadLibraryBooks(currentLibraryName);
         }
@@ -235,7 +246,6 @@ public class EventHandler {
 
     @FXML
     private void loadLibraries() {
-        // Esegui in un thread separato per non bloccare l'UI
         new Thread(() -> {
             List<String> libraries = libraryController.getLibraryList();
             Platform.runLater(() -> showLibraryInUI(libraries));
@@ -254,7 +264,7 @@ public class EventHandler {
             }
 
             // Carica il dialog
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/addToLibraryDialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookrecommender2/addToLibraryDialog.fxml"));
             Parent root = loader.load();
 
             // Configura il controller
@@ -277,7 +287,6 @@ public class EventHandler {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
             alertController.showAlert("Errore", "Impossibile aprire la finestra di dialogo: " + e.getMessage());
         }
     }
@@ -286,7 +295,7 @@ public class EventHandler {
     @FXML
     private void addRating(ActionEvent event) throws IOException {
         // Carica il dialog per l'aggiunta delle recensioni
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/addRatingDialog.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookrecommender2/addRatingDialog.fxml"));
         Parent root = loader.load();
 
         // Ottieni il controller
@@ -319,10 +328,9 @@ public class EventHandler {
         }
     }
 
-    //metodo per apirre la dialog e impostare il rating che viene riscevuto da server aggreato
     @FXML
     private void openRating(MouseEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/addRatingDialog.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookrecommender2/addRatingDialog.fxml"));
         Parent root = loader.load();
 
         // Ottieni il controller
@@ -352,9 +360,8 @@ public class EventHandler {
 
     @FXML
     private void openRating(Rating rating) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/addRatingDialog.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookrecommender2/addRatingDialog.fxml"));
         Parent root = loader.load();
-
 
         // Ottieni il controller
         AddRatingDialogController controller = loader.getController();
@@ -398,9 +405,9 @@ public class EventHandler {
     }
 
     @FXML
-    private void loadHomePageBooks() {
+    private void loadHomePageBooks(String currentPage) {
         // Utilizza BookClient per ottenere i libri
-        if (bookCached.hasCachedHomeBooks()) {
+        if (bookCached.hasCachedHomeBooks() && currentPage.contains("home")) {
             // Se i libri sono già stati caricati, usali dalla cache
             currentSearchResults.addAll(bookCached.getCachedHomeBooks());
 
@@ -414,17 +421,31 @@ public class EventHandler {
             BookClient client = new BookClient();
             try {
                 // Richiedi libri al server
-                List<Book> books = client.getBooks(0);
-                bookCached.setCachedHomeBooks(books);
-                currentSearchResults.addAll(books);
+                if(currentPage.contains("home")) {
+                    List<Book> books = client.getBooks(0);
+                    bookCached.setCachedHomeBooks(books);
+                    currentSearchResults.addAll(books);
 
-                // Aggiorna controlli di paginazione
-                updatePageDisplay();
+                    // Aggiorna controlli di paginazione
+                    updatePageDisplay();
 
-                // Visualizza prima pagina
-                Platform.runLater(this::displayCurrentPage);
+                    // Visualizza prima pagina
+                    Platform.runLater(this::displayCurrentPage);
+                }else if (currentPage.contains("suggested")){
+                    List<Book> books = new ArrayList<>();
+                    //per ogni libreria getLibraryList
+                    for(String library : getLibraryNames()) {
+                        books.addAll(client.getLibraryBooks(UserManager.getUserId(), library));
+                    }
+                    currentSearchResults.addAll(books);
+                    // Aggiorna controlli di paginazione
+                    updatePageDisplay();
+
+                    // Visualizza prima pagina
+                    Platform.runLater(this::displayCurrentPage);
+                }
+
             } catch (IOException e) {
-                e.printStackTrace();
                 alertController.showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
             }
         }
@@ -433,7 +454,7 @@ public class EventHandler {
     private void setupSearchField() {
         if (searchField == null) return;
 
-        searchField.setOnAction(event -> handleSearch(event));
+        searchField.setOnAction(this::handleSearch);
     }
 
     @FXML
@@ -500,7 +521,6 @@ public class EventHandler {
                 Platform.runLater(() -> {
                     alertController.showAlert("Errore di connessione", "Impossibile connettersi al server: " + e.getMessage());
                 });
-                e.printStackTrace();
             }
         }).start();
     }
@@ -524,13 +544,12 @@ public class EventHandler {
             // Ottieni lo stage direttamente qui
             Stage stage = (Stage) source.getScene().getWindow();
             try {
-                String viewFile = "/org/example/bookreccomender2/homeNotLogged-view.fxml";
-                Parent root = FXMLLoader.load(getClass().getResource(viewFile));
+                String viewFile = "/org/example/bookrecommender2/homeNotLogged-view.fxml";
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(viewFile)));
                 Scene scene = new Scene(root, 700, 700);
                 stage.setScene(scene);
                 stage.show();
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            } catch (IOException _) {
             }
         });
 
@@ -544,7 +563,13 @@ public class EventHandler {
     private void showSuggestionsInUI(List<Book> books) {
 
         libriConsigliatiContainer.getChildren().clear();
-        for(Book book : books) {
+        if (books.isEmpty()) {
+            Label noSuggestionLabel = new Label("Nessun suggertimento disponibile per questo libro.");
+            noSuggestionLabel.getStyleClass().add("no-reviews-label");
+            libriConsigliatiContainer.getChildren().add(noSuggestionLabel);
+            return;
+        }
+        for (Book book : books) {
             addBookToUI(book);
         }
     }
@@ -587,7 +612,7 @@ public class EventHandler {
         // Memorizza il libro selezionato
         selectedBook = book;
         ratingList = ratingController.fetchRating(selectedBook.getId());
-        suggestedBookList = suggestionController.getSuggestedBooks(selectedBook.getId());
+        List<Book> suggestedBookList = suggestionController.getSuggestedBooks(selectedBook.getId());
 
         updateBookRating(ratingStarsContainer);
         showSuggestionsInUI(suggestedBookList);
@@ -641,7 +666,7 @@ public class EventHandler {
         // Ottieni le recensioni dal database tramite il controller
         List<Rating> ratings = ratingList;
 
-        if (ratings.isEmpty() || ratings.size() <= 1) {
+        if (ratings.isEmpty()) {
             Label noReviewsLabel = new Label("Nessuna recensione disponibile per questo libro.");
             noReviewsLabel.getStyleClass().add("no-reviews-label");
             valutazioniAggregateContainer.getChildren().add(noReviewsLabel);
@@ -794,10 +819,7 @@ public class EventHandler {
             bookItem.setCursor(Cursor.DEFAULT);
             // Aggiungi l'elemento libro al container
             booksContainer.getChildren().add(bookItem);
-//ciao, le amiche di mia sorella mi fanno paura, sembrano più grandi di me e mi sento  giudicata un botto :(
-
-        }
-        else if(SceneController.currentPage.contains("home")) {
+        } else if (SceneController.currentPage.contains("home")) {
             // Crea l'elemento visuale del libro
             HBox bookItem = new HBox();
             bookItem.getStyleClass().add("book-item");
@@ -872,7 +894,7 @@ public class EventHandler {
 
             booksContainer.getChildren().add(bookItem);
 
-        } else if(SceneController.currentPage.contains("book-view.fxml")) {
+        } else if (SceneController.currentPage.contains("book-view.fxml")) {
             // Crea l'elemento visivo del libro
             HBox bookItem = new HBox();
             bookItem.getStyleClass().add("book-item");
@@ -1050,7 +1072,7 @@ public class EventHandler {
                     HBox.setHgrow(contentBox, Priority.ALWAYS);
 
                     // Aggiungi l'immagine della libreria
-                    ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/LibraryIcon.png")));
+                    ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/LibraryIcon.png"))));
                     imageView.setFitWidth(80);
                     imageView.setFitHeight(80);
                     imageView.setPreserveRatio(true);
@@ -1100,7 +1122,7 @@ public class EventHandler {
     @FXML
     private void createNewLibrary(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookreccomender2/libraryDialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookrecommender2/libraryDialog.fxml"));
             Parent root = loader.load();
 
             // Ottieni il controller della dialog
@@ -1134,7 +1156,6 @@ public class EventHandler {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
             alertController.showAlert("Errore", "Impossibile aprire la finestra di dialogo: " + e.getMessage());
         }
     }
