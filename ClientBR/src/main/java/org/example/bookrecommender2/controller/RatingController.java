@@ -30,7 +30,7 @@ public class RatingController {
             if (response.startsWith("RATING_SUCCESS")) {
                 alertController.showAlertSucces("Recensione aggiunta", "La recensione è stata aggiunta con successo");
             } else {
-                alertController.showAlert("Errore pubblicazione recensione", response.split(":", 2)[1]);
+                alertController.showAlert("Errore pubblicazione recensione", "La recensione non è stata pubblicata controlla di avere il libro in una delle tue librerie");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

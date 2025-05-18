@@ -144,7 +144,9 @@ public class EventHandler {
     }
 
     @FXML
-    private void switchToBookView(MouseEvent event) {sceneController.switchToBookView(event, selectedBook);}
+    private void switchToBookView(MouseEvent event) {
+        sceneController.switchToBookView(event, selectedBook);
+    }
 
     @FXML
     protected void switchToLibrary(ActionEvent event) {
@@ -152,7 +154,9 @@ public class EventHandler {
     }
 
     @FXML
-    protected void switchToSelectedLibrary(MouseEvent event, String libraryName) {sceneController.switchToLibraryBooks(event, libraryName);}
+    protected void switchToSelectedLibrary(MouseEvent event, String libraryName) {
+        sceneController.switchToLibraryBooks(event, libraryName);
+    }
 
     @FXML
     protected void switchToSuggestedBookList(ActionEvent event) {
@@ -233,8 +237,6 @@ public class EventHandler {
         // Carica i libri solo se il container è disponibile
         if (booksContainer != null && SceneController.currentPage.contains("home") || SceneController.currentPage.contains("suggested-books")) {
             loadHomePageBooks(SceneController.currentPage);
-        } else if (booksContainer != null && SceneController.currentPage.contains("library")) {
-            loadLibraryBooks(currentLibraryName);
         }
 
 
@@ -421,7 +423,7 @@ public class EventHandler {
             BookClient client = new BookClient();
             try {
                 // Richiedi libri al server
-                if(currentPage.contains("home")) {
+                if (currentPage.contains("home")) {
                     List<Book> books = client.getBooks(0);
                     bookCached.setCachedHomeBooks(books);
                     currentSearchResults.addAll(books);
@@ -431,10 +433,10 @@ public class EventHandler {
 
                     // Visualizza prima pagina
                     Platform.runLater(this::displayCurrentPage);
-                }else if (currentPage.contains("suggested")){
+                } else if (currentPage.contains("suggested")) {
                     List<Book> books = new ArrayList<>();
                     //per ogni libreria getLibraryList
-                    for(String library : getLibraryNames()) {
+                    for (String library : getLibraryNames()) {
                         books.addAll(client.getLibraryBooks(UserManager.getUserId(), library));
                     }
                     currentSearchResults.addAll(books);
@@ -465,12 +467,6 @@ public class EventHandler {
         String searchTerm = searchField.getText().trim();
         String searchType = searchTypeCombo.getValue();
 
-        // Verifica se i campi sono compilati correttamente
-        if (searchTerm.isEmpty()) {
-            // Mostra un messaggio di errore o carica tutti i libri
-            alertController.showAlert("Ricerca vuota", "Inserisci un termine di ricerca");
-            return;
-        }
 
         if (searchType == null) {
             alertController.showAlert("Tipo di ricerca mancante", "Seleziona un tipo di ricerca");
@@ -511,7 +507,6 @@ public class EventHandler {
         new Thread(() -> {
             try {
                 currentSearchResults = bookClient.performSearch(serverSearchType, searchTerm, year);
-
                 // Aggiorna l'UI nel thread JavaFX
                 Platform.runLater(() -> {
                     displayCurrentPage();
@@ -635,7 +630,6 @@ public class EventHandler {
             consigliaLibriButton.setVisible(UserManager.isLoggedIn());
             consigliaLibriButton.setManaged(UserManager.isLoggedIn());
         }
-
         if (aggiungiLibreriaButton != null) {
             aggiungiLibreriaButton.setVisible(UserManager.isLoggedIn());
             aggiungiLibreriaButton.setManaged(UserManager.isLoggedIn());
@@ -819,7 +813,7 @@ public class EventHandler {
             bookItem.setCursor(Cursor.DEFAULT);
             // Aggiungi l'elemento libro al container
             booksContainer.getChildren().add(bookItem);
-        } else if (SceneController.currentPage.contains("home")) {
+        } else if (SceneController.currentPage.contains("home") || SceneController.currentPage.contains("library-books")) {
             // Crea l'elemento visuale del libro
             HBox bookItem = new HBox();
             bookItem.getStyleClass().add("book-item");
@@ -1052,6 +1046,7 @@ public class EventHandler {
         }
 
         // Aggiungi le librerie al container
+        librariesContainer.getChildren().clear();
         for (String library : libraryNames) {
             if (library.startsWith("LIBRARY:")) {
                 String[] parts = library.split("\\|\\|\\|");
@@ -1146,7 +1141,7 @@ public class EventHandler {
                 String libraryName = controller.getLibraryNameField();
 
                 // Verifica che il nome non sia vuoto
-                if (libraryName != null && !libraryName.trim().isEmpty()) {
+                if (libraryName != null && !libraryName.trim().isEmpty() && !libraryName.contains(":")) {
                     // Procedi con la creazione della libreria
                     if (libraryController.createLibraryWithName(libraryName)) {
                         loadLibraries(); // Ricarica le librerie
@@ -1165,21 +1160,16 @@ public class EventHandler {
         this.currentLibraryName = libraryName;
 
         // Carica i libri della libreria
-        loadLibraryBooks(libraryName);
+        loadLibraryBooks(currentLibraryName);
     }
 
     private void loadLibraryBooks(String libraryName) {
-        // Ottieni l'userID attuale
-
-        String userId = UserManager.getUserId();
         new Thread(() -> {
             try {
-                List<Book> books = bookClient.getLibraryBooks(userId, libraryName);
-
+                List<Book> books = bookClient.getLibraryBooks(UserManager.getUserId(), libraryName);
+                booksContainer.getChildren().clear();
                 Platform.runLater(() -> {
                     if (booksContainer != null) {
-                        booksContainer.getChildren().clear();
-
                         if (books.isEmpty()) {
                             Label emptyLabel = new Label("Nessun libro in questa libreria");
                             emptyLabel.getStyleClass().add("empty-message");
@@ -1256,11 +1246,10 @@ public class EventHandler {
                 alertController.showAlert("Errore", "Impossibile tornare alla schermata principale.");
             }
         } else {
-            alertController.showAlert("Suggerimenti non aggiunti", "I libri selezionati non sono stati suggeriti con successo.");
+            alertController.showAlert("Suggerimenti non aggiunti", "I libri selezionati non sono stati suggeriti con successo, assicurati di avere il libro in una libreria personale");
 
         }
     }
-
     /**
      * Aggiorna lo stato del pulsante "Aggiungi Suggerimenti" in base al numero di libri selezionati
      */

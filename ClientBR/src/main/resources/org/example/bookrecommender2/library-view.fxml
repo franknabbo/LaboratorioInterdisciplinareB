@@ -48,7 +48,7 @@
 
                 <HBox alignment="CENTER_RIGHT" spacing="10">
                     <Label fx:id="usernameLabel" styleClass="username-label" text="NOME ACC"/>
-                    <StackPane onMouseClicked="#showUserMenu">
+                    <StackPane>
                         <Circle fx:id="userAvatar" radius="15" styleClass="user-avatar"/>
                         <FontIcon iconLiteral="fas-user" iconSize="14" iconColor="white"/>
                     </StackPane>

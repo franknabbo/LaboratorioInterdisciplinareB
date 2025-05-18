@@ -25,6 +25,7 @@ public class SceneController {
 
     private final AlertController alertController = new AlertController();
     public static String currentPage = "homeNotLogged-view.fxml";
+    public static String currentLibrary = "";
 
 
     public void switchToRegister(ActionEvent event) {
@@ -109,6 +110,7 @@ public class SceneController {
 
     public void switchToLibraryBooks(MouseEvent event, String libraryName) {
         currentPage = "library-books-view.fxml";
+        currentLibrary = libraryName;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookrecommender2/library-books-view.fxml"));
             Parent root = loader.load();

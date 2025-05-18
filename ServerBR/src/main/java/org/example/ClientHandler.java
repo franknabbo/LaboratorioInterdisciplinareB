@@ -93,7 +93,6 @@ public class ClientHandler implements Runnable {
 
         request = request.replace("ADD_SUGGESTED_BOOK:", "");
 
-
         String[] parts = request.split(":");
 
         String userId = parts[0];
@@ -104,8 +103,17 @@ public class ClientHandler implements Runnable {
         for(int i = 2; i < parts.length; i++){
             idLibri.add(Integer.parseInt(parts[i]));
         }
+        //controllo se  il libro è nella libreria dell'utente
+        boolean flag = false;
+        for (Library library : libraryDAO.getUserLibraries(userId)) {
+            if (libraryDAO.bookExistsInLibrary(library.getIdLibreria(), idLibroReferenced)) {
+                flag = true;
+                break;
+            }
+        }
+
         // Aggiungi il libro suggerito
-        if(suggestedBookDAO.addSuggestedBook(userId, idLibroReferenced, idLibri)){
+        if(flag && suggestedBookDAO.addSuggestedBook(userId, idLibroReferenced, idLibri)) {
             return "SUGGESTION_SUCCESS:Libro suggerito aggiunto con successo";
         }else{
             return "ADD_SUGGESTED_BOOK_FAILED:Errore durante l'aggiunta del libro suggerito";
@@ -329,13 +337,16 @@ public class ClientHandler implements Runnable {
         try {
             // Formato: SEARCH:tipo:termine[:anno]
             String[] parts = request.split(":");
-            if (parts.length < 3) {
+            if (parts.length < 4) {
                 return "ERRORE:Parametri insufficienti";
             }
 
             String searchType = parts[1];
             String searchTerm = parts[2];
             Integer year = null;
+            String userId = parts[3];
+            String currentPage = parts[4];
+            String libraryName = null;
 
 
             if (searchType.equals("AUTHOR_YEAR") && parts.length >= 4) {
@@ -345,8 +356,11 @@ public class ClientHandler implements Runnable {
                     return "ERRORE:Anno non valido";
                 }
             }
+            if(currentPage.contains("library-books-view")) {
+                libraryName = parts[5];
+            }
 
-            List<Book> books = bookDAO.searchBooks(searchType, searchTerm, year);
+            List<Book> books = bookDAO.searchBooks(searchType, searchTerm, year, userId, currentPage,libraryName);
 
             return getString(books);
         } catch (Exception e) {

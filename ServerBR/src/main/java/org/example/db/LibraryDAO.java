@@ -120,7 +120,6 @@ public class LibraryDAO {
      */
     public List<Library> getUserLibraries(String userId) {
         List<Library> libraries = new ArrayList<>();
-        System.out.println("getUserLibraries: " + userId);
         try {
             String sql = "SELECT * FROM librerie WHERE user_id = ? ORDER BY nome";
             PreparedStatement stmt = db.getConnection().prepareStatement(sql);
@@ -138,7 +137,6 @@ public class LibraryDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("getUserLibraries: " + libraries);
 
         return libraries;
     }

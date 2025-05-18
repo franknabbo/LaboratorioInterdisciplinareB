@@ -85,36 +85,140 @@ public class BookDAO {
      * @param year       l'anno di pubblicazione (usato solo per "AUTHOR_YEAR")
      * @return lista di libri che corrispondono ai criteri di ricerca
      */
-    public List<Book> searchBooks(String searchType, String searchTerm, Integer year) {
+    public List<Book> searchBooks(String searchType, String searchTerm, Integer year, String userId, String currentPage, String libraryName) {
         List<Book> books = new ArrayList<>();
         String sql;
 
         try {
-            PreparedStatement stmt;
+            PreparedStatement stmt = null;
 
-            switch (searchType) {
-                case "TITLE":
-                    sql = "SELECT * FROM Libri WHERE LOWER(titolo) LIKE LOWER(?) ORDER BY id_libro";
-                    stmt = db.getConnection().prepareStatement(sql);
-                    stmt.setString(1, "%" + searchTerm + "%");
-                    break;
+            if (currentPage.contains("home")) {
+                switch (searchType) {
+                    case "TITLE":
+                        sql = "SELECT * FROM Libri WHERE LOWER(titolo) LIKE LOWER(?) ORDER BY titolo";
+                        stmt = db.getConnection().prepareStatement(sql);
+                        stmt.setString(1, "%" + searchTerm + "%");
+                        break;
 
-                case "AUTHOR":
-                    sql = "SELECT * FROM Libri WHERE LOWER(autore) LIKE LOWER(?) ORDER BY id_libro";
-                    stmt = db.getConnection().prepareStatement(sql);
-                    stmt.setString(1, "%" + searchTerm + "%");
-                    break;
+                    case "AUTHOR":
+                        sql = "SELECT * FROM Libri WHERE LOWER(autore) LIKE LOWER(?) ORDER BY titolo";
+                        stmt = db.getConnection().prepareStatement(sql);
+                        stmt.setString(1, "%" + searchTerm + "%");
+                        break;
 
-                case "AUTHOR_YEAR":
-                    sql = "SELECT * FROM Libri WHERE LOWER(autore) LIKE LOWER(?) AND anno_pubblicazione = ? ORDER BY id_libro";
-                    stmt = db.getConnection().prepareStatement(sql);
-                    stmt.setString(1, "%" + searchTerm + "%");
-                    stmt.setInt(2, year);
-                    break;
+                    case "AUTHOR_YEAR":
+                        sql = "SELECT * FROM Libri WHERE LOWER(autore) LIKE LOWER(?) AND anno_pubblicazione = ? ORDER BY titolo";
+                        stmt = db.getConnection().prepareStatement(sql);
+                        stmt.setString(1, "%" + searchTerm + "%");
+                        stmt.setInt(2, year);
+                        break;
 
-                default:
-                    System.err.println("Tipo di ricerca non valido: " + searchType);
-                    return books;
+                    default:
+                        System.err.println("Tipo di ricerca non valido: " + searchType);
+                        return books;
+                }
+            } else if (currentPage.contains("suggested")) {
+                switch (searchType) {
+                    case "TITLE":
+                        sql = """
+                                    SELECT * 
+                                    FROM librerie lb
+                                    JOIN librerie_libri ll ON lb.id_libreria = ll.id_libreria
+                                    JOIN libri l ON ll.id_libro = l.id_libro
+                                    WHERE lb.user_id = ? AND LOWER(l.titolo) LIKE LOWER(?)
+                                    ORDER BY l.titolo
+                                """;
+                        stmt = db.getConnection().prepareStatement(sql);
+                        stmt.setString(1, userId);
+                        stmt.setString(2, "%" + searchTerm + "%");
+                        break;
+
+                    case "AUTHOR":
+                        sql = """
+                                    SELECT * 
+                                    FROM librerie lb
+                                    JOIN librerie_libri ll ON lb.id_libreria = ll.id_libreria
+                                    JOIN libri l ON ll.id_libro = l.id_libro
+                                    WHERE lb.user_id = ? AND LOWER(l.autore) LIKE LOWER(?)
+                                    ORDER BY l.titolo
+                                """;
+                        stmt = db.getConnection().prepareStatement(sql);
+                        stmt.setString(1, userId);
+                        stmt.setString(2, "%" + searchTerm + "%");
+                        break;
+
+                    case "AUTHOR_YEAR":
+                        sql = """
+                                    SELECT * 
+                                    FROM librerie lb
+                                    JOIN librerie_libri ll ON lb.id_libreria = ll.id_libreria
+                                    JOIN libri l ON ll.id_libro = l.id_libro
+                                    WHERE lb.user_id = ? AND LOWER(l.autore) LIKE LOWER(?) AND l.anno_pubblicazione = ?
+                                    ORDER BY l.titolo
+                                """;
+                        stmt = db.getConnection().prepareStatement(sql);
+                        stmt.setString(1, userId);
+                        stmt.setString(2, "%" + searchTerm + "%");
+                        stmt.setInt(3, year);
+                        break;
+
+                    default:
+                        System.err.println("Tipo di ricerca non valido: " + searchType);
+                        return books;
+                }
+            } else if (currentPage.contains("library-books-view")) {
+                switch (searchType) {
+                    case "TITLE":
+                        sql = """
+                                    SELECT l.*
+                                    FROM librerie lb
+                                    JOIN librerie_libri ll ON lb.id_libreria = ll.id_libreria
+                                    JOIN libri l ON ll.id_libro = l.id_libro
+                                    WHERE lb.user_id = ? AND LOWER(lb.nome) = LOWER(?) AND LOWER(l.titolo) LIKE LOWER(?)
+                                    ORDER BY l.titolo
+                                """;
+                        stmt = db.getConnection().prepareStatement(sql);
+                        stmt.setString(1, userId);
+                        stmt.setString(2, libraryName);
+                        stmt.setString(3, "%" + searchTerm + "%");
+                        break;
+
+                    case "AUTHOR":
+                        sql = """
+                                    SELECT l.*
+                                    FROM librerie lb
+                                    JOIN librerie_libri ll ON lb.id_libreria = ll.id_libreria
+                                    JOIN libri l ON ll.id_libro = l.id_libro
+                                    WHERE lb.user_id = ? AND LOWER(lb.nome) = LOWER(?) AND LOWER(l.autore) LIKE LOWER(?)
+                                    ORDER BY l.titolo
+                                """;
+                        stmt = db.getConnection().prepareStatement(sql);
+                        stmt.setString(1, userId);
+                        stmt.setString(2, libraryName);
+                        stmt.setString(3, "%" + searchTerm + "%");
+                        break;
+
+                    case "AUTHOR_YEAR":
+                        sql = """
+                                    SELECT l.*
+                                    FROM librerie lb
+                                    JOIN librerie_libri ll ON lb.id_libreria = ll.id_libreria
+                                    JOIN libri l ON ll.id_libro = l.id_libro
+                                    WHERE lb.user_id = ? AND LOWER(lb.nome) = LOWER(?) AND LOWER(l.autore) LIKE LOWER(?) AND l.anno_pubblicazione = ?
+                                    ORDER BY l.titolo
+                                """;
+                        stmt = db.getConnection().prepareStatement(sql);
+                        stmt.setString(1, userId);
+                        stmt.setString(2, libraryName);
+                        stmt.setString(3, "%" + searchTerm + "%");
+                        stmt.setInt(4, year);
+                        break;
+
+                    default:
+                        System.err.println("Tipo di ricerca non valido: " + searchType);
+                        return books;
+                }
+
             }
 
             ResultSet rs = stmt.executeQuery();
