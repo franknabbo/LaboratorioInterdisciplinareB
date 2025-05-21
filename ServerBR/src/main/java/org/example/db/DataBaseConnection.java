@@ -88,7 +88,7 @@ public class DataBaseConnection {
      * @throws IOException se si verifica un errore di lettura
      */
     private String readResourceFile(String resourcePath) throws IOException {
-        String filePath = System.getProperty("user.dir") + "\\LaboratorioInterdisciplinareB\\ServerBR" + resourcePath;
+        String filePath = System.getProperty("user.dir") + "\\ServerBR" + resourcePath;
         File file = new File(filePath);
         FileReader fileReader = new FileReader(file);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
