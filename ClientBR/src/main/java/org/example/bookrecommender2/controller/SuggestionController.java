@@ -55,7 +55,6 @@ public class SuggestionController {
             SocketConnection.sendMessage(message);
             BufferedReader in = SocketConnection.getIn();
             // Leggi la risposta del server
-            String response = in.readLine();
             // Gestisci la risposta
             //INIZIO_LISTA_LIBRI
             //BOOK:882|||100 Greatest Pitchers|||By Kelley, Brent||||||Crescent|||1988|||https://covers.openlibrary.org/b/id/9519394-L.jpg
