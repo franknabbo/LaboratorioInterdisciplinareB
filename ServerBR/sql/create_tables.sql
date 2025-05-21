@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS public.utentiregistrati
     nome character varying(20) COLLATE pg_catalog."default" NOT NULL,
     cognome character varying(20) COLLATE pg_catalog."default" NOT NULL,
     codice_fiscale character(16) COLLATE pg_catalog."default" NOT NULL,
-    mail character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    mail character varying(256) COLLATE pg_catalog."default" NOT NULL,
     crypted_pass character varying(1000) COLLATE pg_catalog."default" NOT NULL,
     user_id character varying(50) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT utentiregistrati_pkey PRIMARY KEY (user_id)

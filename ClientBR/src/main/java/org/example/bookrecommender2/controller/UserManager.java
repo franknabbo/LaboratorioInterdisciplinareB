@@ -66,25 +66,19 @@ public class UserManager {
 
             if (risposta.startsWith("LOGIN OK")) {
                 // Estrai l'userId dalla risposta (formato: "LOGIN OK:userId")
-                String loggedUserId = risposta.split(":")[1];
-
                 // Imposta lo stato di login
-                UserManager.login(loggedUserId);
+                UserManager.login(userId);
 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Login Completato");
                 alert.setHeaderText("Login avvenuto con successo!");
-                alert.setContentText("Benvenuto, " + loggedUserId);
+                alert.setContentText("Benvenuto, " + userId);
                 alert.showAndWait();
 
                 // Reindirizza alla home page dopo il login
                 sceneController.switchToHome(event);
             } else {
                 String errorMessage = "Credenziali non valide.";
-                if (risposta.contains(":")) {
-                    errorMessage = risposta.split(":", 2)[1];
-                }
-
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Errore");
                 alert.setHeaderText("Login fallito");
@@ -135,7 +129,7 @@ public class UserManager {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Errore");
                 alert.setHeaderText("Registrazione fallita");
-                alert.setContentText("Non è stato possibile completare la registrazione.\n" + (risposta.contains(":") ? risposta.split(":", 2)[1] : ""));
+                alert.setContentText("Non è stato possibile completare la registrazione.\n");
                 alert.showAndWait();
             }
         } catch (IOException e) {

@@ -137,6 +137,7 @@ public class ClientHandler implements Runnable {
             // Aggiungi il libro suggerito alla risposta
             books.add(bookDAO.getBookDetails(suggestedBook));
         }
+        System.out.println(getString(books));
         return getString(books);
     }
 
