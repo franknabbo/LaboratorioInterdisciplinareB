@@ -325,7 +325,9 @@ public class EventHandler {
             String reviewText = controller.getReviewText();
             int averageRating = controller.getAverageRating();
 
-            ratingController.addRating(selectedBookData.getId(), styleRating, contentRating, appealRating,
+            if(reviewText == null) {
+                alertController.showAlert("Errore", "La nota è vuota");
+            }else ratingController.addRating(selectedBookData.getId(), styleRating, contentRating, appealRating,
                     originalityRating, editionRating, reviewText, averageRating);
         }
     }
