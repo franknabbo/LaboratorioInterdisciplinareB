@@ -48,7 +48,7 @@ import java.util.Optional;
  * collegata ai controlli FXML e responsabile della navigazione tra scene,
  * gestione utenti, libri, librerie e valutazioni.
  */
-public class EventHandler {
+public class    EventHandler {
 
     /** Bottone per aggiungere il libro selezionato. */
     public Button addSelectedBook;
