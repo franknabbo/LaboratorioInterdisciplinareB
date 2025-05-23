@@ -12,9 +12,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller per la gestione delle librerie utente.
+ * Permette di creare librerie, aggiungere libri a librerie esistenti
+ * e ottenere la lista delle librerie di un utente.
+ */
 public class LibraryController {
-    AlertController alertController = new AlertController();
+    private AlertController alertController = new AlertController();
 
+    /**
+     * Crea una nuova libreria con il nome specificato per l'utente corrente.
+     * Invia una richiesta al server e gestisce la risposta mostrando opportuni alert.
+     *
+     * @param libraryName il nome della libreria da creare
+     * @return true se la libreria è stata creata con successo, false altrimenti
+     */
     public boolean createLibraryWithName(String libraryName) {
         try {
             // Invia richiesta di creazione libreria
@@ -28,8 +40,6 @@ public class LibraryController {
             if (response.startsWith("LIBRARY_CREATED")) {
                 alertController.showAlertSucces("Libreria creata", "La libreria '" + libraryName + "' è stata creata con successo.");
                 return true;
-
-
             } else if (response.startsWith("LIBRARY_EXISTS")) {
                 alertController.showAlert("Libreria già esistente", "La libreria '" + libraryName + "' esiste già.");
                 return false;
@@ -48,6 +58,14 @@ public class LibraryController {
         }
     }
 
+    /**
+     * Aggiunge un libro selezionato alla libreria specificata.
+     * Se il libro non è selezionato, mostra un alert di errore.
+     * Comunica con il server e mostra alert in base alla risposta.
+     *
+     * @param libraryName il nome della libreria a cui aggiungere il libro
+     * @param selectedBook il libro da aggiungere
+     */
     public void addBookToSelectedLibrary(String libraryName, Book selectedBook) {
         if (selectedBook == null) {
             alertController.showAlert("Errore", "Nessun libro selezionato");
@@ -79,13 +97,18 @@ public class LibraryController {
         }
     }
 
+    /**
+     * Recupera la lista delle librerie associate all'utente corrente dal server.
+     *
+     * @return una lista di nomi di librerie
+     */
     public List<String> getLibraryList() {
         List<String> libraries = new ArrayList<>();
         try {
             // Invia richiesta di librerie
             SocketConnection.sendMessage("GET_LIBRARY:" + UserManager.getUserId());
             BufferedReader in = SocketConnection.getIn();
-            // Leggi la risposta
+            // Leggi la risposta riga per riga fino a "END_LIBRARIES"
             String line;
             while ((line = in.readLine()) != null) {
                 if (line.equals("END_LIBRARIES")) {

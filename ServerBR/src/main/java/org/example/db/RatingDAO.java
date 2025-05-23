@@ -12,16 +12,26 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
+/**
+ * Data Access Object (DAO) per la gestione delle valutazioni dei libri nel database.
+ * Fornisce metodi per salvare e recuperare valutazioni.
+ */
 public class RatingDAO {
     private final DataBaseConnection db;
 
+    /**
+     * Costruttore che inizializza la connessione al database.
+     */
     public RatingDAO() {
         this.db = new DataBaseConnection();
     }
 
-    // Metodo per salvare la valutazione nel database
+    /**
+     * Salva una valutazione nel database.
+     *
+     * @param r Oggetto {@link Rating} da salvare
+     * @return true se l'inserimento ha avuto successo, false altrimenti
+     */
     public boolean salvaSuDatabase(Rating r) {
         String sql = "INSERT INTO valutazioniLibri (user_id, id_libro, stile, contenuto, gradevolezza, " +
                 "originalita, edizione, votoFinale, recensione) " +
@@ -45,7 +55,13 @@ public class RatingDAO {
         }
     }
 
-    //getRatingsFromBook
+    /**
+     * Recupera tutte le valutazioni associate a un determinato libro.
+     * Alla lista viene aggiunto in prima posizione un oggetto {@link Rating} contenente la media dei voti.
+     *
+     * @param bookId ID del libro
+     * @return Lista di valutazioni, inclusa la media come primo elemento
+     */
     public List<Rating> getRatingsFromBook(int bookId) {
         List<Rating> ratings = new ArrayList<>();
         String sql = "SELECT * FROM valutazioniLibri WHERE id_libro = ?";
@@ -72,12 +88,17 @@ public class RatingDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        ratings.addFirst(mediaTotale(ratings));
 
+        ratings.addFirst(mediaTotale(ratings));
         return ratings;
     }
 
-    //Metodo per fare una media totale delle valutazioni
+    /**
+     * Calcola la media di tutte le valutazioni nella lista.
+     *
+     * @param ratings Lista di valutazioni
+     * @return Oggetto {@link Rating} contenente la media dei voti
+     */
     private Rating mediaTotale(List<Rating> ratings) {
         double mediaStile = 0;
         double mediaContenuto = 0;
@@ -86,9 +107,11 @@ public class RatingDAO {
         double mediaEdizione = 0;
         double mediaVotoFinale = 0;
         Rating media = new Rating();
+
         if (ratings.isEmpty()) {
             return media;
         }
+
         for (Rating r : ratings) {
             mediaStile += r.getStile();
             mediaContenuto += r.getContenuto();
@@ -97,20 +120,15 @@ public class RatingDAO {
             mediaEdizione += r.getEdizione();
             mediaVotoFinale += r.getVotoFinale();
         }
-        mediaStile /= ratings.size();
-        mediaContenuto /= ratings.size();
-        mediaGradevolezza /= ratings.size();
-        mediaOriginalita /= ratings.size();
-        mediaEdizione /= ratings.size();
-        mediaVotoFinale /= ratings.size();
-        media.setStile((int) Math.round(mediaStile));
-        media.setContenuto((int) Math.round(mediaContenuto));
-        media.setGradevolezza((int) Math.round(mediaGradevolezza));
-        media.setOriginalita((int) Math.round(mediaOriginalita));
-        media.setEdizione((int) Math.round(mediaEdizione));
-        media.setVotoFinale((int) Math.round(mediaVotoFinale));
+
+        int size = ratings.size();
+        media.setStile((int) Math.round(mediaStile / size));
+        media.setContenuto((int) Math.round(mediaContenuto / size));
+        media.setGradevolezza((int) Math.round(mediaGradevolezza / size));
+        media.setOriginalita((int) Math.round(mediaOriginalita / size));
+        media.setEdizione((int) Math.round(mediaEdizione / size));
+        media.setVotoFinale((int) Math.round(mediaVotoFinale / size));
+
         return media;
     }
-
-
 }

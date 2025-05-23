@@ -10,23 +10,34 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * DAO per la gestione dei suggerimenti di libri associati a un libro di riferimento
+ * da parte degli utenti.
+ */
 public class SuggestedBookDAO {
     private final DataBaseConnection db;
 
+    /**
+     * Costruttore che inizializza la connessione al database.
+     */
     public SuggestedBookDAO() {
         this.db = new DataBaseConnection();
     }
 
-    //Metodo per ottenere i libri suggeriti di un determinato libro, contanto quelli che sonos stati consigliati piu volte
-
+    /**
+     * Controlla quante volte un utente ha già suggerito libri per un dato libro di riferimento.
+     *
+     * @param userId            ID dell'utente.
+     * @param idLibroReferenced ID del libro di riferimento.
+     * @return Numero di suggerimenti già presenti, o -1 in caso di errore.
+     */
     private int isSuggestedBookAlreadyAdded(String userId, int idLibroReferenced) {
         String sql = "SELECT * FROM consiglilibri WHERE user_id = ? AND id_libro_referenced = ?";
         try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
             pstmt.setString(1, userId);
             pstmt.setInt(2, idLibroReferenced);
             var exc = pstmt.executeQuery();
-            int i= 0;
+            int i = 0;
             while (exc.next()) {
                 i++;
             }
@@ -37,11 +48,18 @@ public class SuggestedBookDAO {
         }
     }
 
+    /**
+     * Aggiunge o aggiorna i libri suggeriti da un utente per un dato libro di riferimento.
+     * Se esistono già suggerimenti, questi vengono eliminati prima di salvare i nuovi.
+     *
+     * @param userId            ID dell'utente.
+     * @param idLibroReferenced ID del libro di riferimento.
+     * @param suggestedBooks    Lista di ID dei libri suggeriti.
+     * @return true se l'operazione è andata a buon fine, false altrimenti.
+     */
     public boolean addSuggestedBook(String userId, int idLibroReferenced, List<Integer> suggestedBooks) {
-        // Verifica se esiste già questa esatta combinazione
         int i = isSuggestedBookAlreadyAdded(userId, idLibroReferenced);
-        if (i>0) {
-            //fai la delete di tutti i libri suggeriti con idLibroReferenced e userId
+        if (i > 0) {
             String sql = "DELETE FROM consiglilibri WHERE user_id = ? AND id_libro_referenced = ?";
             try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
                 pstmt.setString(1, userId);
@@ -50,42 +68,35 @@ public class SuggestedBookDAO {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            // Inserisce un nuovo record
-            for(int idLibroSuggested : suggestedBooks) {
-                // Inserisce un nuovo record
-                String sql2 = "INSERT INTO consiglilibri (user_id, id_libro_referenced, id_libro_suggested) VALUES (?, ?, ?)";
-                try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql2)) {
-                    pstmt.setString(1, userId);
-                    pstmt.setInt(2, idLibroReferenced);
-                    pstmt.setInt(3, idLibroSuggested);
-                    pstmt.executeUpdate();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            }
-        } else {
-            // Se non esiste, inserisce un nuovo record
-            for(int idLibroSuggested : suggestedBooks) {
-                // Inserisce un nuovo record
-                String sql = "INSERT INTO consiglilibri (user_id, id_libro_referenced, id_libro_suggested) VALUES (?, ?, ?)";
-                try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
-                    pstmt.setString(1, userId);
-                    pstmt.setInt(2, idLibroReferenced);
-                    pstmt.setInt(3, idLibroSuggested);
-                    pstmt.executeUpdate();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+        }
+
+        for (int idLibroSuggested : suggestedBooks) {
+            String sql = "INSERT INTO consiglilibri (user_id, id_libro_referenced, id_libro_suggested) VALUES (?, ?, ?)";
+            try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
+                pstmt.setString(1, userId);
+                pstmt.setInt(2, idLibroReferenced);
+                pstmt.setInt(3, idLibroSuggested);
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
             }
         }
+
         return true;
     }
 
-    //Metodo per ottenere i libri suggeriti di un determinato libro, contanto quelli che sonos stati consigliati piu volte possono essere al massimo 3
+    /**
+     * Restituisce una lista degli ID dei libri più consigliati per un determinato libro di riferimento.
+     * Vengono restituiti al massimo 3 libri suggeriti, ordinati per frequenza decrescente.
+     *
+     * @param idLibroReferenced ID del libro di riferimento.
+     * @return Lista di ID dei libri suggeriti, o null in caso di errore.
+     */
     public List<Integer> getSuggestedBooks(int idLibroReferenced) {
-        String sql = "SELECT id_libro_suggested, COUNT(*) as count FROM consiglilibri WHERE id_libro_referenced = ? GROUP BY id_libro_suggested ORDER BY count DESC LIMIT 3";
+        String sql = "SELECT id_libro_suggested, COUNT(*) as count FROM consiglilibri " +
+                "WHERE id_libro_referenced = ? GROUP BY id_libro_suggested " +
+                "ORDER BY count DESC LIMIT 3";
         try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
             pstmt.setInt(1, idLibroReferenced);
             var exc = pstmt.executeQuery();

@@ -5,21 +5,30 @@
 
 package org.example.db;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
-
+/**
+ * Classe DAO (Data Access Object) per la gestione degli utenti nel database.
+ */
 public class UtenteDAO {
     private final DataBaseConnection db;
 
+    /**
+     * Costruttore della classe UtenteDAO.
+     * Inizializza la connessione al database.
+     */
     public UtenteDAO() {
         this.db = new DataBaseConnection();
     }
 
+    /**
+     * Registra un nuovo utente nel database.
+     *
+     * @param utente Oggetto Utente da registrare.
+     * @return Stringa che indica il risultato della registrazione.
+     */
     public String registraUtente(Utente utente) {
         String sql = "INSERT INTO UtentiRegistrati(nome, cognome, codice_fiscale, mail, crypted_pass, user_id) VALUES (?, ?, ?, ?, ?, ?)";
         try {
@@ -44,20 +53,23 @@ public class UtenteDAO {
         }
     }
 
+    /**
+     * Esegue il login dell'utente controllando le credenziali fornite.
+     *
+     * @param userId   ID utente.
+     * @param password Password cifrata.
+     * @return Stringa che indica il risultato del login.
+     */
     public String loginUtente(String userId, String password) {
         String sql = "SELECT * FROM UtentiRegistrati WHERE user_id = ? AND crypted_pass = ?";
         try {
-
             PreparedStatement stmt = db.getConnection().prepareStatement(sql);
             stmt.setString(1, userId);
             stmt.setString(2, password);
-
-
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                String risposta = "LOGIN OK:" + userId;
-                return risposta;
+                return "LOGIN OK:" + userId;
             } else {
                 return "LOGIN FAILED:Credenziali non valide";
             }
@@ -66,11 +78,21 @@ public class UtenteDAO {
             return "LOGIN FAILED:" + e.getMessage();
         }
     }
+
+    /**
+     * Chiude la connessione al database.
+     */
     public void closeConnection() {
         db.closeConnection();
     }
 
-
+    /**
+     * Genera uno user ID unico basato sul nome e cognome forniti.
+     *
+     * @param nome    Nome dell'utente.
+     * @param cognome Cognome dell'utente.
+     * @return User ID univoco.
+     */
     public String generaUserId(String nome, String cognome) {
         String baseUserId = (nome.charAt(0) + cognome).toLowerCase().replaceAll("\\s+", "");
         String userId = baseUserId;
@@ -95,5 +117,3 @@ public class UtenteDAO {
         return userId;
     }
 }
-
-

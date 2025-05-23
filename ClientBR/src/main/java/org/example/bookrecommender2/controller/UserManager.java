@@ -9,39 +9,70 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import org.example.bookrecommender2.SocketConnection;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
+/**
+ * Gestisce le operazioni di autenticazione dell'utente,
+ * inclusi login, logout e registrazione,
+ * nonché la gestione dello stato di autenticazione.
+ */
 public class UserManager {
+
     private static boolean loggedIn = false;
     private static String userId = null;
     private final SceneController sceneController = new SceneController();
 
+    /**
+     * Verifica se un utente è attualmente loggato.
+     *
+     * @return true se l'utente è loggato, false altrimenti.
+     */
     public static boolean isLoggedIn() {
         return loggedIn;
     }
 
+    /**
+     * Restituisce l'ID dell'utente attualmente loggato.
+     *
+     * @return l'ID utente se loggato, null altrimenti.
+     */
     public static String getUserId() {
         return userId;
     }
 
+    /**
+     * Imposta lo stato di login a true e salva l'ID utente.
+     *
+     * @param userId l'ID utente da impostare.
+     */
     public static void login(String userId) {
         UserManager.loggedIn = true;
         UserManager.userId = userId;
     }
 
+    /**
+     * Esegue il logout dell'utente resettando lo stato di login e l'ID utente.
+     */
     public static void logout() {
         UserManager.loggedIn = false;
         UserManager.userId = null;
     }
 
+    /**
+     * Esegue la procedura di login inviando userId e password criptata al server.
+     * Gestisce la risposta e mostra messaggi di alert in base al risultato.
+     * Se il login ha successo, cambia scena verso la home.
+     *
+     * @param userId   l'ID utente inserito.
+     * @param password la password in chiaro da criptare.
+     * @param event    evento legato all'interfaccia utente (per cambiare scena).
+     * @throws IOException in caso di errore di I/O con il server.
+     */
     public void loginUser(String userId, String password, ActionEvent event) throws IOException {
-
         if (userId.isEmpty() || password.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Errore");
@@ -50,39 +81,26 @@ public class UserManager {
             alert.showAndWait();
             return;
         }
-
-        // Crittografia della password
         String encryptedPassword = encryptPassword(password);
 
-        // Connessione al server
         try {
-
-
-            // Invio della richiesta di login
             SocketConnection.sendMessage("LOGIN:" + userId + ":" + encryptedPassword);
             BufferedReader in = SocketConnection.getIn();
-            // Gestione della risposta
             String risposta = in.readLine();
 
             if (risposta.startsWith("LOGIN OK")) {
-                // Estrai l'userId dalla risposta (formato: "LOGIN OK:userId")
-                // Imposta lo stato di login
                 UserManager.login(userId);
-
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Login Completato");
                 alert.setHeaderText("Login avvenuto con successo!");
                 alert.setContentText("Benvenuto, " + userId);
                 alert.showAndWait();
-
-                // Reindirizza alla home page dopo il login
                 sceneController.switchToHome(event);
             } else {
-                String errorMessage = "Credenziali non valide.";
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Errore");
                 alert.setHeaderText("Login fallito");
-                alert.setContentText(errorMessage);
+                alert.setContentText("Credenziali non valide.");
                 alert.showAndWait();
             }
         } catch (IOException e) {
@@ -91,41 +109,42 @@ public class UserManager {
             alert.setHeaderText("Impossibile connettersi al server");
             alert.setContentText("Dettagli: " + e.getMessage());
             alert.showAndWait();
-
-            System.out.println("Errore di connessione al server: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
+    /**
+     * Esegue la procedura di registrazione inviando i dati al server.
+     * Cripta la password, gestisce la risposta e mostra messaggi di alert.
+     * Se la registrazione ha successo, effettua il login automatico e torna alla home.
+     *
+     * @param event        evento legato all'interfaccia utente (per cambiare scena).
+     * @param nome         nome dell'utente.
+     * @param cognome      cognome dell'utente.
+     * @param codiceFiscale codice fiscale dell'utente.
+     * @param email        email dell'utente.
+     * @param password     password in chiaro da criptare.
+     */
     public void registerUser(ActionEvent event, String nome, String cognome, String codiceFiscale, String email, String password) {
-        // Connessione al server
         try {
             String encryptedPassword = encryptPassword(password);
-
             SocketConnection.sendMessage("REGISTER:" + nome + ":" + cognome + ":" + codiceFiscale + ":" + email + ":" + encryptedPassword);
-            // Gestione della risposta
             BufferedReader in = SocketConnection.getIn();
-            // Gestione della risposta
             String risposta = in.readLine();
             System.out.println("Risposta dal server: " + risposta);
 
             if (risposta.startsWith("REGISTRAZIONE OK")) {
-                // Estrai l'userId dalla risposta
                 String userId = risposta.split(":")[1];
-
                 UserManager.login(userId);
 
-                // Mostra alert di successo con userId
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Registrazione completata");
                 alert.setHeaderText("Registrazione avvenuta con successo!");
                 alert.setContentText("Il tuo userId è: " + userId + "\n\nUtilizza questo userId per accedere al sistema.");
                 alert.showAndWait();
 
-                // Reindirizza alla pagina di login
                 sceneController.switchToHome(event);
             } else {
-                // Mostra alert di errore
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Errore");
                 alert.setHeaderText("Registrazione fallita");
@@ -138,13 +157,16 @@ public class UserManager {
             alert.setHeaderText("Impossibile connettersi al server");
             alert.setContentText("Dettagli: " + e.getMessage());
             alert.showAndWait();
-
-            System.out.println("Errore di connessione al server: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // Metodo per crittografare la password con SHA-256
+    /**
+     * Cripta una password in chiaro usando SHA-256.
+     *
+     * @param password la password in chiaro da criptare.
+     * @return la password criptata in formato esadecimale.
+     */
     public String encryptPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

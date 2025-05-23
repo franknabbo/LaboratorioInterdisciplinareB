@@ -13,13 +13,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller che gestisce l'aggiunta e il recupero delle recensioni (rating) dei libri.
+ */
 public class RatingController {
     private final AlertController alertController = new AlertController();
 
+    /**
+     * Aggiunge una nuova recensione per un libro specificato.
+     *
+     * @param idLibro          l'ID del libro da recensire
+     * @param styleRating      voto per lo stile
+     * @param contentRating    voto per il contenuto
+     * @param appealRating     voto per la gradevolezza
+     * @param originalityRating voto per l'originalità
+     * @param editionRating    voto per l'edizione
+     * @param reviewText       testo della recensione
+     * @param averageRating    voto medio complessivo
+     */
     public void addRating(int idLibro, int styleRating, int contentRating, int appealRating,
-                             int originalityRating, int editionRating, String reviewText, int averageRating) {
+                          int originalityRating, int editionRating, String reviewText, int averageRating) {
         try {
-
             // Invia richiesta di creazione rating
             SocketConnection.sendMessage("ADD_RATING:" + UserManager.getUserId() + "|||" + idLibro + "|||" + styleRating + "|||"
                     + contentRating + "|||" + appealRating + "|||" + originalityRating + "|||" + editionRating + "|||"
@@ -37,17 +51,21 @@ public class RatingController {
         }
     }
 
+    /**
+     * Recupera la lista delle recensioni associate a un dato libro.
+     *
+     * @param idLibro l'ID del libro di cui si vogliono ottenere le recensioni
+     * @return lista di oggetti Rating contenenti le recensioni del libro
+     */
     public List<Rating> fetchRating(int idLibro) {
         List<Rating> results = new ArrayList<>();
         try {
-            // Invia richiesta di creazione rating
+            // Invia richiesta di ottenimento recensioni
             SocketConnection.sendMessage("GET_RATING:" + idLibro);
             BufferedReader in = SocketConnection.getIn();
 
-            // Leggi la risposta
-             String line;
+            String line;
             boolean reading = false;
-
 
             while ((line = in.readLine()) != null) {
                 if (line.equals("INIZIO_LISTA_RATING")) {
@@ -62,7 +80,7 @@ public class RatingController {
                 if (reading && line.startsWith("RATING:")) {
                     try {
                         String[] parts = line.split("RATING:|\\|\\|\\|");
-                        if (parts.length >= 9) {
+                        if (parts.length >= 10) { // 10 perché recensione è parts[9]
                             String idUtente = parts[1];
                             int idLibroRating = Integer.parseInt(parts[2]);
                             int stile = Integer.parseInt(parts[3]);
@@ -79,14 +97,12 @@ public class RatingController {
                         } else {
                             System.err.println("Formato rating non valido: " + line);
                         }
-
-
                     } catch (Exception e) {
+                        // Se si verifica un errore nella lettura di una recensione, interrompe la lettura e restituisce ciò che ha ottenuto finora
                         return results;
                     }
                 }
             }
-
             return results;
 
         } catch (IOException e) {
@@ -94,6 +110,3 @@ public class RatingController {
         }
     }
 }
-
-
-

@@ -43,126 +43,269 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-
+/**
+ * Classe che gestisce gli eventi dell'interfaccia grafica,
+ * collegata ai controlli FXML e responsabile della navigazione tra scene,
+ * gestione utenti, libri, librerie e valutazioni.
+ */
 public class EventHandler {
+
+    /** Bottone per aggiungere il libro selezionato. */
     public Button addSelectedBook;
+
+    /** Contenitore orizzontale per le stelle di valutazione. */
     public HBox ratingStarsContainer;
+
+    /** Campo di testo per il nome dell'utente. */
     @FXML
     private TextField firstNameField;
+
+    /** Campo di testo per il cognome dell'utente. */
     @FXML
     private TextField lastNameField;
+
+    /** Contenitore verticale per mostrare valutazioni aggregate. */
     @FXML
     private VBox valutazioniAggregateContainer;
+
+    /** Campo di testo per il codice fiscale dell'utente. */
     @FXML
     private TextField taxCodeField;
+
+    /** Icona stella 1 per la valutazione. */
     @FXML
-    private FontIcon star1, star2, star3, star4, star5;
+    private FontIcon star1;
+
+    /** Icona stella 2 per la valutazione. */
+    @FXML
+    private FontIcon star2;
+
+    /** Icona stella 3 per la valutazione. */
+    @FXML
+    private FontIcon star3;
+
+    /** Icona stella 4 per la valutazione. */
+    @FXML
+    private FontIcon star4;
+
+    /** Icona stella 5 per la valutazione. */
+    @FXML
+    private FontIcon star5;
+
+    /** Contenitore orizzontale per la valutazione a stelle. */
     @FXML
     private HBox starRatingContainer;
+
+    /** Etichetta che mostra il valore numerico della valutazione. */
     @FXML
     private Label ratingValueLabel;
+
+    /** Campo di testo per l'email dell'utente. */
     @FXML
     private TextField emailField;
+
+    /** Campo password per la password dell'utente. */
     @FXML
     private PasswordField passwordField;
+
+    /** Campo di testo per l'ID utente (username). */
     @FXML
     private TextField userIdField;
+
+    /** Campo di testo per la ricerca libri. */
     @FXML
     private TextField searchField;
+
+    /** Contenitore verticale per mostrare la lista dei libri. */
     @FXML
     private VBox booksContainer;
+
+    /** Etichetta che mostra il nome utente attualmente loggato. */
     @FXML
     private Label usernameLabel;
+
+    /** ComboBox per selezionare il tipo di ricerca. */
     @FXML
     private ComboBox<String> searchTypeCombo;
+
+    /** Campo di testo per inserire l'anno (visibile solo per alcune ricerche). */
     @FXML
     private TextField yearField;
+
+    /** Bottone per andare alla pagina precedente della lista libri. */
     @FXML
     private Button prevPageButton;
+
+    /** Bottone per andare alla pagina successiva della lista libri. */
     @FXML
     private Button nextPageButton;
+
+    /** Bottone per cancellare la selezione corrente. */
     @FXML
     private Button clearSelectionButton;
+
+    /** Etichetta che mostra il numero della pagina corrente. */
     @FXML
     private Label pageLabel;
+
+    /** Etichetta che mostra il titolo del libro selezionato. */
     @FXML
     private Label titoloLabel;
+
+    /** Etichetta che mostra l'autore del libro selezionato. */
     @FXML
     private Label autoreLabel;
+
+    /** Etichetta che mostra il genere del libro selezionato. */
     @FXML
     private Label genereLabel;
+
+    /** Etichetta che mostra l'editore del libro selezionato. */
     @FXML
     private Label editoreLabel;
+
+    /** Etichetta che mostra l'anno di pubblicazione del libro selezionato. */
     @FXML
     private Label annoLabel;
+
+    /** Bottone per aggiungere una valutazione a un libro. */
     @FXML
     private Button addRatingButton;
+
+    /** Immagine di copertina del libro selezionato. */
     @FXML
     private ImageView coverImage;
+
+    /** Contatore della pagina corrente per la paginazione. */
     private int currentPage = 1;
+
+    /** Numero di libri mostrati per pagina. */
     private final int booksPerPage = 25;
+
+    /** Lista dei libri risultanti dalla ricerca corrente. */
     private List<Book> currentSearchResults = new ArrayList<>();
+
+    /** Istanza singleton per la cache dei libri. */
     public BookCached bookCached = BookCached.getInstance();
+
+    /** Dati del libro attualmente selezionato. */
     private static Book selectedBookData;
+
+    /** Contenitore verticale per mostrare le librerie. */
     @FXML
     private VBox librariesContainer;
+
+    /** Contenitore verticale per mostrare i libri consigliati. */
     @FXML
     private VBox libriConsigliatiContainer;
+
+    /** Bottone per valutare un libro. */
     @FXML
     private Button valutaLibroButton;
+
+    /** Bottone per chiedere consigli su libri. */
     @FXML
     private Button consigliaLibriButton;
+
+    /** Bottone per aggiungere una nuova libreria. */
     @FXML
     private Button aggiungiLibreriaButton;
-    @FXML
+
+    /** Lista statica delle valutazioni. */
     private static List<Rating> ratingList = new ArrayList<>();
 
+    /** Controller per la gestione degli alert. */
     private final AlertController alertController = new AlertController();
+
+    /** Controller per il cambio di scena. */
     private final SceneController sceneController = new SceneController();
+
+    /** Manager per la gestione degli utenti. */
     private final UserManager userManager = new UserManager();
+
+    /** Client per la gestione delle chiamate legate ai libri. */
     private final BookClient bookClient = new BookClient();
+
+    /** Controller per la gestione delle librerie. */
     private final LibraryController libraryController = new LibraryController();
+
+    /** Controller per la gestione delle valutazioni. */
     private final RatingController ratingController = new RatingController();
+
+    /** Controller per la gestione dei suggerimenti di libri. */
     private final SuggestionController suggestionController = new SuggestionController();
 
+    /** Nome della libreria attualmente selezionata. */
     private String currentLibraryName;
 
-
+    /**
+     * Cambia la scena alla schermata di registrazione utente.
+     * @param event evento di azione (es. click su bottone)
+     */
     @FXML
     protected void switchToRegister(ActionEvent event) {
         sceneController.switchToRegister(event);
     }
 
+    /**
+     * Cambia la scena alla schermata principale (home).
+     * @param event evento di azione
+     */
     @FXML
     protected void switchToHome(ActionEvent event) {
         sceneController.switchToHome(event);
     }
 
+    /**
+     * Cambia la scena alla schermata di login.
+     * @param event evento di azione
+     */
     @FXML
     protected void switchToLogin(ActionEvent event) {
         sceneController.switchToLogin(event);
     }
 
+    /**
+     * Cambia la scena alla visualizzazione dettagliata del libro selezionato.
+     * @param event evento di input del mouse
+     */
     @FXML
     private void switchToBookView(MouseEvent event) {
         sceneController.switchToBookView(event, selectedBookData);
     }
 
+    /**
+     * Cambia la scena alla visualizzazione librerie.
+     * @param event evento di azione
+     */
     @FXML
     protected void switchToLibrary(ActionEvent event) {
         sceneController.switchToLibrary(event);
     }
 
+    /**
+     * Cambia la scena alla visualizzazione dei libri di una libreria specifica.
+     * @param event evento di input mouse
+     * @param libraryName nome della libreria selezionata
+     */
     @FXML
     protected void switchToSelectedLibrary(MouseEvent event, String libraryName) {
         sceneController.switchToLibraryBooks(event, libraryName);
     }
 
+    /**
+     * Cambia la scena alla lista di libri consigliati.
+     * @param event evento di azione
+     */
     @FXML
     protected void switchToSuggestedBookList(ActionEvent event) {
         sceneController.switchToSuggestedBookList(event);
     }
 
+    /**
+     * Esegue il login dell'utente usando i dati inseriti nei campi.
+     * @param event evento di azione
+     */
     @FXML
     protected void loginUser(ActionEvent event) {
         String userId = userIdField.getText();
@@ -172,9 +315,13 @@ public class EventHandler {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
+    /**
+     * Esegue la registrazione di un nuovo utente validando i dati immessi.
+     * Mostra eventuali errori all'utente tramite Alert.
+     * @param event evento di azione
+     */
     @FXML
     protected void registerUser(ActionEvent event) {
         String nome = firstNameField.getText();
@@ -183,7 +330,6 @@ public class EventHandler {
         String email = emailField.getText();
         String password = passwordField.getText();
 
-        //Controllo codice fiscale
         if (codiceFiscale.length() != 16) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Errore");
@@ -192,7 +338,6 @@ public class EventHandler {
             alert.showAndWait();
             return;
         }
-        // Controllo email
         if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Errore");
@@ -201,8 +346,6 @@ public class EventHandler {
             alert.showAndWait();
             return;
         }
-
-        // Controlla che i campi non siano vuoti
         if (nome.isEmpty() || cognome.isEmpty() || codiceFiscale.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Errore");
@@ -211,9 +354,14 @@ public class EventHandler {
             alert.showAndWait();
             return;
         }
+
         userManager.registerUser(event, nome, cognome, codiceFiscale, email, password);
     }
 
+    /**
+     * Metodo di inizializzazione chiamato automaticamente da JavaFX.
+     * Configura campi di testo, ComboBox e carica i dati iniziali necessari.
+     */
     @FXML
     public void initialize() {
         if (usernameLabel != null && UserManager.isLoggedIn()) {
@@ -223,7 +371,6 @@ public class EventHandler {
             searchField.setPromptText("Cerca un libro...");
         }
 
-        // Configura il ComboBox per il tipo di ricerca
         if (searchTypeCombo != null) {
             searchTypeCombo.getSelectionModel().selectFirst();
             searchTypeCombo.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -231,21 +378,20 @@ public class EventHandler {
             });
         }
 
-        // Configurazione del campo di ricerca
         setupSearchField();
 
-        // Carica i libri solo se il container è disponibile
-        if (booksContainer != null && SceneController.currentPage.contains("home") || SceneController.currentPage.contains("suggested-books")) {
+        if (booksContainer != null && (SceneController.currentPage.contains("home") || SceneController.currentPage.contains("suggested-books"))) {
             loadHomePageBooks(SceneController.currentPage);
         }
 
-
-        // Carica le librerie se siamo nella vista librerie
         if (UserManager.isLoggedIn() && librariesContainer != null) {
             loadLibraries();
         }
     }
 
+    /**
+     * Carica la lista delle librerie dell'utente in un thread separato e aggiorna la UI.
+     */
     @FXML
     private void loadLibraries() {
         new Thread(() -> {
@@ -254,6 +400,12 @@ public class EventHandler {
         }).start();
     }
 
+
+    /**
+     * Apre un dialog per aggiungere il libro selezionato a una libreria esistente.
+     * Se non esistono librerie, mostra un alert.
+     * @param event evento di azione (es. click su bottone)
+     */
     @FXML
     private void addBookToLibrary(ActionEvent event) {
         try {
@@ -265,26 +417,27 @@ public class EventHandler {
                 return;
             }
 
-            // Carica il dialog
+            // Carica il file FXML del dialog
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookrecommender2/addToLibraryDialog.fxml"));
             Parent root = loader.load();
 
-            // Configura il controller
+            // Ottieni il controller del dialog e imposta la lista delle librerie
             AddToLibraryDialogController controller = loader.getController();
             controller.setLibraries(libraries);
 
-            // Mostra il dialog
+            // Crea il dialog e setta il contenuto
             Dialog<ButtonType> dialog = new Dialog<>();
             dialog.setDialogPane((DialogPane) root);
             dialog.setTitle("Aggiungi a Libreria");
 
+            // Mostra il dialog e attendi la risposta
             Optional<ButtonType> result = dialog.showAndWait();
 
+            // Se l'utente preme OK, aggiungi il libro alla libreria selezionata
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 String selectedLibrary = controller.getSelectedLibrary();
 
                 if (selectedLibrary != null && !selectedLibrary.isEmpty()) {
-                    // Aggiungi il libro alla libreria
                     libraryController.addBookToSelectedLibrary(selectedLibrary, selectedBookData);
                 }
             }
@@ -293,30 +446,33 @@ public class EventHandler {
         }
     }
 
-    //metodo per aprire la dialog per l'aggiunta della libreria
+    /**
+     * Apre un dialog per aggiungere una valutazione e recensione al libro selezionato.
+     * @param event evento di azione
+     * @throws IOException in caso di errore di caricamento del dialog
+     */
     @FXML
     private void addRating(ActionEvent event) throws IOException {
         // Carica il dialog per l'aggiunta delle recensioni
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookrecommender2/addRatingDialog.fxml"));
         Parent root = loader.load();
 
-        // Ottieni il controller
+        // Ottieni il controller del dialog
         AddRatingDialogController controller = loader.getController();
 
         // Passa il libro selezionato al controller
         controller.setBook(selectedBookData);
 
-        // Crea una nuova finestra di dialogo
+        // Crea il dialog e setta il contenuto
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setDialogPane((DialogPane) root);
         dialog.setTitle("Aggiungi Recensione");
 
-        // Mostra la dialog e attendi il risultato
+        // Mostra il dialog e attendi il risultato
         Optional<ButtonType> result = dialog.showAndWait();
 
-        // Gestisci il risultato solo se l'utente ha premuto OK
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            // Ottieni le valutazioni e la recensione dal controller
+            // Ottieni le valutazioni e la recensione inserite
             int styleRating = controller.getStyleRating();
             int contentRating = controller.getContentRating();
             int appealRating = controller.getAppealRating();
@@ -327,53 +483,62 @@ public class EventHandler {
 
             if(reviewText == null) {
                 alertController.showAlert("Errore", "La nota è vuota");
-            }else ratingController.addRating(selectedBookData.getId(), styleRating, contentRating, appealRating,
-                    originalityRating, editionRating, reviewText, averageRating);
+            } else {
+                ratingController.addRating(selectedBookData.getId(), styleRating, contentRating, appealRating,
+                        originalityRating, editionRating, reviewText, averageRating);
+            }
         }
     }
 
+    /**
+     * Apre un dialog per mostrare la valutazione media del libro selezionato.
+     * @param event evento di input mouse
+     * @throws IOException in caso di errore di caricamento del dialog
+     */
     @FXML
     private void openRating(MouseEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookrecommender2/addRatingDialog.fxml"));
         Parent root = loader.load();
 
-        // Ottieni il controller
         AddRatingDialogController controller = loader.getController();
-
-        // Passa il libro selezionato al controller
         controller.setBook(selectedBookData);
-        // Crea una nuova finestra di dialogo
+
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setDialogPane((DialogPane) root);
         dialog.setTitle("Valutazione media");
 
+        // Ottieni la prima valutazione aggregata dalla lista
         Rating ratingAggragato = ratingList.getFirst();
 
+        // Imposta le valutazioni esistenti nel dialog
         controller.setExistingRatings(ratingAggragato.getStile(),
                 ratingAggragato.getContenuto(),
                 ratingAggragato.getGradevolezza(),
                 ratingAggragato.getOriginalita(),
                 ratingAggragato.getEdizione());
 
-        //togli la recensione
+        // Nascondi il campo testo per la recensione
         controller.setReviewTextVisible(false);
 
-        // Mostra la dialog
+        // Mostra il dialog e attendi risposta (anche se non usata qui)
         Optional<ButtonType> result = dialog.showAndWait();
     }
 
+    /**
+     * Apre un dialog per mostrare una valutazione specifica (non modificabile) con recensione.
+     * @param rating la valutazione da mostrare
+     * @throws IOException in caso di errore di caricamento del dialog
+     */
     @FXML
     private void openRating(Rating rating) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/bookrecommender2/addRatingDialog.fxml"));
         Parent root = loader.load();
 
-        // Ottieni il controller
         AddRatingDialogController controller = loader.getController();
         controller.setReviewTextEditable(false);
 
-        // Passa il libro selezionato al controller
         controller.setBook(selectedBookData);
-        // Crea una nuova finestra di dialogo
+
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setDialogPane((DialogPane) root);
         dialog.setTitle("Recensione di: " + rating.getUserId());
@@ -384,14 +549,16 @@ public class EventHandler {
                 rating.getOriginalita(),
                 rating.getEdizione());
 
-        //togli la recensione
         controller.setReviewTextVisible(true);
         controller.setReviewText(rating.getRecensione());
 
-        // Mostra la dialog
         Optional<ButtonType> result = dialog.showAndWait();
     }
 
+    /**
+     * Estrae e ritorna la lista dei nomi delle librerie dall'elenco delle librerie dell'utente.
+     * @return lista di nomi di librerie
+     */
     private List<String> getLibraryNames() {
         List<String> libraryNames = new ArrayList<>();
         List<String> libraryEntries = libraryController.getLibraryList();
@@ -408,44 +575,45 @@ public class EventHandler {
         return libraryNames;
     }
 
+    /**
+     * Carica i libri per la pagina home o suggeriti, usando la cache se disponibile,
+     * e aggiorna la visualizzazione con la paginazione.
+     * @param currentPage identificatore della pagina corrente (es. "home", "suggested-books")
+     */
     @FXML
     private void loadHomePageBooks(String currentPage) {
-        // Utilizza BookClient per ottenere i libri
+        // Se i libri sono già in cache e siamo nella pagina home
         if (bookCached.hasCachedHomeBooks() && currentPage.contains("home")) {
-            // Se i libri sono già stati caricati, usali dalla cache
             currentSearchResults.addAll(bookCached.getCachedHomeBooks());
 
-            // Aggiorna controlli di paginazione
             updatePageDisplay();
 
-            // Visualizza prima pagina
+            // Visualizza la pagina corrente nella UI
             Platform.runLater(this::displayCurrentPage);
 
         } else {
             BookClient client = new BookClient();
             try {
-                // Richiedi libri al server
                 if (currentPage.contains("home")) {
+                    // Ottieni libri dalla prima pagina
                     List<Book> books = client.getBooks(0);
                     bookCached.setCachedHomeBooks(books);
                     currentSearchResults.addAll(books);
 
-                    // Aggiorna controlli di paginazione
                     updatePageDisplay();
 
-                    // Visualizza prima pagina
                     Platform.runLater(this::displayCurrentPage);
+
                 } else if (currentPage.contains("suggested")) {
                     List<Book> books = new ArrayList<>();
-                    //per ogni libreria getLibraryList
+                    // Ottieni libri per ogni libreria dell'utente
                     for (String library : getLibraryNames()) {
                         books.addAll(client.getLibraryBooks(UserManager.getUserId(), library));
                     }
                     currentSearchResults.addAll(books);
-                    // Aggiorna controlli di paginazione
+
                     updatePageDisplay();
 
-                    // Visualizza prima pagina
                     Platform.runLater(this::displayCurrentPage);
                 }
 
@@ -455,12 +623,25 @@ public class EventHandler {
         }
     }
 
+
+    /**
+     * Configura il campo di ricerca impostando l'azione da eseguire quando l'utente preme Invio.
+     * Se il campo di ricerca è nullo, non fa nulla.
+     */
     private void setupSearchField() {
         if (searchField == null) return;
 
         searchField.setOnAction(this::handleSearch);
     }
 
+    /**
+     * Gestisce l'evento di ricerca attivato dall'utente.
+     * Esegue una ricerca in base al termine inserito e al tipo di ricerca selezionato.
+     * Valida i dati di input e mostra eventuali messaggi di errore.
+     * Esegue la ricerca in un thread separato e aggiorna l'interfaccia utente con i risultati.
+     *
+     * @param event Evento di azione generato dal campo di ricerca.
+     */
     @FXML
     protected void handleSearch(ActionEvent event) {
         // Resetta la paginazione
@@ -522,6 +703,12 @@ public class EventHandler {
         }).start();
     }
 
+    /**
+     * Mostra il menu contestuale utente con l'opzione di logout.
+     * Al logout cambia la scena alla vista non loggata.
+     *
+     * @param event Evento di mouse che attiva il menu.
+     */
     @FXML
     private void showUserMenu(MouseEvent event) {
         // Crea menu contestuale
@@ -557,6 +744,12 @@ public class EventHandler {
         contextMenu.show(source.getScene().getWindow(), event.getScreenX(), event.getScreenY());
     }
 
+    /**
+     * Mostra nella UI una lista di libri suggeriti.
+     * Se la lista è vuota, mostra un messaggio di assenza suggerimenti.
+     *
+     * @param books Lista di libri suggeriti da visualizzare.
+     */
     private void showSuggestionsInUI(List<Book> books) {
 
         libriConsigliatiContainer.getChildren().clear();
@@ -571,7 +764,12 @@ public class EventHandler {
         }
     }
 
-
+    /**
+     * Aggiorna la visualizzazione delle stelle di valutazione nella UI
+     * colorando le stelle in base al voto medio disponibile.
+     *
+     * @param ratingStarsContainer Contenitore HBox che contiene le stelle da aggiornare.
+     */
     public void updateBookRating(HBox ratingStarsContainer) {
         // Ottieni la valutazione media
         if (ratingList.isEmpty()) {
@@ -596,13 +794,22 @@ public class EventHandler {
         }
     }
 
-
+    /**
+     * Avvia il caricamento e la visualizzazione delle recensioni associate al libro selezionato.
+     */
     public void showRating() {
 
         loadAndDisplayBookReviews(selectedBookData.getId());
 
     }
 
+    /**
+     * Inizializza i dati relativi al libro selezionato aggiornando la UI con i dettagli,
+     * valutazioni, suggerimenti e copertina. Gestisce anche la visibilità dei controlli
+     * in base allo stato di login dell'utente.
+     *
+     * @param book Libro selezionato da visualizzare.
+     */
     public void initBookData(Book book) {
         if (book == null) return;
         // Memorizza il libro selezionato
@@ -656,6 +863,12 @@ public class EventHandler {
         }
     }
 
+    /**
+     * Carica e mostra le recensioni aggregate di un libro nel contenitore dedicato.
+     * Se non ci sono recensioni mostra un messaggio di assenza.
+     *
+     * @param bookId ID del libro per cui caricare le recensioni.
+     */
     private void loadAndDisplayBookReviews(int bookId) {
         valutazioniAggregateContainer.getChildren().clear();
 
@@ -691,11 +904,20 @@ public class EventHandler {
         }
     }
 
+
+    /**
+     * Crea una VBox che rappresenta una recensione.
+     * La recensione contiene un'intestazione con l'ID utente e la valutazione sotto forma di stelle,
+     * seguita da una sezione per i dettagli della valutazione.
+     *
+     * @param rating l'oggetto Rating contenente i dati della recensione, come l'ID utente e il voto finale
+     * @return una VBox contenente la visualizzazione grafica della recensione
+     */
     private VBox createReviewBox(Rating rating) {
         VBox reviewBox = new VBox(10);
         reviewBox.getStyleClass().add("review-box");
 
-        // Intestazione con ID utente e valutazione
+        // Intestazione con ID utente e valutazione a stelle
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
 
@@ -706,7 +928,7 @@ public class EventHandler {
 
         header.getChildren().addAll(userLabel, starsBox);
 
-        // Dettagli della valutazione
+        // Sezione per i dettagli della valutazione (attualmente vuota)
         GridPane ratingDetails = new GridPane();
         ratingDetails.setHgap(10);
         ratingDetails.setVgap(5);
@@ -716,6 +938,14 @@ public class EventHandler {
         return reviewBox;
     }
 
+    /**
+     * Crea una HBox contenente stelle colorate per rappresentare la valutazione numerica.
+     * Le stelle piene (fino al valore della valutazione) sono colorate in oro,
+     * mentre le stelle vuote sono colorate in grigio.
+     *
+     * @param rating valore numerico della valutazione da 0 a 5
+     * @return una HBox contenente 5 icone a forma di stella con il colore appropriato
+     */
     private HBox createRatingStars(int rating) {
         HBox starsBox = new HBox(5);
         starsBox.setAlignment(Pos.CENTER_LEFT);
@@ -726,9 +956,9 @@ public class EventHandler {
             star.setIconSize(16);
 
             if (i <= rating) {
-                star.setIconColor(Color.GOLD);
+                star.setIconColor(Color.GOLD);  // stelle piene
             } else {
-                star.setIconColor(Color.GRAY);
+                star.setIconColor(Color.GRAY);  // stelle vuote
             }
 
             starsBox.getChildren().add(star);
@@ -737,39 +967,47 @@ public class EventHandler {
         return starsBox;
     }
 
-
+    /**
+     * Aggiunge un elemento visivo rappresentante un libro all'interfaccia utente.
+     * La visualizzazione e il comportamento dell'elemento dipendono dalla pagina corrente.
+     *
+     * <p>Gestisce tre contesti principali:</p>
+     * <ul>
+     *   <li>Pagina "suggested-books": aggiunge libri con checkbox per selezione, escludendo il libro già selezionato.</li>
+     *   <li>Pagina "home" o "library-books": aggiunge libri cliccabili che permettono di passare alla vista dettagliata del libro.</li>
+     *   <li>Pagina "book-view.fxml": aggiunge libri consigliati cliccabili per la navigazione al dettaglio.</li>
+     * </ul>
+     *
+     * @param book il libro da visualizzare nell'interfaccia utente
+     */
     private void addBookToUI(Book book) {
         if (SceneController.currentPage.contains("suggested-books")) {
-            // Non aggiungere il libro se è lo stesso del libro selezionato
+            // Se il libro è lo stesso di quello selezionato, non fare nulla
             if (book.getId() == selectedBookData.getId()) {
-
+                // Nessuna azione
             } else {
-                // Crea l'elemento visuale del libro
+                // Crea l'elemento visuale per il libro con checkbox
                 HBox bookItem = new HBox();
                 bookItem.getStyleClass().add("book-item");
                 bookItem.setSpacing(15.0);
 
-                // Copertina
+                // Imposta l'immagine di copertina
                 ImageView coverView = new ImageView();
                 coverView.setFitWidth(120.0);
                 coverView.setFitHeight(180.0);
                 coverView.setPreserveRatio(true);
 
-                // Carica l'immagine di copertina
+                // Carica l'immagine o fallback se non disponibile
                 if (!book.getCoverUrl().equals("null")) {
                     try {
                         String imageUrl = book.getCoverUrl();
-                        // Caricamento immagine
                         Image coverImage = new Image(imageUrl, true);
-                        // Listener per errori
                         coverImage.errorProperty().addListener((observable, oldValue, newValue) -> {
                             if (newValue) {
                                 Platform.runLater(() -> coverView.setImage(new Image("/logoBookRecommender.png")));
                             }
                         });
-
                         coverView.setImage(coverImage);
-
                     } catch (Exception e) {
                         coverView.setImage(new Image("/logoBookRecommender.png"));
                     }
@@ -777,76 +1015,66 @@ public class EventHandler {
                     coverView.setImage(new Image("/logoBookRecommender.png"));
                 }
 
-                // Contenitore per i dettagli testuali
+                // Contenitore per dettagli testuali e checkbox
                 VBox contentBox = new VBox();
-                contentBox.setUserData(book.getId()); // Salvi l'ID del libro
-                contentBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                contentBox.setUserData(book.getId()); // memorizza l'ID del libro
+                contentBox.setAlignment(Pos.CENTER_LEFT);
                 contentBox.setSpacing(10.0);
 
-                // Titolo del libro
+                // Etichette con informazioni del libro
                 Label titleLabel = new Label(book.getTitle());
                 titleLabel.getStyleClass().add("book-title");
 
-                // Autore del libro
                 Label authorLabel = new Label("Autore: " + (book.getAuthor().length() >= 3 ? book.getAuthor().substring(3) : book.getAuthor()));
                 authorLabel.getStyleClass().add("book-author");
-                // Categoria del libro
+
                 Label categoryLabel = new Label("Categoria: " + book.getCategory());
                 categoryLabel.getStyleClass().add("book-category");
-                // Editore del libro
+
                 Label publisherLabel = new Label("Editore: " + book.getPublisher());
                 publisherLabel.getStyleClass().add("book-publisher");
-                // Anno di pubblicazione del libro
+
                 Label yearLabel = new Label("Anno: " + book.getPublicationYear());
                 yearLabel.getStyleClass().add("book-year");
-                //aggiunge la checkbox per ogni libro
+
+                // Checkbox per selezionare il libro
                 CheckBox checkBox = new CheckBox();
                 checkBox.setStyle("-fx-font-size: 14px; -fx-text-fill: #000000;");
                 checkBox.setSelected(false);
+                checkBox.setOnAction(e -> updateAddSuggestionsButtonState());
 
-                checkBox.setOnAction(e -> {
-                    updateAddSuggestionsButtonState();
-                });
-                // Aggiungi la checkbox al contentBox
+                // Aggiungi checkbox e dettagli al contenitore
                 contentBox.getChildren().add(checkBox);
-                // Aggiungi gli elementi testuali al contentBox
                 contentBox.getChildren().addAll(titleLabel, authorLabel, categoryLabel, publisherLabel, yearLabel);
-                // Aggiungi copertina e contenitore di testo all'elemento libro
+
+                // Aggiungi copertina e contenuto all'elemento libro
                 bookItem.getChildren().addAll(coverView, contentBox);
-                //make the bookItem not clickable
-                bookItem.setCursor(Cursor.DEFAULT);
-                // Aggiungi l'elemento libro al container
+                bookItem.setCursor(Cursor.DEFAULT); // non cliccabile
+
+                // Aggiungi l'elemento al container della lista libri suggeriti
                 booksContainer.getChildren().add(bookItem);
             }
 
         } else if (SceneController.currentPage.contains("home") || SceneController.currentPage.contains("library-books")) {
-            // Crea l'elemento visuale del libro
+            // Crea un elemento libro cliccabile senza checkbox
             HBox bookItem = new HBox();
             bookItem.getStyleClass().add("book-item");
             bookItem.setSpacing(15.0);
 
-            // Copertina
             ImageView coverView = new ImageView();
             coverView.setFitWidth(120.0);
             coverView.setFitHeight(180.0);
             coverView.setPreserveRatio(true);
 
-            // Carica l'immagine di copertina
             if (!book.getCoverUrl().equals("null")) {
                 try {
-
-                    // Caricamento immagine
                     Image coverImage = new Image(book.getCoverUrl(), true);
-
-                    // Listener per errori
                     coverImage.errorProperty().addListener((observable, oldValue, newValue) -> {
                         if (newValue) {
                             Platform.runLater(() -> coverView.setImage(new Image("/logoBookRecommender.png")));
                         }
                     });
-
                     coverView.setImage(coverImage);
-
                 } catch (Exception e) {
                     coverView.setImage(new Image("/logoBookRecommender.png"));
                 }
@@ -854,37 +1082,28 @@ public class EventHandler {
                 coverView.setImage(new Image("/logoBookRecommender.png"));
             }
 
-            // Contenitore per i dettagli testuali
             VBox contentBox = new VBox();
-            contentBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            contentBox.setAlignment(Pos.CENTER_LEFT);
             contentBox.setSpacing(10.0);
 
-            // Titolo del libro
             Label titleLabel = new Label(book.getTitle());
             titleLabel.getStyleClass().add("book-title");
 
-            // Autore del libro
             Label authorLabel = new Label("Autore: " + (book.getAuthor().length() >= 3 ? book.getAuthor().substring(3) : book.getAuthor()));
             authorLabel.getStyleClass().add("book-author");
 
-            // Categoria del libro
             Label categoryLabel = new Label("Categoria: " + book.getCategory());
             categoryLabel.getStyleClass().add("book-category");
 
-            // Editore del libro
             Label publisherLabel = new Label("Editore: " + book.getPublisher());
             publisherLabel.getStyleClass().add("book-publisher");
 
-            // Anno di pubblicazione del libro
             Label yearLabel = new Label("Anno: " + book.getPublicationYear());
             yearLabel.getStyleClass().add("book-year");
 
-            // Aggiungi gli elementi testuali al contentBox
             contentBox.getChildren().addAll(titleLabel, authorLabel, categoryLabel, publisherLabel, yearLabel);
 
-            // Aggiungi copertina e contenitore di testo all'elemento libro
             bookItem.getChildren().addAll(coverView, contentBox);
-
 
             bookItem.setCursor(Cursor.HAND);
             bookItem.setOnMouseClicked(event -> {
@@ -895,32 +1114,26 @@ public class EventHandler {
             booksContainer.getChildren().add(bookItem);
 
         } else if (SceneController.currentPage.contains("book-view.fxml")) {
-            // Crea l'elemento visivo del libro
+            // Aggiunge libri consigliati nella vista dettaglio libro
             HBox bookItem = new HBox();
             bookItem.getStyleClass().add("book-item");
             bookItem.setSpacing(15.0);
 
-            // Copertina
             ImageView coverView = new ImageView();
             coverView.setFitWidth(120.0);
             coverView.setFitHeight(180.0);
             coverView.setPreserveRatio(true);
 
-            // Carica l'immagine di copertina
             if (!book.getCoverUrl().equals("null")) {
                 try {
                     String imageUrl = book.getCoverUrl();
-                    // Caricamento immagine
                     Image coverImage = new Image(imageUrl, true);
-                    // Listener per errori
                     coverImage.errorProperty().addListener((observable, oldValue, newValue) -> {
                         if (newValue) {
                             Platform.runLater(() -> coverView.setImage(new Image("/logoBookRecommender.png")));
                         }
                     });
-
                     coverView.setImage(coverImage);
-
                 } catch (Exception e) {
                     coverView.setImage(new Image("/logoBookRecommender.png"));
                 }
@@ -928,45 +1141,46 @@ public class EventHandler {
                 coverView.setImage(new Image("/logoBookRecommender.png"));
             }
 
-            // Contenitore per i dettagli testuali
             VBox contentBox = new VBox();
-            contentBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            contentBox.setAlignment(Pos.CENTER_LEFT);
             contentBox.setSpacing(10.0);
 
-            // Titolo del libro
             Label titleLabel = new Label(book.getTitle());
             titleLabel.getStyleClass().add("book-title");
 
-            // Autore del libro
             Label authorLabel = new Label("Autore: " + (book.getAuthor().length() >= 3 ? book.getAuthor().substring(3) : book.getAuthor()));
             authorLabel.getStyleClass().add("book-author");
 
-            // Categoria del libro
             Label categoryLabel = new Label("Categoria: " + book.getCategory());
             categoryLabel.getStyleClass().add("book-category");
 
-            // Editore del libro
             Label publisherLabel = new Label("Editore: " + book.getPublisher());
             publisherLabel.getStyleClass().add("book-publisher");
 
-            // Anno di pubblicazione del libro
             Label yearLabel = new Label("Anno: " + book.getPublicationYear());
             yearLabel.getStyleClass().add("book-year");
-            // Aggiungi gli elementi testuali al contentBox
+
             contentBox.getChildren().addAll(titleLabel, authorLabel, categoryLabel, publisherLabel, yearLabel);
-            // Aggiungi copertina e contenitore di testo all'elemento libro
+
             bookItem.getChildren().addAll(coverView, contentBox);
             bookItem.setCursor(Cursor.HAND);
             bookItem.setOnMouseClicked(event -> {
                 selectedBookData = book;
                 switchToBookView(event);
             });
-            // Aggiungi l'elemento libro al container
-            libriConsigliatiContainer.getChildren().add(bookItem);
 
+            libriConsigliatiContainer.getChildren().add(bookItem);
         }
     }
 
+
+    /**
+     * Gestisce la navigazione alla pagina successiva nella paginazione.
+     * Incrementa il numero della pagina corrente se non si è già all'ultima pagina,
+     * aggiorna i controlli di paginazione e visualizza i libri della nuova pagina.
+     *
+     * @param event L'evento di azione generato dal pulsante "pagina successiva".
+     */
     @FXML
     protected void goToNextPage(ActionEvent event) {
         if (currentPage < getTotalPages()) {
@@ -976,6 +1190,13 @@ public class EventHandler {
         }
     }
 
+    /**
+     * Gestisce la navigazione alla pagina precedente nella paginazione.
+     * Decrementa il numero della pagina corrente se non si è già alla prima pagina,
+     * aggiorna i controlli di paginazione e visualizza i libri della nuova pagina.
+     *
+     * @param event L'evento di azione generato dal pulsante "pagina precedente".
+     */
     @FXML
     protected void goToPrevPage(ActionEvent event) {
         if (currentPage > 1) {
@@ -985,10 +1206,20 @@ public class EventHandler {
         }
     }
 
+    /**
+     * Calcola il numero totale di pagine in base al numero totale di risultati della ricerca
+     * e al numero di libri visualizzati per pagina.
+     *
+     * @return Il numero totale di pagine.
+     */
     private int getTotalPages() {
         return (int) Math.ceil((double) currentSearchResults.size() / booksPerPage);
     }
 
+    /**
+     * Aggiorna lo stato e il testo dei controlli di paginazione,
+     * inclusi i pulsanti "pagina precedente", "pagina successiva" e l'etichetta della pagina.
+     */
     private void updatePaginationControls() {
         int totalPages = getTotalPages();
 
@@ -1007,6 +1238,10 @@ public class EventHandler {
         }
     }
 
+    /**
+     * Aggiorna la visualizzazione della pagina attuale,
+     * incluso l'aggiornamento dell'etichetta pagina e lo stato dei pulsanti di navigazione.
+     */
     private void updatePageDisplay() {
         if (pageLabel != null) {
             pageLabel.setText("Pagina " + currentPage);
@@ -1027,6 +1262,10 @@ public class EventHandler {
         }
     }
 
+    /**
+     * Visualizza i libri corrispondenti alla pagina corrente all'interno del contenitore UI.
+     * Pulisce il contenitore e aggiunge gli elementi relativi ai libri della pagina corrente.
+     */
     private void displayCurrentPage() {
         if (booksContainer == null) return;
 
@@ -1044,6 +1283,13 @@ public class EventHandler {
         }
     }
 
+    /**
+     * Mostra la lista delle librerie nella UI come pulsanti cliccabili.
+     * Ogni pulsante contiene un'icona, il nome della libreria e uno stile personalizzato.
+     * Se la lista è vuota, mostra un messaggio informativo.
+     *
+     * @param libraryNames Lista di stringhe che rappresentano le librerie, con formato specifico.
+     */
     private void showLibraryInUI(List<String> libraryNames) {
         // Verifica che librariesContainer non sia null
         if (librariesContainer == null) {
@@ -1085,7 +1331,7 @@ public class EventHandler {
                     nameLabel.setFont(Font.font("System", FontWeight.BOLD, 24.0)); // Aumentato la dimensione del font
                     nameLabel.setTextFill(Color.valueOf("#4A3C32"));
                     nameLabel.setStyle(nameLabel.getStyle() + "-fx-text-fill: #4A3C32;");
-// Aggiungere effetto ombra al testo
+                    // Aggiungere effetto ombra al testo
                     DropShadow dropShadow = new DropShadow();
                     dropShadow.setRadius(2.0);
                     dropShadow.setOffsetX(1.0);
@@ -1093,7 +1339,7 @@ public class EventHandler {
                     dropShadow.setColor(Color.rgb(0, 0, 0, 0.3));
                     nameLabel.setEffect(dropShadow);
 
-// Modificare lo stile del pulsante per un migliore contrasto
+                    // Modificare lo stile del pulsante per un migliore contrasto
                     libraryButton.setStyle("-fx-background-color: linear-gradient(to bottom right, #f0e6d8, #e6d7c3);" +
                             "-fx-background-radius: 12;" +
                             "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);");
@@ -1120,6 +1366,14 @@ public class EventHandler {
         }
     }
 
+
+    /**
+     * Apre una finestra di dialogo per creare una nuova libreria.
+     * Verifica che il nome inserito sia valido e, in caso positivo, crea la libreria.
+     * Altrimenti mostra un messaggio di errore.
+     *
+     * @param event Evento generato dal click sul pulsante "Crea Nuova Libreria".
+     */
     @FXML
     private void createNewLibrary(ActionEvent event) {
         try {
@@ -1146,7 +1400,7 @@ public class EventHandler {
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 String libraryName = controller.getLibraryNameField();
 
-                // Verifica che il nome non sia vuoto
+                // Verifica che il nome non sia vuoto e non contenga ":"
                 if (libraryName != null && !libraryName.trim().isEmpty() && !libraryName.contains(":")) {
                     // Procedi con la creazione della libreria
                     if (libraryController.createLibraryWithName(libraryName)) {
@@ -1161,6 +1415,12 @@ public class EventHandler {
         }
     }
 
+    /**
+     * Inizializza la visualizzazione dei libri di una libreria specifica.
+     * Salva il nome della libreria corrente e carica i suoi libri.
+     *
+     * @param libraryName Nome della libreria da caricare.
+     */
     public void initLibraryBooksView(String libraryName) {
         // Salva il nome della libreria corrente
         this.currentLibraryName = libraryName;
@@ -1169,6 +1429,12 @@ public class EventHandler {
         loadLibraryBooks(currentLibraryName);
     }
 
+    /**
+     * Carica i libri di una libreria specifica in un thread separato per non bloccare la UI.
+     * Aggiorna la UI con i libri ottenuti o mostra un messaggio se la libreria è vuota.
+     *
+     * @param libraryName Nome della libreria di cui caricare i libri.
+     */
     private void loadLibraryBooks(String libraryName) {
         new Thread(() -> {
             try {
@@ -1202,6 +1468,13 @@ public class EventHandler {
         }).start();
     }
 
+    /**
+     * Gestisce l'aggiunta di suggerimenti in base ai libri selezionati dall'utente.
+     * Raccoglie gli ID dei libri selezionati tramite checkbox, chiama il controller di suggerimenti
+     * e mostra messaggi di conferma o errore.
+     *
+     * @param event Evento generato dal click sul pulsante "Aggiungi Suggerimenti".
+     */
     @FXML
     private void addSuggestions(ActionEvent event) {
         List<Integer> selectedBooks = new ArrayList<>();
@@ -1226,10 +1499,9 @@ public class EventHandler {
             }
         }
 
-
         if (suggestionController.addSuggestedBook(UserManager.getUserId(), selectedBookData.getId(), selectedBooks)) {
             alertController.showAlertSucces("Suggerimenti aggiunti", "I libri selezionati sono stati suggeriti con successo.");
-            //torna nella schermata principale
+            // Torna nella schermata principale
             try {
                 switchToHome(event);
             } catch (Exception e) {
@@ -1237,12 +1509,12 @@ public class EventHandler {
             }
         } else {
             alertController.showAlert("Suggerimenti non aggiunti", "I libri selezionati non sono stati suggeriti con successo, assicurati di avere il libro in una libreria personale");
-
         }
     }
 
     /**
-     * Aggiorna lo stato del pulsante "Aggiungi Suggerimenti" in base al numero di libri selezionati
+     * Aggiorna lo stato del pulsante "Aggiungi Suggerimenti" in base al numero di libri selezionati.
+     * Abilita il pulsante solo se sono selezionati tra 1 e 3 libri.
      */
     private void updateAddSuggestionsButtonState() {
         int selectedCount = 0;
@@ -1272,6 +1544,12 @@ public class EventHandler {
         addSelectedBook.setDisable(selectedCount < 1 || selectedCount > 3);
     }
 
+    /**
+     * Deseleziona tutte le checkbox dei libri nella UI,
+     * aggiorna lo stato del pulsante "Aggiungi Suggerimenti" e torna alla schermata principale.
+     *
+     * @param event Evento generato dal click sul pulsante "Cancella Selezione".
+     */
     @FXML
     private void clearBookSelection(ActionEvent event) {
         // Deseleziona tutte le checkbox
@@ -1298,6 +1576,7 @@ public class EventHandler {
             alertController.showAlert("Errore", "Impossibile tornare alla schermata precedente.");
         }
     }
+
 
 
 }

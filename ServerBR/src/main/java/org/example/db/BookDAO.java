@@ -20,12 +20,27 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 
+/**
+ * Data Access Object (DAO) per la gestione dei libri nel database.
+ * Permette di recuperare, cercare e ottenere dettagli sui libri.
+ */
+
 public class BookDAO {
     private final DataBaseConnection db;
 
+    /**
+     * Costruttore: inizializza la connessione al database.
+     */
     public BookDAO() {
         this.db = new DataBaseConnection();
     }
+
+    /**
+     * Recupera una lista di libri dal database, con un limite opzionale.
+     *
+     * @param limit Numero massimo di libri da recuperare. Se 0, recupera tutti i libri.
+     * @return Lista di oggetti Book recuperati dal database.
+     */
 
     public List<Book> getBooks(int limit) {
         List<Book> books = new ArrayList<>();
@@ -78,13 +93,17 @@ public class BookDAO {
     }
 
     /**
-     * Metodo unificato per la ricerca di libri secondo vari criteri
+     * Cerca libri nel database secondo diversi criteri e contesto di pagina.
      *
-     * @param searchType il tipo di ricerca ("TITLE", "AUTHOR", "AUTHOR_YEAR")
-     * @param searchTerm il termine di ricerca (titolo o autore)
-     * @param year       l'anno di pubblicazione (usato solo per "AUTHOR_YEAR")
-     * @return lista di libri che corrispondono ai criteri di ricerca
+     * @param searchType Tipo di ricerca (TITLE, AUTHOR, AUTHOR_YEAR).
+     * @param searchTerm Termine di ricerca (titolo o autore).
+     * @param year       Anno di pubblicazione (opzionale, usato solo con AUTHOR_YEAR).
+     * @param userId     ID utente per ricerche filtrate su librerie di un utente.
+     * @param currentPage Identifica la pagina corrente per differenziare la query.
+     * @param libraryName Nome della libreria (usato per ricerca specifica in libreria).
+     * @return Lista di libri che soddisfano i criteri di ricerca.
      */
+
     public List<Book> searchBooks(String searchType, String searchTerm, Integer year, String userId, String currentPage, String libraryName) {
         List<Book> books = new ArrayList<>();
         String sql;
@@ -243,7 +262,13 @@ public class BookDAO {
         return books;
     }
 
-    // Metodo per ottenere i dettagli di un libro specifico
+    /**
+     * Recupera i dettagli di un libro specifico dato il suo ID.
+     *
+     * @param bookId ID del libro da cercare.
+     * @return Oggetto Book con i dettagli del libro, o null se non trovato.
+     */
+
     public Book getBookDetails(int bookId) {
         Book book = null;
         String sql = "SELECT * FROM Libri WHERE id_libro = ?";
@@ -268,6 +293,9 @@ public class BookDAO {
         return book;
     }
 
+    /**
+     * Chiude la connessione al database.
+     */
 
     public void closeConnection() {
         db.closeConnection();

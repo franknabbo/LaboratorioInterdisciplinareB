@@ -17,17 +17,30 @@ import org.example.bookrecommender2.EventHandler;
 
 import java.io.IOException;
 
-
-
-
+/**
+ * Controller per la gestione della navigazione tra le varie scene dell'applicazione.
+ * Fornisce metodi per passare da una vista all'altra, caricando i relativi file FXML
+ * e inizializzando i controller associati quando necessario.
+ */
 public class SceneController {
 
-
     private final AlertController alertController = new AlertController();
+
+    /**
+     * Nome della pagina attualmente visualizzata.
+     * Utilizzato per tenere traccia della vista attiva.
+     */
     public static String currentPage = "homeNotLogged-view.fxml";
+
+    /**
+     * Nome della libreria attualmente selezionata.
+     */
     public static String currentLibrary = "";
 
-
+    /**
+     * Passa alla scena di registrazione.
+     * @param event evento generato dal click su un pulsante o altro controllo.
+     */
     public void switchToRegister(ActionEvent event) {
         currentPage = "register-view.fxml";
         try {
@@ -41,7 +54,12 @@ public class SceneController {
         }
     }
 
-
+    /**
+     * Passa alla scena principale (home).
+     * Se l'utente è loggato, carica la home per utenti loggati,
+     * altrimenti la home per utenti non loggati.
+     * @param event evento generato dal click su un pulsante o altro controllo.
+     */
     public void switchToHome(ActionEvent event) {
         currentPage = "homeNotLogged-view.fxml";
         try {
@@ -59,7 +77,10 @@ public class SceneController {
         }
     }
 
-
+    /**
+     * Passa alla scena di login.
+     * @param event evento generato dal click su un pulsante o altro controllo.
+     */
     public void switchToLogin(ActionEvent event) {
         currentPage = "login-view.fxml";
         try {
@@ -73,6 +94,12 @@ public class SceneController {
         }
     }
 
+    /**
+     * Passa alla vista dettagliata di un libro selezionato.
+     * Inizializza il controller della vista con i dati del libro.
+     * @param event evento generato dal click su un elemento della lista libri.
+     * @param selectedBook libro selezionato da mostrare nella nuova vista.
+     */
     public void switchToBookView(MouseEvent event, Book selectedBook) {
         currentPage = "book-view.fxml";
         try {
@@ -95,6 +122,10 @@ public class SceneController {
         }
     }
 
+    /**
+     * Passa alla scena della lista librerie.
+     * @param event evento generato dal click su un pulsante o altro controllo.
+     */
     public void switchToLibrary(ActionEvent event) {
         currentPage = "library-view.fxml";
         try {
@@ -108,6 +139,12 @@ public class SceneController {
         }
     }
 
+    /**
+     * Passa alla vista dei libri di una libreria specifica.
+     * Inizializza il controller con il nome della libreria selezionata.
+     * @param event evento generato dal click su un elemento della lista librerie.
+     * @param libraryName nome della libreria da visualizzare.
+     */
     public void switchToLibraryBooks(MouseEvent event, String libraryName) {
         currentPage = "library-books-view.fxml";
         currentLibrary = libraryName;
@@ -130,6 +167,10 @@ public class SceneController {
         }
     }
 
+    /**
+     * Passa alla vista della lista di libri suggeriti.
+     * @param event evento generato dal click su un pulsante o altro controllo.
+     */
     public void switchToSuggestedBookList(ActionEvent event) {
         currentPage = "suggested-books-view.fxml";
         try {

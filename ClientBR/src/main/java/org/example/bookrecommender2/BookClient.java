@@ -11,18 +11,22 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Client per la gestione dei libri, con metodi per richieste e parsing delle risposte dal server.
+ */
 public class BookClient {
 
     /**
-     * Richiede un numero specifico di libri con copertine
+     * Richiede un numero specifico di libri dal server.
+     * @param number numero di libri da richiedere
+     * @return lista di libri ottenuti
+     * @throws IOException in caso di errori di I/O
      */
     public List<Book> getBooks(int number) throws IOException {
         List<Book> books = new ArrayList<>();
 
-        // Invia la richiesta dei libri
         SocketConnection.sendMessage("GET_BOOKS:" + number);
         BufferedReader in = SocketConnection.getIn();
-        // Legge la risposta
         String line;
         boolean reading = false;
 
@@ -31,14 +35,11 @@ public class BookClient {
                 reading = true;
                 continue;
             }
-
             if (line.equals("END_BOOKS")) {
                 break;
             }
-
             if (reading && line.startsWith("BOOK:")) {
                 try {
-                    // Formato corretto da server: BOOK:id|||titolo|||autore|||categoria|||editore|||anno_pubblicazione|||copertina
                     String[] parts = line.split("BOOK:|\\|\\|\\|");
                     if (parts.length >= 8) {
                         Book book = getBook(parts);
@@ -51,10 +52,14 @@ public class BookClient {
                 }
             }
         }
-
         return books;
     }
 
+    /**
+     * Crea un oggetto Book da un array di stringhe parsate dal server.
+     * @param parts array con i dati del libro
+     * @return oggetto Book costruito
+     */
     public static Book getBook(String[] parts) {
         int id = Integer.parseInt(parts[1]);
         String title = parts[2];
@@ -63,25 +68,27 @@ public class BookClient {
         String publisher = parts[5];
         String publicationYear = parts[6];
 
-        // La parte coverUrl è opzionale, verifica se esiste
         String coverUrl = "null";
         if (parts.length > 7) {
             coverUrl = parts[7];
         }
 
-        // Crea il libro con il costruttore che accetta 7 parametri
         return new Book(id, title, author, category, publisher, publicationYear, coverUrl);
     }
 
+    /**
+     * Richiede i libri appartenenti a una libreria specifica di un utente.
+     * @param userId id utente
+     * @param libraryName nome della libreria
+     * @return lista di libri nella libreria
+     * @throws IOException in caso di errori di I/O
+     */
     public List<Book> getLibraryBooks(String userId, String libraryName) throws IOException {
         List<Book> books = new ArrayList<>();
-
-        // Invia la richiesta
         String request = "GET_LIBRARY_BOOKS:" + userId + ":" + libraryName;
 
         SocketConnection.sendMessage(request);
         BufferedReader in = SocketConnection.getIn();
-        // Legge la risposta
         String line;
         boolean reading = false;
 
@@ -90,14 +97,11 @@ public class BookClient {
                 reading = true;
                 continue;
             }
-
             if (line.equals("END_BOOKS")) {
                 break;
             }
-
             if (reading && line.startsWith("BOOK:")) {
                 try {
-                    // Formato corretto da server: BOOK:titolo|||autore|||categoria|||editore|||anno_pubblicazione|||copertina
                     String[] parts = line.split("BOOK:|\\|\\|\\|");
                     if (parts.length >= 8) {
                         int id = Integer.parseInt(parts[1]);
@@ -117,25 +121,35 @@ public class BookClient {
             }
         }
         return books;
-
     }
 
+    /**
+     * Esegue una ricerca di libri sul server.
+     * @param searchType tipo di ricerca (es. AUTHOR, TITLE, AUTHOR_YEAR)
+     * @param searchTerm termine da cercare
+     * @param year anno (opzionale, usato solo se searchType è AUTHOR_YEAR)
+     * @return lista di libri trovati
+     * @throws IOException in caso di errori di I/O
+     */
     public List<Book> performSearch(String searchType, String searchTerm, String year) throws IOException {
-        // Leggi il messaggio di benvenuto
-        // Invia la richiesta di ricerca
         String request = "SEARCH:" + searchType + ":" + searchTerm;
         if (year != null && searchType.equals("AUTHOR_YEAR")) {
             request += ":" + year;
         }
         request += ":" + UserManager.getUserId();
         request += ":" + SceneController.currentPage;
-        if(SceneController.currentPage.contains("library-books-view")) {
+        if (SceneController.currentPage.contains("library-books-view")) {
             request += ":" + SceneController.currentLibrary;
         }
         SocketConnection.sendMessage(request);
         return parseSearchResults();
     }
 
+    /**
+     * Parsea la risposta del server contenente risultati di ricerca.
+     * @return lista di libri trovati
+     * @throws IOException in caso di errori di I/O
+     */
     private List<Book> parseSearchResults() throws IOException {
         List<Book> results = new ArrayList<>();
         String line;
@@ -148,14 +162,11 @@ public class BookClient {
                 reading = true;
                 continue;
             }
-
             if (line.equals("END_BOOKS")) {
                 break;
             }
-
             if (reading && line.startsWith("BOOK:")) {
                 try {
-                    // Formato corretto da server: BOOK:titolo|||autore|||categoria|||editore|||anno_pubblicazione|||copertina
                     String[] parts = line.split("BOOK:|\\|\\|\\|");
                     if (parts.length >= 8) {
                         int id = Integer.parseInt(parts[1]);
@@ -174,7 +185,6 @@ public class BookClient {
                 }
             }
         }
-
         return results;
     }
 }

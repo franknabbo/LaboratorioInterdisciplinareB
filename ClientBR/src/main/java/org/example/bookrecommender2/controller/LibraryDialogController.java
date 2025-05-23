@@ -7,10 +7,20 @@ package org.example.bookrecommender2.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
+/**
+ * Controller per il dialogo di creazione/modifica di una libreria.
+ * Gestisce l'input del nome della libreria da parte dell'utente.
+ */
 public class LibraryDialogController {
+
     @FXML
     private TextField libraryNameField;
 
+    /**
+     * Restituisce il testo attualmente inserito nel campo per il nome della libreria.
+     *
+     * @return il nome della libreria inserito dall'utente
+     */
     public String getLibraryNameField() {
         return libraryNameField.getText();
     }

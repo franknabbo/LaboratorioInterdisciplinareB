@@ -13,55 +13,58 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
-
+/**
+ * Controller per la gestione delle operazioni relative ai suggerimenti di libri.
+ * Permette di aggiungere libri suggeriti per un dato libro di riferimento
+ * e di recuperare la lista di libri suggeriti associati a un libro specifico.
+ */
 public class SuggestionController {
 
+    /**
+     * Costruttore di default.
+     */
     public SuggestionController() {
     }
 
+    /**
+     * Aggiunge una lista di libri suggeriti per un libro di riferimento di un utente specifico.
+     * Costruisce e invia un messaggio al server con i dati da aggiungere.
+     *
+     * @param userId           Identificativo dell'utente che aggiunge i suggerimenti.
+     * @param idLibroReferenced ID del libro di riferimento per cui si suggeriscono altri libri.
+     * @param idLibroSuggested  Lista degli ID dei libri suggeriti da associare.
+     * @return true se il server conferma l'aggiunta con successo, false altrimenti.
+     * @throws RuntimeException in caso di errore di comunicazione con il server.
+     */
     public boolean addSuggestedBook(String userId, int idLibroReferenced, List<Integer> idLibroSuggested) {
-        //la stringa è composta da: ADD_SUGGESTED_BOOK:userId:idLibroReferenced:idLibroSuggested:idLibroSuggested2:idLibroSuggested3:
         StringBuilder message = new StringBuilder("ADD_SUGGESTED_BOOK:" + userId + ":" + idLibroReferenced);
-        //aggiungo i libri suggeriti
         for (int i = 0; i < idLibroSuggested.size(); i++) {
             message.append(":").append(idLibroSuggested.get(i));
         }
-        //invia la stringa al server
         try {
-            // Invia la richiesta di aggiunta del libro suggerito
             SocketConnection.sendMessage(String.valueOf(message));
             BufferedReader in = SocketConnection.getIn();
-            // Leggi la risposta del server
             String response = in.readLine();
-            // Gestisci la risposta
-            if (response.startsWith("SUGGESTION_SUCCESS")) {
-                return true;
-            } else {
-                return false;
-            }
-
+            return response.startsWith("SUGGESTION_SUCCESS");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Recupera la lista di libri suggeriti associati a un libro di riferimento.
+     * Invia una richiesta al server e parsifica la risposta in oggetti {@link Book}.
+     *
+     * @param idLibroReferenced ID del libro di riferimento.
+     * @return Lista di libri suggeriti.
+     * @throws RuntimeException in caso di errore di comunicazione con il server.
+     */
     public List<Book> getSuggestedBooks(int idLibroReferenced) {
-        //la stringa è composta da: GET_SUGGESTED_BOOK:idLibroReferenced
         String message = "GET_SUGGESTED_BOOKS:" + idLibroReferenced;
         List<Book> books = new java.util.ArrayList<>();
-        //invia la stringa al server
         try {
-            // Invia la richiesta di aggiunta del libro suggerito
             SocketConnection.sendMessage(message);
             BufferedReader in = SocketConnection.getIn();
-            // Leggi la risposta del server
-            // Gestisci la risposta
-            //INIZIO_LISTA_LIBRI
-            //BOOK:882|||100 Greatest Pitchers|||By Kelley, Brent||||||Crescent|||1988|||https://covers.openlibrary.org/b/id/9519394-L.jpg
-            //BOOK:2906|||1000 Reasons You Are the Perfect Mom (1000 Hints, Tips and Ideas)|||By Powell, Michael||| Family & Relationships , Parenting , Motherhood|||M Q Publications|||2005|||https://covers.openlibrary.org/b/id/2015189-L.jpg
-            //BOOK:4662|||100 Years 100 Stories|||By Burns, George||| Biography & Autobiography , Entertainment & Performing Arts|||Putnam Adult|||1996|||https://covers.openlibrary.org/b/id/258454-L.jpg
-            //END_BOOKS
-
             String line;
             boolean reading = false;
             while ((line = in.readLine()) != null) {
@@ -69,14 +72,12 @@ public class SuggestionController {
                     reading = true;
                     continue;
                 }
-
                 if (line.equals("END_BOOKS")) {
                     break;
                 }
-
                 if (reading && line.startsWith("BOOK:")) {
                     try {
-                        // Formato corretto da server: BOOK:id|||titolo|||autore|||categoria|||editore|||anno_pubblicazione|||copertina
+                        // Formato atteso: BOOK:id|||titolo|||autore|||categoria|||editore|||anno_pubblicazione|||copertina
                         String[] parts = line.split("BOOK:|\\|\\|\\|");
                         if (parts.length >= 8) {
                             Book book = BookClient.getBook(parts);
@@ -89,12 +90,9 @@ public class SuggestionController {
                     }
                 }
             }
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
         return books;
     }
 }

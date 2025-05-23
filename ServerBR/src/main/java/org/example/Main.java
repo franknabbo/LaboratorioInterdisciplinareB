@@ -15,9 +15,21 @@ import org.example.db.Book;
 import org.example.db.BookDAO;
 import org.example.db.DataBaseConnection;
 
+/**
+ * Classe principale che avvia il server e gestisce le connessioni in arrivo.
+ */
 public class Main {
+    /**
+     * Porta su cui il server rimane in ascolto per le connessioni client.
+     */
     public static final int PORT = 8080;
 
+    /**
+     * Metodo main che avvia il server, configura la connessione al database
+     * e accetta connessioni client creando un thread per ciascuna.
+     *
+     * @param args argomenti da linea di comando (non utilizzati)
+     */
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             Scanner scanner = new Scanner(System.in);
@@ -57,4 +69,3 @@ public class Main {
         }
     }
 }
-
