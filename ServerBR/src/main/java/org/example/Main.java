@@ -55,6 +55,11 @@ public class Main {
                     System.out.println("Errore Credenziali Sbagliate");
             } while (!DataBaseConnection.testConnection());
 
+            DataBaseConnection dbConnection = new DataBaseConnection();
+            if (!dbConnection.checkTablesExist()) {
+                dbConnection.createTablesAndInsert();
+            }
+
             System.out.println("Server avviato sulla porta " + PORT);
             while (true) {
                 Socket clientSocket = serverSocket.accept();

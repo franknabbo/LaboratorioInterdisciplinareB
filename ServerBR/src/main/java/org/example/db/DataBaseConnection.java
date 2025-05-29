@@ -59,9 +59,6 @@ public class DataBaseConnection {
     public DataBaseConnection() {
         try {
             connection = DriverManager.getConnection(getURL(), USER, PASSWORD);
-            if (!checkTablesExist()) {
-                createTablesAndInsert();
-            }
         } catch (SQLException e) {
             System.err.println("Errore di connessione al database: " + e.getMessage());
 
