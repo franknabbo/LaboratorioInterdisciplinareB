@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import  bookrecommender.controller.AlertController;
+
 /**
  * Gestisce le operazioni di autenticazione dell'utente,
  * inclusi login, logout e registrazione,
@@ -145,9 +146,23 @@ public class UserManager {
                 alert.showAndWait();
 
                 sceneController.switchToHome(event);
-            } else if( risposta.startsWith("REGISTRAZIONE FALLITA:Codice fiscale o email già registrati")) {
-                alertController.showAlert("Errore", "Codice fiscale o email già registrati. Prova con un altro codice fiscale o email.");
 
+                //if (cfDuplicato && mailDuplicata) {
+                //                return "REGISTRAZIONE FALLITA:Codice fiscale e mail già registrati";
+                //            } else if (cfDuplicato) {
+                //                return "REGISTRAZIONE FALLITA:Codice fiscale già registrato";
+                //            } else if (mailDuplicata) {
+                //                return "REGISTRAZIONE FALLITA:Mail già registrata";
+            } else if( risposta.startsWith("REGISTRAZIONE FALLITA")) {
+                if(risposta.contains("Codice fiscale e mail già registrati")) {
+                    alertController.showAlert("Errore", "Codice fiscale e email già registrati. Prova con un altro codice fiscale o email.");
+                }
+                else if(risposta.contains("Codice fiscale già registrato")) {
+                    alertController.showAlert("Errore", "Codice fiscale già registrato. Prova con un altro codice fiscale.");
+                }
+                else if(risposta.contains("Mail già registrata")) {
+                    alertController.showAlert("Errore", "Email già registrata. Prova con un'altra email.");
+                }
             }
             else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);

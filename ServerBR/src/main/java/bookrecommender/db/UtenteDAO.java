@@ -30,15 +30,32 @@ public class UtenteDAO {
      * @return Stringa che indica il risultato della registrazione.
      */
     public String registraUtente(Utente utente) {
-        //controllo che non esista già un utente con lo stesso codice fiscale o email
-        String checkSql = "SELECT COUNT(*) FROM UtentiRegistrati WHERE codice_fiscale = ? OR mail = ?";
+        String checkCfSql = "SELECT COUNT(*) FROM UtentiRegistrati WHERE codice_fiscale = ?";
+        boolean cfDuplicato = false;
+        boolean mailDuplicata = false;
         try {
-            PreparedStatement checkStmt = db.getConnection().prepareStatement(checkSql);
-            checkStmt.setString(1, utente.getCodiceFiscale());
-            checkStmt.setString(2, utente.getEmail());
-            ResultSet rs = checkStmt.executeQuery();
-            if (rs.next() && rs.getInt(1) > 0) {
-                return "REGISTRAZIONE FALLITA:Codice fiscale o email già registrati";
+            PreparedStatement checkCfStmt = db.getConnection().prepareStatement(checkCfSql);
+            checkCfStmt.setString(1, utente.getCodiceFiscale());
+            ResultSet rsCf = checkCfStmt.executeQuery();
+            if (rsCf.next() && rsCf.getInt(1) > 0) {
+                cfDuplicato = true;
+            }
+
+            // Controllo se esiste già un utente con la stessa mail
+            String checkMailSql = "SELECT COUNT(*) FROM UtentiRegistrati WHERE mail = ?";
+            PreparedStatement checkMailStmt = db.getConnection().prepareStatement(checkMailSql);
+            checkMailStmt.setString(1, utente.getEmail());
+            ResultSet rsMail = checkMailStmt.executeQuery();
+            if (rsMail.next() && rsMail.getInt(1) > 0) {
+                mailDuplicata = true;
+            }
+
+            if (cfDuplicato && mailDuplicata) {
+                return "REGISTRAZIONE FALLITA:Codice fiscale e mail già registrati";
+            } else if (cfDuplicato) {
+                return "REGISTRAZIONE FALLITA:Codice fiscale già registrato";
+            } else if (mailDuplicata) {
+                return "REGISTRAZIONE FALLITA:Mail già registrata";
             }
         } catch (SQLException e) {
             e.printStackTrace();
