@@ -16,7 +16,7 @@
 <?import javafx.collections.FXCollections?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.bookrecommender2.EventHandler"
+            fx:controller="bookrecommender.EventHandler"
             prefHeight="600.0" prefWidth="800.0" stylesheets="@homenotlogged.css" style="-fx-background-color: #f8eedf">
     <top>
         <HBox alignment="CENTER" spacing="10.0" styleClass="top-bar">
